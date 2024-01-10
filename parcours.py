@@ -33,13 +33,13 @@ Données de vent v (en m.s-1) d'oust en est
 ATTENTION, wind_data est un dictionnaire, le tableau qui nous interesse est disponible dans wind_data['data']
 """
 
-def parcours_a_Z(longitude : int, latitude : int, pression : int, tab_vent : dict, tempsI : int, duree : int) -> (int, int) :
+def parcours_a_Z(longitude : (int,int), latitude : (int,int), pression : int, tab_vent : dict, tempsI : int, duree : int) -> ((int, int),(int, int))  :
     temps = tempsI
-    long = longitude
-    lat = latitude
+    long = longitude[0]
+    lat = latitude[0]
     # ensuite vienne les position au sien de cette enormes cases
-    longDetaille = 140000
-    latDetaille = 140000
+    longDetaille = longitude[1]
+    latDetaille = latitude[1]
 
     #echelle d'une case a l'autre (pas sur de la valeur)
     echelle_temp = 6
@@ -112,7 +112,7 @@ def parcours_a_Z(longitude : int, latitude : int, pression : int, tab_vent : dic
 
             temps += tempsV
         
-    return (long, lat)
+    return ((long, longDetaille), (lat, latDetaille))
 
 def test() :
     #ca c'est completement random
@@ -124,9 +124,10 @@ def test() :
     duree = 3*24
     temps_dep = 0
 
-    print(parcours_a_Z(longitudeInit, latitudeInit, pression, wind_data, temps_dep, duree))
+    print(parcours_a_Z((longitudeInit,longitudeInit), (latitudeInit,latitudeInit), pression, wind_data, temps_dep, duree))
+test()
 
-#test()
+
 
 
 
