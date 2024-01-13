@@ -1,5 +1,6 @@
 import gym
 from gym import spaces
+import numpy as np
 
 
 
@@ -11,8 +12,9 @@ class CustomEnvironment(gym.Env):
         super(CustomEnvironment, self).__init__()
 
         # Define your observation space and action space
-        self.observation_space = spaces.Discrete(10)  # Change this to suit your environment
-        self.action_space = spaces.Discrete(2)  # Change this to suit your environment
+        self.observation_space = spaces.Discrete(4) #tableau 4D discret, temps, longitude, latitude, pression, 
+
+        self.action_space = spaces.Discrete(3)  # Change this to suit your environment
 
         # Initialize your custom variables here
 

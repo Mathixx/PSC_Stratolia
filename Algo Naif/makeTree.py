@@ -22,34 +22,41 @@ Construire le graphe permet de garder en memoire le chemion a prendre (en remont
 """
 
 
-def makeTree(destination, longitude : (int, int), latitude : (int, int), pression : int, temps : int, duree : int, pere : Node) -> (Node, list(Node)) :
+def Tree_Largeur(destination,longitude : (int, int), latitude : (int, int), pression : int, temps : int, duree : int) -> (bool, list(Node)) :
     #On fixe ici la precision de notre algo : a quel distance de l'objectif considere-t-on etre arrive ? (en m)
-    precision = 100
+    precision = 1000
+
+    racine = Node(longitude, latitude, pression, temps, None)
+
+    listeP = [racine]
+
+    while True :
+        for n in listeP :
+            if testPosition(destination, n.long, n.lat, precision) :
+            #retourner la liste avec le parcours en arriere du graphe
+                liste = [n]
+                nb = n
+                while nb.prev != None :
+                    nb = nb.prev
+                    liste.append(nb)
+                return True, liste
+            
+            if n.t > temps + 100 :
+                return False, []
+
+            #Ici considère l'evolution en  altitude sur les 20 000 km, parcours total en 35 minutes -> negligeable
+            for i in range(0, 17) :
+                if i!= pression :
+                    listeP.append(Node(longitude, latitude, i, temps, n))
+            
+            #Ensuite, pour chaque noeud de la colonne, on considère son évolution temporelle a altitude fixée
+            listeF = []
+            for noeudP in listeP :
+                longB, latB = parcours_a_Z(longitude, latitude, noeudP.p, wind_data, temps, duree)
+                listeF.append(Node(longB,latB,noeudP.p, temps+duree, noeudP))
+        listeP = listeF
 
 
-    n = Node(longitude, latitude, pression, temps, pere)
-
-    if testPosition(destination, longitude, latitude, precision) :
-        #retourner la liste avec le parcours en arriere du graphe
-        liste = [n]
-        nb = n
-        while nb.prev != None :
-            nb = nb.prev
-            liste.append(nb)
-        return liste, True
-
-    #Ici considère l'evolution en  altitude sur les 20 000 km, parcours totale en 35 minutes -> negligeable
-    colonne = []
-    for i in range(0, 17) :
-        if i!= pression :
-            colonne.append(Node(longitude, latitude, i, temps, pere))
-        else :
-            colonne.append(n)
-    
-    #Ensuite, pour chaque noeud de la colonne, on considère son évolution temporelle a altitude fixée
-    for noeudP in colonne :
-        longB, latB = parcours_a_Z(longitude, latitude, noeudP.p, wind_data, temps, duree)
-        next = makeTree(longB,latB,noeudP.p, temps+duree, duree, n)
 
 
 

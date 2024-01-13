@@ -44,7 +44,6 @@ def parcours_a_Z(longitude : (int,int), latitude : (int,int), pression : int, ta
     #echelle d'une case a l'autre (pas sur de la valeur)
     echelle_temp = 6
     while (duree > temps-tempsI) :
-        print("je suis passe par la ")
         #on verifie qu'on n'est pas sorti du tableau et si c'est le cas on se remet au bon endroit (ca fait un tour complet)
         long = long%len(tab_vent['data'][0])
         lat = lat%len(tab_vent['data'][0][0])
@@ -125,7 +124,6 @@ def test() :
     temps_dep = 0
 
     print(parcours_a_Z((longitudeInit,longitudeInit), (latitudeInit,latitudeInit), pression, wind_data, temps_dep, duree))
-test()
 
 
 
