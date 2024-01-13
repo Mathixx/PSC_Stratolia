@@ -30,7 +30,9 @@ def Tree_Largeur(destination,longitude : (int, int), latitude : (int, int), pres
 
     listeP = [racine]
 
+
     while True :
+        listeF = []
         for n in listeP :
             if testPosition(destination, n.long, n.lat, precision) :
             #retourner la liste avec le parcours en arriere du graphe
@@ -50,11 +52,10 @@ def Tree_Largeur(destination,longitude : (int, int), latitude : (int, int), pres
                     listeP.append(Node(longitude, latitude, i, temps, n))
             
             #Ensuite, pour chaque noeud de la colonne, on considère son évolution temporelle a altitude fixée
-            listeF = []
             for noeudP in listeP :
                 longB, latB = parcours_a_Z(longitude, latitude, noeudP.p, wind_data, temps, duree)
                 listeF.append(Node(longB,latB,noeudP.p, temps+duree, noeudP))
-        listeP = listeF
+        listeP = listeF.copy()
 
 
 

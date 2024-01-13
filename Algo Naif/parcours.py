@@ -61,12 +61,12 @@ def parcours_a_Z(longitude : (int,int), latitude : (int,int), pression : int, ta
             print("long =", long, "lat =", lat, "pression =", pression, "temps =", temps)
 
         #je calcule ici le temps necessaire pour passer a l'autre case en focntion des vents
-        if (ventU > 0) :
+        if (ventU != 0) :
             tempsU =  (280000-latDetaille)/ventU if ventU > 0 else (-latDetaille)/ventU
             tempsU =  math.ceil(tempsU)
         else :
             tempsU = sys.maxsize
-        if (ventV > 0) :
+        if (ventV != 0) :
             tempsV =  (280000-longDetaille)//ventU if ventU > 0 else (-longDetaille)//ventU
             tempsV =  math.ceil(tempsV)
         else :
@@ -124,6 +124,7 @@ def test() :
     temps_dep = 0
 
     print(parcours_a_Z((longitudeInit,longitudeInit), (latitudeInit,latitudeInit), pression, wind_data, temps_dep, duree))
+
 
 
 

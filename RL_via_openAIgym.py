@@ -7,7 +7,6 @@ import numpy as np
 
 class CustomEnvironment(gym.Env):
 
-
     def __init__(self):
         super(CustomEnvironment, self).__init__()
 
