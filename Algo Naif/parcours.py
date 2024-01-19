@@ -10,8 +10,8 @@ import pickle
 with open("objet_wind_data_2020.pickle", "rb") as f:
     wind_data = pickle.load(f)
 
-from makeTree import Node
-from makeTree import distance_destination
+from Node import Node
+
 
 
 
@@ -59,7 +59,7 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
     while (temps_restant > 0) :
 
         # On vérifie si on a atteint la destination. Si oui on renvoie notre position.
-        if distance_destination(destination,long, lat)<=precision:
+        if distance_destination(destination,long,lat)<=precision:
             return (True, Node(long, lat, (temps_init,temps[1]+temps_chgmt_pression-temps_restant), pression, n))
 
         # On calcule le temps nécessaire (en secondes) pour passer à une autre case en fonction des vents. 
@@ -117,7 +117,28 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
         return (False, Node(long, lat, (temps_init+1, 0), pression, n))
     return (False, Node(long, lat, (temps_init, temps[1]+temps_chgmt_pression), pression, n))
     
-        
+
+
+'''
+Fonction donnant la distance (en m) entre un point donné et la destination
+
+Entrée :
+- destination (longitude, latitude)
+- position : longitude, latitude
+
+Sortie :
+- distance entre le point et la destination (en m)
+'''
+
+
+def distance_destination(destination : (float,float), long : float, lat : float) -> int :
+    # Constante utile : (rayon de la Terre en m et conversion degrés en radians)
+    k = 1000 * 6371 * math.pi / 180
+    dest_long = destination[0]
+    dest_lat = destination[1]
+    return int(k*math.sqrt(((math.cos(math.pi*dest_lat/180))*(dest_long-long))**2 + (dest_lat-lat)**2))
+
+
 
 '''
 Fonction auxiliaire qui détermine la case dans laquelle on se trouve en fonction de la longitude et de la latitude.
@@ -154,12 +175,12 @@ def ventU_ventV(longitude : float, latitude : float, temps : int, pression : int
         ventU = tab_vent['data'][temps][case_longitude][case_latitude][pression][0]
     except IndexError as e:
         print(f"Erreur d'index : {e}")
-        print("long =", case_longitude, "lat =", case_latitude, "temps =", tmp,"pression =", pression)
+        print("long =", case_longitude, "lat =", case_latitude, "temps =", temps,"pression =", pression)
     try:
-        ventV = tab_vent['data'][tmp_init][long][lat][pression][1]
+        ventV = tab_vent['data'][temps][case_longitude][case_latitude][pression][1]
     except IndexError as e:
         print(f"Erreur d'index : {e}")
-        print("long =", long, "lat =", lat, "pression =", pression, "temps =", tmp)
+        print("long =", case_longitude, "lat =", case_latitude, "temps =", temps, "pression =", pression)
     return (ventU,ventV)
 
 
@@ -173,7 +194,9 @@ def ventU_ventV(longitude : float, latitude : float, temps : int, pression : int
 def test1_parcours_a_Z() :
     # Test de base
     # Paramètres modifiables au besoin
-    print(parcours_a_Z((10,45),5,40,(0,0),10,10800,5000,wind_data))
+    print(parcours_a_Z((10,45),Node(5,40,(0,0),10,None),10800,5000,wind_data))
+
+test1_parcours_a_Z()
 
 
 def test2_parcours_a_Z() :
@@ -196,7 +219,7 @@ def test2_parcours_a_Z() :
     temps_sec = input("Veuillez entrer le temps de départ du parcours au sein de la case temporelle (int compris entre 0 et 21599) : ")
     temps_sec = int(temps_I)
 
-    print(parcours_a_Z((longInit,longDetailleeInit), (latInit,latDetailleeInit), (temps_I,temps_sec), pression, wind_data))
+    
 
 
 

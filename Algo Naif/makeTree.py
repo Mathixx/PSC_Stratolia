@@ -6,25 +6,19 @@
 import math
 import sys
 from parcours import parcours_a_Z
+from Node import Node
 import pickle
 with open("objet_wind_data_2020.pickle", "rb") as f:
     wind_data = pickle.load(f)
 
 
-class Node :
-    def __init__(self, longitude, latitude, temps, pression, prev):
-        self.long = longitude
-        self.lat = latitude
-        self.t = temps
-        self.p = pression
-        self.prev = prev
     
 """
 Programme qui détermine si on peut aller d'un point à un autre et qui renvoie le chemin dans le cas échéant
 
 Entrée :
 - position de la destination : longitude, latitude
-- position intiale : longitude, latitude, temps, pression
+- position intiale : noeud
 Attention : on commence toujours sur un temps rond (au sens des données de vent ie temps[1] = 0)
 - durée de l'exploration (en heures)
 Attention : on impose que la durée d'exploration soit un multiple de 6 heures !
@@ -108,20 +102,7 @@ def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_
 
 
 
-'''
-Fonction donnant la distance (en m) entre un point donné et la destination
 
-Entrée :
-- destination (longitude, latitude)
-- position : longitude, latitude
-
-Sortie :
-- distance entre le point et la destination (en m)
-'''
-
-
-def distance_destination(destination : (float,float), longitude : float, latitude : float) -> int :
-    return 6371000*math.sqrt(((math.cos(destination[1]))*(destination[0]-longitude))**2 + (destination[1]-latitude)**2)
 
 
 
