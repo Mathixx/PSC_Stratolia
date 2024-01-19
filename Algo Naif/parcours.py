@@ -57,14 +57,16 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
     # vent.
 
     while (temps_restant > 0) :
-
+        print("long :",long," et lat : ",lat)
         # On vérifie si on a atteint la destination. Si oui on renvoie notre position.
         if distance_destination(destination,long,lat)<=precision:
             return (True, Node(long, lat, (temps_init,temps[1]+temps_chgmt_pression-temps_restant), pression, n))
 
         # On calcule le temps nécessaire (en secondes) pour passer à une autre case en fonction des vents. 
         # cf README pour les valeurs numériques.
-        (case_longitude, case_latitude) = case (long, lat)
+        (case_longitude, case_latitude) = case(long, lat)
+        
+
         if (ventU != 0) :
             tempsU =  k*(-90+(2.5*(case_latitude+1))-lat)/ventU if ventU > 0 else k*(lat-(90+2.5*case_latitude))/ventU
             tempsU =  math.ceil(tempsU)
@@ -88,7 +90,7 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
         # Deuxième cas : on a changé de case en latitude.
         elif (tempsU < tempsV) :
             # Attention au cas où on passe le pôle Nord (d'où le %72).
-            lat = -90 + 2,5*((case_latitude+1)%72) if ventU>0 else -90 + 2,5*case_latitude
+            lat = -90 + 2.5*((case_latitude+1)%72) if ventU>0 else -90 + 2.5*case_latitude
             # Il faut quand même mettre à jour la longitude.
             long += (tempsU*ventV)/k
 
@@ -97,7 +99,8 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
         # Troisième cas : on a changé de case en longitude.
         elif (tempsV < tempsU) :
             # Attention au cas où on passe le méridien 0 (d'où le %144).
-            long = 2,5*((case_longitude+1)%144) if ventV>0 else 2,5 * case_longitude
+            long = 2.5*((case_longitude+1)%144) if ventV>0 else 2.5 * case_longitude
+
             # Il faut quand même mettre à jour la latitude.
             lat += (tempsV*ventU)/k
 
@@ -105,11 +108,11 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
 
         # Quatrième cas : on change de case en latitude et en longitude simultanément (très peu probable).
         else :
-            
-            lat = -90 + 2,5*((case_latitude+1)%72) if ventU>0 else -90 + 2,5*case_latitude
-            long = 2,5*((case_longitude+1)%144) if ventV>0 else 2,5 * case_longitude
+            lat = -90 + 2.5*((case_latitude+1)%72) if ventU>0 else -90 + 2.5*case_latitude
+            long = 2.5*((case_longitude+1)%144) if ventV>0 else 2.5 * case_longitude
 
             temps_restant -= tempsU
+
     
     # On renvoie notre position finale sachant qu'on a pas rencontré la destination. On vérifie si on a atteint une nouvelle 
     # fenêtre de six heures.
@@ -134,10 +137,23 @@ Sortie :
 def distance_destination(destination : (float,float), long : float, lat : float) -> int :
     # Constante utile : (rayon de la Terre en m et conversion degrés en radians)
     k = 1000 * 6371 * math.pi / 180
+    
     dest_long = destination[0]
     dest_lat = destination[1]
     return int(k*math.sqrt(((math.cos(math.pi*dest_lat/180))*(dest_long-long))**2 + (dest_lat-lat)**2))
 
+
+def check_type(arg):
+    if isinstance(arg, float):
+        print("It's a float!")
+    elif isinstance(arg, int):
+        print("It's an int!")
+    elif isinstance(arg, str):
+        print("It's a string!")
+    elif isinstance(arg, tuple):
+        print("It's a tuple")
+    else:
+        print("It's some other type!")
 
 
 '''
