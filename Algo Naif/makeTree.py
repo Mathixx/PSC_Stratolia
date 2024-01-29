@@ -73,12 +73,12 @@ def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_
     for count in range(nombre_d_iterations+1) : 
 
         # On veut afficher dans quelle boucle la recherche est en cours.
-        print("Recherche dans la boucle "+str(count)+" ...")
+        #print("Recherche dans la boucle "+str(count)+" ...")
 
         # Si la liste des points à explorer est nulle on abandonne.
         if listeP == []:
             print("Aucun chemin n'a été concluant.")
-            return
+            return False, []
         
         # On initialise la liste des points qu'on va atteindre.
         listeF = []
@@ -105,7 +105,7 @@ def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_
                         p = p.prev
                         res.append(p)
                     res.reverse()
-                    affichage(res)
+                    #affichage(res)
                     return (True, res)
                 # Sinon on ajoute le nouveau point à la liste des futurs points. 
                 listeF.append(pointF)
@@ -148,10 +148,15 @@ def affichage(liste : list):
 # Trouvons quand partir
 
 
-'''
+
 t = 0
 while True :
-    res = Tree_Largeur((2.291007,48.8648915),Node(2.211653,48.709859,(50,0),10,None),24,3*3600,5000,50000,wind_data)
-'''
+    res = Tree_Largeur((2.291007,48.8648915),Node(2.211653,48.709859,(t,0),10,None),24,3*3600,1000,50000,wind_data)
+    if res[0] == True :
+        print("un chemin a été trouvé :")
+        affichage(res[1])
+        break
+    t +=1
 
-Tree_Largeur((2.4,45),Node(2.211653,48.709859,(50,0),10,None),24,3*3600,5000,1000000,wind_data)
+
+#Tree_Largeur((2.4,45),Node(2.211653,48.709859,(50,0),10,None),24,3*3600,5000,1000000,wind_data)
