@@ -6,10 +6,12 @@
 import math
 import sys
 from parcours import parcours_a_Z
-from Node import Node
+from Node import *
 import pickle
 with open("objet_wind_data_2020.pickle", "rb") as f:
     wind_data = pickle.load(f)
+
+from parcours import distance_destination
 
 
     
@@ -33,7 +35,7 @@ Sortie :
 """
 
 
-def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_chgmt_pression : int, precision : int, limite_eloignement : int) -> (bool, list(Node)) :
+def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_chgmt_pression : int, precision : int, limite_eloignement : int, tab_vent : dict) -> (bool, list) :
 
     # On vérifie que le noeud de départ n'a pas de parent.
     if not(depart.prev == None):
@@ -44,11 +46,15 @@ def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_
     if not(depart.t[1] == 0):
         print("Erreur : on doit commencer sur un temps 'rond', ie temps[1]=0.")
         return 
+    
+    temps_initial = depart.t[0]
 
     # On vérifie que la durée d'exploration est un multiple de six heures.
     if not(duree%6 == 0):
         print("Erreur : la durée d'exploration doit être un multiple de six heures.")
         return
+    
+    nombre_d_iterations = duree//6
 
     # On vérifie que le temps des changements de niveau de pression divise six heures.
     if not(21600%temps_chgmt_pression == 0):
@@ -56,16 +62,27 @@ def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_
         return
 
     # On vérifie que la limite d'éloignement choisie est suffisamment grande pour que l'algorithme fonctionne correctement.
-    if distance_destination(destination, depart.long, depart.lat)<limite_eloignement:
+    if distance_destination(destination, depart.long, depart.lat)>limite_eloignement:
         print("Erreur : la limite d'éloignement est inférieure à la distance entre le point de départ et la destination.")
         return 
 
     # On initialise la liste des points que nous explorons.
     listeP = [depart]
+  
 
-    while True : 
+    for count in range(nombre_d_iterations+1) : 
+
+        # On veut afficher dans quelle boucle la recherche est en cours.
+        print("Recherche dans la boucle "+str(count)+" ...")
+
+        # Si la liste des points à explorer est nulle on abandonne.
+        if listeP == []:
+            print("Aucun chemin n'a été concluant.")
+            return
+        
         # On initialise la liste des points qu'on va atteindre.
-        listeF = list()
+        listeF = []
+
         for point in listeP :
             
             distance = distance_destination(destination, point.long, point.lat)
@@ -74,13 +91,7 @@ def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_
             if distance > limite_eloignement :
                 continue
 
-            # Deuxième cas : si on a dépassé la durée d'exploration on arrête et on renvoie False (si le temps est 
-            # écoulé pour un point il l'est aussi pour tous les points de la liste). Attention : l'échelle de temps
-            # du tableau de vent est de 6 heures. 
-            if point.t[0] > temps[0] + duree/6 :
-                return False, []
-
-            # Troisième cas : on continue l'exploration. On appelle parcours à Z pour tous les niveaux de pression
+            # Deuxième cas : on continue l'exploration. On appelle parcours à Z pour tous les niveaux de pression
             # correspondant à notre point.
             for i in range(0, 17) :
 
@@ -93,17 +104,37 @@ def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_
                     while p.prev != None :
                         p = p.prev
                         res.append(p)
+                    res.reverse()
+                    affichage(res)
                     return (True, res)
                 # Sinon on ajoute le nouveau point à la liste des futurs points. 
                 listeF.append(pointF)
 
         listeP = listeF
+        count +=1
+
+    # Dans ce cas on a dépassé la limite temporelle d'exploration.
+    return False, []
 
 
 
+'''
+Fonction qui affiche proprement la trajectoire trouvée
 
+Entrée : liste de Node
+Pas de sortie
+'''
 
-
+def affichage(liste : list):
+    print()
+    print("Liste des points formant la trajectoire : ")
+    print()
+    for x in liste:
+        if isinstance(x, Node):
+            print(toString(x))
+        else:
+            print("Erreur : un des éléments de la liste n'est pas une instance de la classe Node.")
+            return
 
 
 
@@ -111,3 +142,16 @@ def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_
 ###########
 ## TESTS ##
 ###########
+
+
+### OBJECTIF : Hippo doit rentrer chez lui ! MAIS il a mal au pied et n'a qu'un ballon stratosphérique à disposition
+# Trouvons quand partir
+
+
+'''
+t = 0
+while True :
+    res = Tree_Largeur((2.291007,48.8648915),Node(2.211653,48.709859,(50,0),10,None),24,3*3600,5000,50000,wind_data)
+'''
+
+Tree_Largeur((2.4,45),Node(2.211653,48.709859,(50,0),10,None),24,3*3600,5000,1000000,wind_data)

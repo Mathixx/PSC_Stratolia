@@ -5,7 +5,7 @@
 
 import math
 import sys
-#for test purposes only
+# For test purposes only
 import time
 
 
@@ -13,7 +13,7 @@ import pickle
 with open("objet_wind_data_2020.pickle", "rb") as f:
     wind_data = pickle.load(f)
 
-from Node import Node
+from Node import *
 
 
 
@@ -63,18 +63,18 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
     # vent.
 
     while (temps_restant > 0) :
-        time.sleep(3)
+        #time.sleep(0.1)
 
         # On récupère les données de vent (en m.s-1).
         (ventU, ventV) = ventU_ventV(long, lat, temps_init, pression, tab_vent)
 
         #A supprimer utile pour les tests seulemet:
-        print("temps_test_arrivee : "+str(temps_test_arrivee) )
-        print("vent U : "+str(ventU)+", vent V : "+str(ventV))
+        # print("temps_test_arrivee : "+str(temps_test_arrivee) )
+        # print("vent U : "+str(ventU)+", vent V : "+str(ventV))
 
 
         
-        print("long :",long," et lat : ",lat)
+        # print("long :",long," et lat : ",lat)
         # On vérifie si on a atteint la destination. Si oui on renvoie notre position.
         if distance_destination(destination,long,lat)<=precision:
             return (True, Node(long, lat, (temps_init,temps[1]+temps_chgmt_pression-temps_restant), pression, n))
@@ -86,18 +86,19 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
 
         # ATTENTION : Disjoncion de cas : Quand on souhaite calculer tempsU/tempsV et que l'on se situe deja sur une limite de case
         if (ventU != 0) :
-            if (lat%2.5) == 0 :
-                tempsU = math.fabs(k*(-90+(2.5*(case_latitude+1))-lat)/ventU) if ventU > 0 else math.fabs(k*(lat-(90+2.5*(case_latitude-1)))/ventU)
+            if (lat%2.5) != 0 :
+                # edit : Je ne comprends pas pourquoi on met une valeur absolue - peut etre que c'est juste la synatxe if ventU > 0 qui ne marche pas
+                tempsU = k*(-90+2.5*(case_latitude+1)-lat)/ventU if ventU > 0 else -k*(lat-(-90+2.5*case_latitude))/ventU
             else :
-                tempsU =  math.fabs(k*(-90+(2.5*(case_latitude+1))-lat)/ventU) if ventU > 0 else math.fabs(k*(lat-(90+2.5*case_latitude))/ventU)
+                tempsU =  k*(-90+2.5*(case_latitude+1)-lat)/ventU if ventU > 0 else -k*(lat-(-90+2.5*(case_latitude-1)))/ventU
             tempsU =  math.ceil(tempsU)
         else :
             tempsU = sys.maxsize
         if (ventV != 0) :
-            if (long%2.5) == 0:
-                tempsV =  math.fabs(k*math.cos(lat)(2.5*(case_longitude+1)-long)/ventV) if ventV > 0 else math.fabs(k*math.cos(lat)*(long-2.5*(case_longitude-1))/ventV)
+            if (long%2.5) != 0:
+                tempsV =  k*math.cos(lat*math.pi/180)*(2.5*(case_longitude+1)-long)/ventV if ventV > 0 else -k*math.cos(lat*math.pi/180)*(long-2.5*case_longitude)/ventV
             else :
-                tempsV =  math.fabs(k*math.cos(lat)(2.5*(case_longitude+1)-long)/ventV) if ventV > 0 else math.fabs(k*math.cos(lat)*(long-2.5*case_longitude)/ventV)
+                tempsV =  k*math.cos(lat*math.pi/180)*(2.5*(case_longitude+1)-long)/ventV if ventV > 0 else -k*math.cos(lat*math.pi/180)*(long-2.5*(case_longitude-1))/ventV
             tempsV =  math.ceil(tempsV)
         else :
             tempsV = sys.maxsize
@@ -107,22 +108,22 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
         temps_evolution = min(temps_restant, temps_test_arrivee)
 
         #A supprimer utile pour les tests seulemet:
-        print("temps evolution : "+str(temps_evolution))
-        print("temps U : " +str(tempsU))
-        print("temps V : " +str(tempsV))
+        # print("temps evolution : "+str(temps_evolution))
+        # print("temps U : " +str(tempsU))
+        # print("temps V : " +str(tempsV))
 
         if (temps_evolution < min(tempsU,tempsV)) :
-            print(1)
-            lat += (temps_restant*ventU)/k
-            long += (temps_restant*ventV)/k
+            # print(1)
+            lat += (temps_evolution*ventU)/k
+            long += (temps_evolution*ventV)/k
 
             # ATTENTION : BLOQUAGE TUPLE - FLAOT EN DESSOUS
             #J'ai pas modifié car je sais pas envore tres bien ce que tu veux faire
-            temps_restant -= (temps-temps_evolution)
+            temps_restant -= temps_evolution
 
         # Deuxième cas : on a changé de case en latitude.
         elif (tempsU < tempsV) :
-            print(2)
+            # print(2)
             # Attention au cas où on passe le pôle Nord (d'où le %72).
             lat = -90 + 2.5*((case_latitude+1)%72) if ventU>0 else -90 + 2.5*case_latitude
             # Il faut quand même mettre à jour la longitude.
@@ -132,7 +133,7 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
 
         # Troisième cas : on a changé de case en longitude.
         elif (tempsV < tempsU) :
-            print(3)
+            # print(3)
             # Attention au cas où on passe le méridien 0 (d'où le %144).
             long = 2.5*((case_longitude+1)%144) if ventV>0 else 2.5 * case_longitude
 
@@ -142,12 +143,12 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
             temps_restant -= tempsV
 
             #A supprimer utile pour les tests seulemet:
-            print("nouvelle longitude : "+ str(long))
-            print("nouvelle latitude : "+ str(lat))
+            # print("nouvelle longitude : "+ str(long))
+            # print("nouvelle latitude : "+ str(lat))
 
         # Quatrième cas : on change de case en latitude et en longitude simultanément (très peu probable).
         else :
-            print(4)
+            # print(4)
             lat = -90 + 2.5*((case_latitude+1)%72) if ventU>0 else -90 + 2.5*case_latitude
             long = 2.5*((case_longitude+1)%144) if ventV>0 else 2.5 * case_longitude
 
@@ -253,15 +254,18 @@ def ventU_ventV(longitude : float, latitude : float, temps : int, pression : int
 def test1_parcours_a_Z() :
     # Test de base
     # Paramètres modifiables au besoin
-    print(parcours_a_Z((2.2,48.7),Node(3,48.7,(0,0),10,None),8760,1000,wind_data))
+    print(parcours_a_Z((1.5,50),Node(2.211653,48.709859,(50,0),10,None),3*3600,5000,wind_data))
 
 test1_parcours_a_Z()
 
 #print(case(2.5, 48.7))
 #print(case(3, 48.7))
 
-
-
+'''
+Palaiseau
+2.211653
+48.709859
+'''
 """
 print(ventU_ventV(2.5, 48.7, 0, 10, wind_data))
 print(ventU_ventV(3, 48.7, 0, 10, wind_data))
