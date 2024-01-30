@@ -254,7 +254,7 @@ def ventU_ventV(longitude : float, latitude : float, temps : int, pression : int
 def test1_parcours_a_Z() :
     # Test de base
     # Paramètres modifiables au besoin
-    print(parcours_a_Z((1.5,50),Node(2.211653,48.709859,(50,0),10,None),3*3600,5000,wind_data))
+    print(toString(parcours_a_Z((2.2885401248931885,48.865013122558594),Node(2.2039577960968018,48.71699905395508,(4,0),5,None),3*3600,5000,wind_data)[1]))
 
 test1_parcours_a_Z()
 

@@ -1,7 +1,9 @@
 import math
 import sys
-from parcours import parcours_a_Z
-from makeTree import Tree_Largeur
+from parcours import *
+from makeTree import *
+import affichage
+
 
 import pickle
 with open("objet_wind_data_2020.pickle", "rb") as f:
@@ -20,35 +22,29 @@ latitude : (55, 135504.20799999937)
 https://www.coordonnees-gps.fr
 """
 
-def convPrg_Coord(longitude : (int,int), latitude : (int,int)) -> (int, int):
-    return (longitude[0]*2.5+2.5*longitude[1]/280000, latitude[0]*2.5-90+latitude[1]/280000*2.5)
-
-def convCoord_Prg(longitude, latitude) :
-    x0 = math.floor(longitude/2.5)
-    x1 = (longitude - 2.5*x0)*280000/2.5
-    y0 = math.floor((latitude+90)/2.5)
-    y1 = (latitude+90-2.5*y0)*280000/2.5
-    return ((x0,x1),(y0,y1))
-
+"""
+OBJECTIF : Hippo doit rentrer chez lui ! MAIS il a mal au pied et n'a qu'un ballon stratosphérique à disposition
+Trouvons quand partir et affihcons la demarche a suivre !
 
 """
-for pression in range (17) :
-    #je fais evoluer pendant 10j
-    print("pression : "+ str(pression))
-    (long, lat) = parcours_a_Z((0, 247705.136), (55, 135504.20799999937), pression, wind_data, 0, 90)
-    print (convPrg_Coord(long,lat))
-"""
 
-destination  = convCoord_Prg((2.2101489978376114, 48.700457632812494))
+def hippo_from_cube_to_house(): 
+    t = 0
+    while True :
+        res = Tree_Largeur((2.291007,48.8648915),Node(2.211653,48.709859,(t,0),10,None),24,3*3600,1000,50000,wind_data)
+        if res[0] == True :
+            print("un chemin a été trouvé :")
+            affichage(res[1])
+            break
+    t +=1
 
-result = Tree_Largeur(destination,(0, 247705.136),(55, 135504.20799999937),3, 0, 90)
-if result[0] :
-    print('ok')
     coords = []
-    for n in result[1] :
-        x,y = convPrg_Coord(n.long, n.lat)
-        z = 20000-n.p*1176
-        coords.append((x,y,z))
+    for i in range(len(res[1])):
+        n = res[i]
+        coords.append((n.lat, n.long, convPression_altitude(n.p)))
+    
+    animation(coords, 6*t, timedelta(minutes=30) )
+
 
 
 

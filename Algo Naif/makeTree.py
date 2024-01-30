@@ -40,31 +40,31 @@ def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_
     # On vérifie que le noeud de départ n'a pas de parent.
     if not(depart.prev == None):
         print("Erreur : le point de départ ne doit pas avoir de parent.")
-        return 
+        return False, []
 
     # On vérifie qu'on commence sur un temps 'rond'.
     if not(depart.t[1] == 0):
         print("Erreur : on doit commencer sur un temps 'rond', ie temps[1]=0.")
-        return 
+        return False, []
     
     temps_initial = depart.t[0]
 
     # On vérifie que la durée d'exploration est un multiple de six heures.
     if not(duree%6 == 0):
         print("Erreur : la durée d'exploration doit être un multiple de six heures.")
-        return
+        return False, []
     
     nombre_d_iterations = duree//6
 
     # On vérifie que le temps des changements de niveau de pression divise six heures.
     if not(21600%temps_chgmt_pression == 0):
         print("Erreur : le temps des changements de niveau de pression doit diviser six heures.")
-        return
+        return False, []
 
     # On vérifie que la limite d'éloignement choisie est suffisamment grande pour que l'algorithme fonctionne correctement.
     if distance_destination(destination, depart.long, depart.lat)>limite_eloignement:
         print("Erreur : la limite d'éloignement est inférieure à la distance entre le point de départ et la destination.")
-        return 
+        return False, []
 
     # On initialise la liste des points que nous explorons.
     listeP = [depart]
@@ -73,7 +73,7 @@ def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_
     for count in range(nombre_d_iterations+1) : 
 
         # On veut afficher dans quelle boucle la recherche est en cours.
-        #print("Recherche dans la boucle "+str(count)+" ...")
+        print("Recherche dans la boucle "+str(count)+" ...")
 
         # Si la liste des points à explorer est nulle on abandonne.
         if listeP == []:
@@ -111,7 +111,7 @@ def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_
                 listeF.append(pointF)
 
         listeP = listeF
-        count +=1
+        #count +=1
 
     # Dans ce cas on a dépassé la limite temporelle d'exploration.
     return False, []
@@ -136,6 +136,13 @@ def affichage(liste : list):
             print("Erreur : un des éléments de la liste n'est pas une instance de la classe Node.")
             return
 
+def convPression_altitude(pressionData : int) -> int :
+        tabPhP = [10,20,30,50,70,100,150,200,250,300,400,500,600,700,850,925,1000]
+        pressionHp = tabPhP[pressionData]
+        return 0.3048*145366.45*(1-(pressionHp/1013.25)**0.190284)
+
+
+
 
 
 
@@ -146,17 +153,26 @@ def affichage(liste : list):
 
 ### OBJECTIF : Hippo doit rentrer chez lui ! MAIS il a mal au pied et n'a qu'un ballon stratosphérique à disposition
 # Trouvons quand partir
+"""
+son adresse :
+48.865013122558594 ; 2.2885401248931885
+
+73 bvrd des marechaux :
+48.71699905395508 ; 2.2039577960968018
+
+"""
 
 
+def test(): 
+    t = 0
+    while True :
+        res = Tree_Largeur((2.1675682067871094,48.710262298583984),Node(2.2039577960968018,48.71699905395508,(t,0),0,None),24,3*3600,100,40000,wind_data)
+        if res[0] == True :
+            print("un chemin a été trouvé :")
+            affichage(res[1])
+            break
+        t +=1
 
-t = 0
-while True :
-    res = Tree_Largeur((2.291007,48.8648915),Node(2.211653,48.709859,(t,0),10,None),24,3*3600,1000,50000,wind_data)
-    if res[0] == True :
-        print("un chemin a été trouvé :")
-        affichage(res[1])
-        break
-    t +=1
-
+test()
 
 #Tree_Largeur((2.4,45),Node(2.211653,48.709859,(50,0),10,None),24,3*3600,5000,1000000,wind_data)

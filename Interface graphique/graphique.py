@@ -9,7 +9,7 @@ import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 
 
-# Exemple: coords = [(x1, y1, z1), (x2, y2, z2), ...]
+# Exemple: coords = [(lat, long, altitude), (x2, y2, z2), ...]
 coords = [
     (50.0, 0.0, 0.0),
     (38.43, 29.22, 3.45),
