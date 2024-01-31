@@ -115,5 +115,3 @@ spirale = [
 # Heure de départ et intervalle de temps (step) en minutes
 heure_depart = datetime(2024, 1, 1, 8, 0, 0)  # Exemple : 8h00 du matin
 step = timedelta(minutes=30)  # Exemple : 30 minutes
-
-animation(spirale, heure_depart, step)

@@ -2,7 +2,8 @@ import math
 import sys
 from parcours import *
 from makeTree import *
-import affichage
+from Affichage import animation
+from datetime import datetime, timedelta
 
 
 import pickle
@@ -34,16 +35,20 @@ def hippo_from_cube_to_house():
         res = Tree_Largeur((2.291007,48.8648915),Node(2.211653,48.709859,(t,0),10,None),24,3*3600,1000,50000,wind_data)
         if res[0] == True :
             print("un chemin a été trouvé :")
-            affichage(res[1])
+            #affichage(res[1])
             break
-    t +=1
+        t +=1
 
     coords = []
     for i in range(len(res[1])):
-        n = res[i]
-        coords.append((n.lat, n.long, convPression_altitude(n.p)))
-    
-    animation(coords, 6*t, timedelta(minutes=30) )
+        n = res[1][i]
+        coords.append((n.long, n.lat, convPression_altitude(n.p)))
+
+    heure_depart = datetime(2021, 1, 1, 8, 0, 0)
+    animation(coords, heure_depart, timedelta(minutes=30) )
+
+hippo_from_cube_to_house()
+
 
 
 

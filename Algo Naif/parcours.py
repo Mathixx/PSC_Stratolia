@@ -291,3 +291,5 @@ def test2_parcours_a_Z() :
     
 
 
+#print(wind_data['metadata'])
+print(len(wind_data['data']))
