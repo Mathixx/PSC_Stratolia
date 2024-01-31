@@ -31,3 +31,10 @@ TO DO :
 - MOYEN :corriger le problème du calcul de ventU ventV qaund on change de case (on avait vu que parfois on utilise le vent de la mauvaise case)
 - HARD : améliorer le calcul de la limite d'éloignement - réflechir à la meilleur manière de faire
 - 
+
+Historique modifications : 
+
+2.0 Hippo : 
+- modifications de la classe Node pour garantir le type entier de la pression et du temps tout au long des fonctions
+- modifications de la fonction print(node) pour que les barres verticales soient toujours alignées 
+- modifications mineures sur les tests d'argument au début de makeTree (ValueError)

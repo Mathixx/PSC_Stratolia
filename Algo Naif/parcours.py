@@ -47,7 +47,7 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
     # On utilise la précision pour déterminer la fréquence à laquelle on vérifie si on a atteint la destination (temps en secondes). 
     # On estime arbitrairement la vitesse des vents.
     vitesse_moyenne_vents = 7
-    temps_test_arrivee = precision/vitesse_moyenne_vents
+    temps_test_arrivee = math.ceil(precision/vitesse_moyenne_vents)
     
     # Constante utile : (rayon de la Terre en m et conversion degrés en radians)
     k = 1000 * 6371 * math.pi / 180
@@ -87,7 +87,6 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
         # ATTENTION : Disjoncion de cas : Quand on souhaite calculer tempsU/tempsV et que l'on se situe deja sur une limite de case
         if (ventU != 0) :
             if (lat%2.5) != 0 :
-                # edit : Je ne comprends pas pourquoi on met une valeur absolue - peut etre que c'est juste la synatxe if ventU > 0 qui ne marche pas
                 tempsU = k*(-90+2.5*(case_latitude+1)-lat)/ventU if ventU > 0 else -k*(lat-(-90+2.5*case_latitude))/ventU
             else :
                 tempsU =  k*(-90+2.5*(case_latitude+1)-lat)/ventU if ventU > 0 else -k*(lat-(-90+2.5*(case_latitude-1)))/ventU
@@ -107,7 +106,7 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
         # Premier cas : on a pas changé de case pendant le temps d'évolution.
         temps_evolution = min(temps_restant, temps_test_arrivee)
 
-        #A supprimer utile pour les tests seulemet:
+        # A supprimer utile pour les tests seulemet:
         # print("temps evolution : "+str(temps_evolution))
         # print("temps U : " +str(tempsU))
         # print("temps V : " +str(tempsV))
@@ -117,8 +116,6 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
             lat += (temps_evolution*ventU)/k
             long += (temps_evolution*ventV)/k
 
-            # ATTENTION : BLOQUAGE TUPLE - FLAOT EN DESSOUS
-            #J'ai pas modifié car je sais pas envore tres bien ce que tu veux faire
             temps_restant -= temps_evolution
 
         # Deuxième cas : on a changé de case en latitude.
@@ -142,7 +139,7 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
 
             temps_restant -= tempsV
 
-            #A supprimer utile pour les tests seulemet:
+            # A supprimer utile pour les tests seulemet:
             # print("nouvelle longitude : "+ str(long))
             # print("nouvelle latitude : "+ str(lat))
 
@@ -154,7 +151,7 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
 
             temps_restant -= tempsU
 
-        #A supprimer utile pour les tests seulemet:
+        
         
 
     
@@ -254,9 +251,9 @@ def ventU_ventV(longitude : float, latitude : float, temps : int, pression : int
 def test1_parcours_a_Z() :
     # Test de base
     # Paramètres modifiables au besoin
-    print(toString(parcours_a_Z((2.2885401248931885,48.865013122558594),Node(2.2039577960968018,48.71699905395508,(4,0),5,None),3*3600,5000,wind_data)[1]))
+    print(parcours_a_Z((1.5,50),Node(2.211653,48.709859,(50,0),10,None),3*3600,5000,wind_data))
 
-test1_parcours_a_Z()
+# test1_parcours_a_Z()
 
 #print(case(2.5, 48.7))
 #print(case(3, 48.7))
@@ -274,7 +271,7 @@ print(ventU_ventV(3, 48.7, 0, 10, wind_data))
 def test2_parcours_a_Z() :
     # Test de trajectoires approfondi
     # Choix des paramètres libres
-    longInit = input("Veuillez entrer la longitude (x) de la case de départ (int) : ")
+    longInit = input("Veuillez entrer la longitude du point de départ (int) : ")
     longInit = int(longInit)
     latInit = input("Veuillez entrer la latitude (y) de la case de départ (int) : ")
     latInit = int(latInit)
@@ -294,13 +291,3 @@ def test2_parcours_a_Z() :
     
 
 
-"""
-Retour sur les erreurs :
-De ce que j'ai compris temps U et temps V ne sont pas bons, 
-quand je ;aisse evoluer le man jusqu'a ce qu'il chnage de case ca stop l'algo a un endroit ou la case n'est pas ditsincte.
-
-Deuxieme porbleme, quand tu es a la limite d'une case, je pense que l'algo deconne entre savoir si il doit calculer TempsU en 
-fonction de la prochaine limite ou de celle sur laquelle tu es deja (ce probelem vien tusrement du fait que case est pas bon)
-
-j"essaie d eregler le probleme mais dans tous les cas je crois ya un probleme avec le calcul de TempsU pcq il est bcp trop long a chaque fois
-"""

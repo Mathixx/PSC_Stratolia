@@ -39,32 +39,27 @@ def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_
 
     # On vérifie que le noeud de départ n'a pas de parent.
     if not(depart.prev == None):
-        print("Erreur : le point de départ ne doit pas avoir de parent.")
-        return False, []
-
+        raise ValueError("Le point de départ ne doit pas avoir de parent.")
+        
     # On vérifie qu'on commence sur un temps 'rond'.
     if not(depart.t[1] == 0):
-        print("Erreur : on doit commencer sur un temps 'rond', ie temps[1]=0.")
-        return False, []
+        raise ValueError("On doit commencer sur un temps 'rond', ie temps[1]=0.")
     
     temps_initial = depart.t[0]
 
     # On vérifie que la durée d'exploration est un multiple de six heures.
     if not(duree%6 == 0):
-        print("Erreur : la durée d'exploration doit être un multiple de six heures.")
-        return False, []
+        raise ValueError("La durée d'exploration doit être un multiple de six heures.")
     
     nombre_d_iterations = duree//6
 
     # On vérifie que le temps des changements de niveau de pression divise six heures.
     if not(21600%temps_chgmt_pression == 0):
-        print("Erreur : le temps des changements de niveau de pression doit diviser six heures.")
-        return False, []
+        raise ValueError("Le temps des changements de niveau de pression doit diviser six heures.")
 
     # On vérifie que la limite d'éloignement choisie est suffisamment grande pour que l'algorithme fonctionne correctement.
     if distance_destination(destination, depart.long, depart.lat)>limite_eloignement:
-        print("Erreur : la limite d'éloignement est inférieure à la distance entre le point de départ et la destination.")
-        return False, []
+        raise ValueError("La limite d'éloignement est inférieure à la distance entre le point de départ et la destination.")
 
     # On initialise la liste des points que nous explorons.
     listeP = [depart]
@@ -105,15 +100,15 @@ def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_
                         p = p.prev
                         res.append(p)
                     res.reverse()
-                    #affichage(res)
+                    affichage_liste(res)
                     return (True, res)
                 # Sinon on ajoute le nouveau point à la liste des futurs points. 
                 listeF.append(pointF)
 
         listeP = listeF
-        #count +=1
 
     # Dans ce cas on a dépassé la limite temporelle d'exploration.
+    print("On a atteint la limite temporelle d'exploration.")
     return False, []
 
 
@@ -125,21 +120,30 @@ Entrée : liste de Node
 Pas de sortie
 '''
 
-def affichage(liste : list):
+def affichage_liste(liste : list):
     print()
     print("Liste des points formant la trajectoire : ")
     print()
     for x in liste:
         if isinstance(x, Node):
-            print(toString(x))
+            print(x)
         else:
             print("Erreur : un des éléments de la liste n'est pas une instance de la classe Node.")
             return
 
+
+'''
+Fonction qui convertit la donnée de case de pression en une altitude (en m??)
+
+Entrée : case de pression (int dans [0,17[)
+Sortie : altitude (int)
+'''
+
 def convPression_altitude(pressionData : int) -> int :
-        tabPhP = [10,20,30,50,70,100,150,200,250,300,400,500,600,700,850,925,1000]
-        pressionHp = tabPhP[pressionData]
-        return 0.3048*145366.45*(1-(pressionHp/1013.25)**0.190284)
+    # Formules admises fournies par Louis Hart-Davis
+    tabPhP = [10,20,30,50,70,100,150,200,250,300,400,500,600,700,850,925,1000]
+    pressionHp = tabPhP[pressionData]
+    return 0.3048*145366.45*(1-(pressionHp/1013.25)**0.190284)
 
 
 
@@ -173,6 +177,6 @@ def test():
             break
         t +=1
 
-test()
+#test()
 
-#Tree_Largeur((2.4,45),Node(2.211653,48.709859,(50,0),10,None),24,3*3600,5000,1000000,wind_data)
+Tree_Largeur((2,48),Node(2.211653,48.709859,(50,0),10,None),24,3*3600,5000,1000000,wind_data)
