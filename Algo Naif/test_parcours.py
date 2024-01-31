@@ -1,11 +1,10 @@
-#########################
-## MODULES NÉCESSAIRES ##
-#########################
+#########################           ##################
+## MODULES NÉCESSAIRES ##           ## VERSION TEST ##
+#########################           ##################
 
 
 import math
 import sys
-# For test purposes only
 import time
 
 
@@ -16,9 +15,9 @@ with open("objet_wind_data_2020.pickle", "rb") as f:
 from Node import *
 
 
-#########################
-## FONCTION PRINCIPALE ##
-#########################
+#########################           ##################
+## FONCTION PRINCIPALE ##           ## VERSION TEST ##       
+#########################           ##################
 
 
 """
@@ -55,14 +54,25 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
     k = 1000 * 6371 * math.pi / 180
 
     while (temps_restant > 0) :
+        time.sleep(0.1)
 
-        # On vérifie si on a atteint la destination. Si oui on renvoie notre position.
-        if distance_destination(destination,long,lat)<=precision:
-            return (True, Node(long, lat, (temps_init,temps[1]+temps_chgmt_pression-temps_restant), pression, n))
+        (long, lat) = ajuste(long, lat)
 
         # On récupère les données de vent (en m.s-1). Grâce aux hypothèses sur les temps on sait qu'on reste dans la même case temporelle.
         (ventU, ventV) = ventU_ventV(long, lat, temps_init, pression, tab_vent)
 
+        # TEST
+        print("temps_test_arrivee : "+str(temps_test_arrivee) )
+        print("vent U : "+str(ventU)+", vent V : "+str(ventV))
+
+
+        
+        print("long :",long," et lat : ",lat)
+        # On vérifie si on a atteint la destination. Si oui on renvoie notre position.
+        if distance_destination(destination,long,lat)<=precision:
+            return (True, Node(long, lat, (temps_init,temps[1]+temps_chgmt_pression-temps_restant), pression, n))
+
+        
         (case_longitude, case_latitude) = case(long, lat)
         
         # On calcule le temps nécessaire pour changer de case.
@@ -88,7 +98,13 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
         # Premier cas : on a pas changé de case pendant le temps d'évolution.
         temps_evolution = min(temps_restant, temps_test_arrivee)
 
+        # A supprimer utile pour les tests seulemet:
+        print("temps evolution : "+str(temps_evolution))
+        print("temps U : " +str(tempsU))
+        print("temps V : " +str(tempsV))
+
         if (temps_evolution < min(tempsU,tempsV)) :
+            print(1)
             lat += (temps_evolution*ventU)/k
             long += (temps_evolution*ventV)/k
 
@@ -96,6 +112,7 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
 
         # Deuxième cas : on a changé de case en latitude.
         elif (tempsU < tempsV) :
+            print(2)
             # Attention au cas où on passe le pôle Nord (d'où le %72).
             lat = -90 + 2.5*((case_latitude+1)%72) if ventU>0 else -90 + 2.5*case_latitude
             # Il faut quand même mettre à jour la longitude.
@@ -105,6 +122,7 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
 
         # Troisième cas : on a changé de case en longitude.
         elif (tempsV < tempsU) :
+            print(3)
             # Attention au cas où on passe le méridien 0 (d'où le %144).
             long = 2.5*((case_longitude+1)%144) if ventV>0 else 2.5 * case_longitude
 
@@ -112,6 +130,8 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
             lat += (tempsV*ventU)/k
 
             temps_restant -= tempsV
+
+            
 
         # Quatrième cas : on change de case en latitude et en longitude simultanément (très peu probable).
         else :
@@ -127,12 +147,14 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
     if temps[1]+temps_chgmt_pression>=21600:
         return (False, Node(long, lat, (temps_init+1, 0), pression, n))
     return (False, Node(long, lat, (temps_init, temps[1]+temps_chgmt_pression), pression, n))
-    
 
 
-###########################
-## FONCTIONS AUXILIAIRES ##
-###########################
+
+
+###########################         ##################
+## FONCTIONS AUXILIAIRES ##         ## VERSION TEST ##
+###########################         ##################
+
 
 
 '''
@@ -156,17 +178,6 @@ def distance_destination(destination : (float,float), long : float, lat : float)
     return int(k*math.sqrt(((math.cos(math.pi*dest_lat/180))*(dest_long-long))**2 + (dest_lat-lat)**2))
 
 
-def check_type(arg):
-    if isinstance(arg, float):
-        print("It's a float!")
-    elif isinstance(arg, int):
-        print("It's an int!")
-    elif isinstance(arg, str):
-        print("It's a string!")
-    elif isinstance(arg, tuple):
-        print("It's a tuple")
-    else:
-        print("It's some other type!")
 
 
 '''
@@ -214,52 +225,65 @@ def ventU_ventV(longitude : float, latitude : float, temps : int, pression : int
 
 
 
+'''
+Fonction qui ajuste la valeur de la longitude et de la latitude dans le cas où on est passé par un pôle ou le méridien zéro.
+Entrée et sortie : longitude(float), latitude(float)
+'''
+
+
+def ajuste(long : float, lat : float) -> (float, float):
+    # On ajuste si on est passé par un pôle ou le méridien 0.
+        if (long<0):
+            long += 360
+        if (long>360):
+            long -= 360
+        if (lat < -90):
+            lat = -180 - lat
+        if (lat > 90):
+            lat = 180 - lat
+        return (long, lat)
+
+
+
 
 ###########
-## TESTS ##       A MODIFIER !!!!!
+## TESTS ##       
 ###########
 
 
 
-def test1_parcours_a_Z() :
-    # Test de base
-    # Paramètres modifiables au besoin
-    print(parcours_a_Z((1.5,50),Node(2.211653,48.709859,(50,0),10,None),3*3600,5000,wind_data))
+def test_parcours_a_Z():
+    # Demander à l'utilisateur d'entrer les données d'entrée
+    longInit = float(input("Veuillez entrer la longitude du point de départ : "))
+    latInit = float(input("Veuillez entrer la latitude du point de départ : "))
+    destination_long = float(input("Veuillez entrer la longitude de la destination : "))
+    destination_lat = float(input("Veuillez entrer la latitude de la destination : "))
+    temps_I = int(input("Veuillez entrer le temps de départ du parcours : "))
+    temps_sec = int(input("Veuillez entrer le temps de départ du parcours au sein de la case temporelle : "))
+    pression = int(input("Veuillez entrer la pression (entier compris entre 0 et 16 inclus) : "))
 
-test1_parcours_a_Z()
+    # Paramètres de test
+    destination = (destination_long, destination_lat)
+    n = Node(longitude=longInit, latitude=latInit, temps=(temps_I, temps_sec), pression=pression, prev=None)
+    temps_chgmt_pression = 3*3600  # Remplacez par la durée du changement de pression souhaitée
+    precision = 1000  # Précision de la destination
 
-#print(case(2.5, 48.7))
-#print(case(3, 48.7))
+    # Exécution de la fonction
+    result, final_node = parcours_a_Z(destination, n, temps_chgmt_pression, precision, wind_data)
 
-'''
-Palaiseau
-2.211653
-48.709859
-'''
-"""
-print(ventU_ventV(2.5, 48.7, 0, 10, wind_data))
-print(ventU_ventV(3, 48.7, 0, 10, wind_data))
-"""
+    # Affichage des résultats
+    if result:
+        print("Destination atteinte. Position finale :")
+        print(final_node)
+    else:
+        print("Destination non atteinte. Position finale :")
+        print(final_node)
 
-def test2_parcours_a_Z() :
-    # Test de trajectoires approfondi
-    # Choix des paramètres libres
-    longInit = input("Veuillez entrer la longitude du point de départ (int) : ")
-    longInit = int(longInit)
-    latInit = input("Veuillez entrer la latitude (y) de la case de départ (int) : ")
-    latInit = int(latInit)
-    longDetailleeInit = input("Veuillez entrer la longitude détaillée (y) (float - doit correspondre avec la case) : ")
-    longDetailleeInit = int(longDetailleeInit)
-    latDetailleeInit = input("Veuillez entrer la latitude détaillée (y) (float - doit correspondre avec la case) : ")
-    latDetailleeInit = int(latDetailleeInit)
-    pression = input("Veuillez entrer la pression (int compris entre 0 et 16 inclus) : ")
-    pression = int(pression)
-    duree = input("Veuillez entrer la durée du parcours (int) : ")
-    duree = int(duree)
-    temps_I = input("Veuillez entrer le temps de départ du parcours (int) : ")
-    temps_I = int(temps_I)
-    temps_sec = input("Veuillez entrer le temps de départ du parcours au sein de la case temporelle (int compris entre 0 et 21599) : ")
-    temps_sec = int(temps_I)
+# Exécution du test
+test_parcours_a_Z()
+
+
+#print(wind_data['metadata'])
 
     
 

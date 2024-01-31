@@ -5,16 +5,22 @@
 
 import math
 import sys
+
 from parcours import parcours_a_Z
 from Node import *
+from parcours import distance_destination
+
 import pickle
 with open("objet_wind_data_2020.pickle", "rb") as f:
     wind_data = pickle.load(f)
 
-from parcours import distance_destination
 
 
-    
+#########################
+## FONCTION PRINCIPALE ##
+#########################
+
+
 """
 Programme qui détermine si on peut aller d'un point à un autre et qui renvoie le chemin dans le cas échéant
 
@@ -113,6 +119,14 @@ def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_
 
 
 
+
+
+###########################
+## FONCTIONS AUXILIAIRES ##
+###########################
+
+
+
 '''
 Fonction qui affiche proprement la trajectoire trouvée
 
@@ -173,10 +187,10 @@ def test():
         res = Tree_Largeur((2.1675682067871094,48.710262298583984),Node(2.2039577960968018,48.71699905395508,(t,0),0,None),24,3*3600,100,40000,wind_data)
         if res[0] == True :
             print("un chemin a été trouvé :")
-            affichage(res[1])
+            affichage_liste(res[1])
             break
         t +=1
 
-#test()
+test()
 
-Tree_Largeur((2,48),Node(2.211653,48.709859,(50,0),10,None),24,3*3600,5000,1000000,wind_data)
+#Tree_Largeur((2,48),Node(2.211653,48.709859,(50,0),10,None),24,3*3600,5000,1000000,wind_data)
