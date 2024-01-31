@@ -191,6 +191,6 @@ def test():
             break
         t +=1
 
-test()
+#test()
 
 #Tree_Largeur((2,48),Node(2.211653,48.709859,(50,0),10,None),24,3*3600,5000,1000000,wind_data)

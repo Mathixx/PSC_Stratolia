@@ -226,7 +226,7 @@ def test1_parcours_a_Z() :
     # Paramètres modifiables au besoin
     print(parcours_a_Z((1.5,50),Node(2.211653,48.709859,(50,0),10,None),3*3600,5000,wind_data))
 
-test1_parcours_a_Z()
+#test1_parcours_a_Z()
 
 #print(case(2.5, 48.7))
 #print(case(3, 48.7))

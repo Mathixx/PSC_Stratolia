@@ -4,8 +4,8 @@ Partie Naïve :
 
 Le tableau wind_data est un tableau 4D :
     1 donnée de temps : résolution d'un point toutes les 6 heures.
-    2 données de longitude et de latitude : résolution  2,5 °.
     1 donnée de pression 
+    2 données de longitude et de latitude : résolution  2,5 °.
     2 données de vent U, V ( U dans la direction Sud->Nord; V dans la direction Ouest -> Est)
     
 
@@ -26,10 +26,11 @@ Note sur le coordonnées de temps :
 
 
 TO DO : 
+- EASY : améliorer l'affichage : calibrer les distances pour que les barres verticales soient toujours alignées
 - MOYEN : mettre en lien les algos avec l'interface graphique
 - MOYEN :corriger le problème du calcul de ventU ventV qaund on change de case (on avait vu que parfois on utilise le vent de la mauvaise case)
 - HARD : améliorer le calcul de la limite d'éloignement - réflechir à la meilleur manière de faire
-
+- 
 
 Historique modifications : 
 
@@ -37,8 +38,3 @@ Historique modifications :
 - modifications de la classe Node pour garantir le type entier de la pression et du temps tout au long des fonctions
 - modifications de la fonction print(node) pour que les barres verticales soient toujours alignées 
 - modifications mineures sur les tests d'argument au début de makeTree (ValueError)
-
-2.1 Hippo :
-- erreur corrigée dans ventUventV sur l'appel à wind_data
-- création du fichier test_parcours et ecriture d'un test
-- nettoyage des commentaires
