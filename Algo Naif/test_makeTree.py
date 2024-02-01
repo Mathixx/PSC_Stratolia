@@ -73,7 +73,7 @@ def test_makeTree():
     n = Node(depart.long, depart.lat, temps=(temps_I, temps_sec), pression=pression, prev=None)
     temps_chgmt_pression = 3*3600  # Remplacez par la durée du changement de pression souhaitée
     precision = 10000  # Précision de la destination
-    limite_eloignement = 1000000 # Ajuster si besoin (correspond à 1000km soit la taille de la France)
+    limite_eloignement = 2*distance_destination(destination, depart.long, depart.lat) # Ajuster si besoin 
 
     # Exécution de la fonction
     temps_debut_execution = time.time()
