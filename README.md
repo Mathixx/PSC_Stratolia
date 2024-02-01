@@ -44,5 +44,8 @@ Historique modifications :
 - nettoyage des commentaires
 
 2.2 Hippo : 
+2.2.0
 - correction de la fonction distance : résolution d'erreur quand on est de part et d'autre du méridien 0
 - écriture de test_makeTree
+2.2.1
+- changement de la condition d'arrêt sur liste P

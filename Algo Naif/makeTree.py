@@ -77,7 +77,7 @@ def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_
         print("Recherche dans la boucle "+str(count)+" ...")
 
         # Si la liste des points à explorer est nulle on abandonne.
-        if listeP == []:
+        if len(listeP) == 0:
             print("Aucun chemin n'a été concluant.")
             return False, []
         
