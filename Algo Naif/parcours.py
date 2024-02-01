@@ -147,19 +147,25 @@ Sortie :
 '''
 
 
-def distance_destination(destination : (float,float), long : float, lat : float) -> int :
-    # Constante utile : (rayon de la Terre en m et conversion degrés en radians)
-    k = 1000 * 6371 * math.pi / 180
-    
-    ecart_long = destination[0] - long
-    if ecart_long > 180:
-        ecart_long -= 360
-    elif ecart_long < -180:
-        ecart_long += 360
-    
-    dest_lat = destination[1]
-    
-    return int(k*math.sqrt(((math.cos(math.pi*dest_lat/180))*(ecart_long))**2 + (dest_lat-lat)**2))
+def distance_destination(destination : (float,float), long : float, lat : float) -> int:
+    # Convertir les coordonnées degrés en radians
+    dest_lat, dest_long, lat, long = map(math.radians, [destination[1], destination[0], lat, long])
+
+    # Calcul des différences de coordonnées
+    ecart_lat = lat - dest_lat
+    ecart_long = long - dest_long
+
+    # Formule de la haversine pour calculer la distance
+    a = math.sin(ecart_lat/2)**2 + math.cos(dest_lat) * math.cos(lat) * math.sin(ecart_long/2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+
+    # Rayon de la Terre en mètres (environ 6371 km)
+    rayon = 6371000
+
+    # Calcul de la distance et conversion en entier
+    distance = int(rayon * c)
+
+    return distance
 
 
 

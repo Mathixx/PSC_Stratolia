@@ -49,3 +49,6 @@ Historique modifications :
 - écriture de test_makeTree
 2.2.1
 - changement de la condition d'arrêt sur liste P
+2.2.2
+- introduction constante de rétrecissement
+
