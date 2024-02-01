@@ -42,3 +42,7 @@ Historique modifications :
 - erreur corrigée dans ventUventV sur l'appel à wind_data
 - création du fichier test_parcours et ecriture d'un test
 - nettoyage des commentaires
+
+2.2 Hippo : 
+- correction de la fonction distance : résolution d'erreur quand on est de part et d'autre du méridien 0
+- écriture de test_makeTree

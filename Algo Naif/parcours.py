@@ -151,22 +151,17 @@ def distance_destination(destination : (float,float), long : float, lat : float)
     # Constante utile : (rayon de la Terre en m et conversion degrés en radians)
     k = 1000 * 6371 * math.pi / 180
     
-    dest_long = destination[0]
+    ecart_long = destination[0] - long
+    if ecart_long > 180:
+        ecart_long -= 360
+    elif ecart_long < -180:
+        ecart_long += 360
+    
     dest_lat = destination[1]
-    return int(k*math.sqrt(((math.cos(math.pi*dest_lat/180))*(dest_long-long))**2 + (dest_lat-lat)**2))
+    
+    return int(k*math.sqrt(((math.cos(math.pi*dest_lat/180))*(ecart_long))**2 + (dest_lat-lat)**2))
 
 
-def check_type(arg):
-    if isinstance(arg, float):
-        print("It's a float!")
-    elif isinstance(arg, int):
-        print("It's an int!")
-    elif isinstance(arg, str):
-        print("It's a string!")
-    elif isinstance(arg, tuple):
-        print("It's a tuple")
-    else:
-        print("It's some other type!")
 
 
 '''
@@ -213,54 +208,5 @@ def ventU_ventV(longitude : float, latitude : float, temps : int, pression : int
     return (ventU,ventV)
 
 
-
-
-###########
-## TESTS ##       A MODIFIER !!!!!
-###########
-
-
-
-def test1_parcours_a_Z() :
-    # Test de base
-    # Paramètres modifiables au besoin
-    print(parcours_a_Z((1.5,50),Node(2.211653,48.709859,(50,0),10,None),3*3600,5000,wind_data))
-
-test1_parcours_a_Z()
-
-#print(case(2.5, 48.7))
-#print(case(3, 48.7))
-
-'''
-Palaiseau
-2.211653
-48.709859
-'''
-"""
-print(ventU_ventV(2.5, 48.7, 0, 10, wind_data))
-print(ventU_ventV(3, 48.7, 0, 10, wind_data))
-"""
-
-def test2_parcours_a_Z() :
-    # Test de trajectoires approfondi
-    # Choix des paramètres libres
-    longInit = input("Veuillez entrer la longitude du point de départ (int) : ")
-    longInit = int(longInit)
-    latInit = input("Veuillez entrer la latitude (y) de la case de départ (int) : ")
-    latInit = int(latInit)
-    longDetailleeInit = input("Veuillez entrer la longitude détaillée (y) (float - doit correspondre avec la case) : ")
-    longDetailleeInit = int(longDetailleeInit)
-    latDetailleeInit = input("Veuillez entrer la latitude détaillée (y) (float - doit correspondre avec la case) : ")
-    latDetailleeInit = int(latDetailleeInit)
-    pression = input("Veuillez entrer la pression (int compris entre 0 et 16 inclus) : ")
-    pression = int(pression)
-    duree = input("Veuillez entrer la durée du parcours (int) : ")
-    duree = int(duree)
-    temps_I = input("Veuillez entrer le temps de départ du parcours (int) : ")
-    temps_I = int(temps_I)
-    temps_sec = input("Veuillez entrer le temps de départ du parcours au sein de la case temporelle (int compris entre 0 et 21599) : ")
-    temps_sec = int(temps_I)
-
-    
 
 
