@@ -114,7 +114,7 @@ def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_
         listeP = listeF
         
         # On réduit la limite d'éloignement au fur et à mesure
-        constante_de_retrecissement = 0.9
+        constante_de_retrecissement = 0.7
         limite_eloignement *= constante_de_retrecissement
 
     # Dans ce cas on a dépassé la limite temporelle d'exploration.
