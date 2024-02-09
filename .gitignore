@@ -163,3 +163,4 @@ cython_debug/
 # Files I do nt want on the git repository
 
 objet_wind_data_2020.pickle
+Animation_trajectoire.gif
