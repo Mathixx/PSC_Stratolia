@@ -30,7 +30,7 @@ def test1_makeTree():
     pression = random.randint(0,16)
     print("Pression de départ : "+str(pression))
     # duree = int(input("Veuillez entrer la durée d'exploration (nombre d'heures divisible par 6) : "))
-    duree = 18
+    duree = 60
     
     # Paramètres de test
     destination = (dest.long, dest.lat)
@@ -51,7 +51,7 @@ def test1_makeTree():
 
 
 # Exécution du test
-# test1_makeTree()
+#test1_makeTree()
 
 def test1bis_makeTree(depart, dest):
     print("Départ : "+ str(depart))
@@ -69,7 +69,7 @@ def test1bis_makeTree(depart, dest):
     n = Node(depart.long, depart.lat, temps=(temps_I, temps_sec), pression=pression, prev=None)
     temps_chgmt_pression = 3*3600  # Remplacez par la durée du changement de pression souhaitée
     precision = 10000  # Précision de la destination
-    limite_eloignement = 2*distance_destination(destination, depart.long, depart.lat) # Ajuster si besoin 
+    limite_eloignement = 1.2*distance_destination(destination, depart.long, depart.lat) # Ajuster si besoin 
 
     # Exécution de la fonction
     temps_debut_execution = time.time()
@@ -83,7 +83,7 @@ def test1bis_makeTree(depart, dest):
 
 def test2_makeTree():
     # On fait varier la limite d'éloignement et la durée dans test1
-    nombre_tests = 100
+    nombre_tests = 1000
     moyenne_temps = 0
     moyenne_chemins_trouves = 0
     for i in range(nombre_tests):
@@ -99,7 +99,7 @@ def test2_makeTree():
 
 
 # Exécution du test
-# test2_makeTree()
+test2_makeTree()
 
 
 
@@ -122,5 +122,5 @@ def test3_makeTree(liste):
 
 
 # Exécution du test
-test3_makeTree(villes_200)
+#test3_makeTree(villes_200)
 

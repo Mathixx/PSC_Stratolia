@@ -110,11 +110,11 @@ def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_
                     return (True, res)
                 # Sinon on ajoute le nouveau point à la liste des futurs points. 
                 listeF.append(pointF)
-
-        listeP = listeF
+        # On garde que les 100 éléments les plus proches.
+        listeP = N_plus_proches(destination, listeF, 100)
         
         # On réduit la limite d'éloignement au fur et à mesure
-        constante_de_retrecissement = 0.7
+        constante_de_retrecissement = 0.9
         limite_eloignement *= constante_de_retrecissement
 
     # Dans ce cas on a dépassé la limite temporelle d'exploration.
@@ -165,6 +165,55 @@ def convPression_altitude(pressionData : int) -> int :
 
 
 
+'''
+Fonction qui renvoie la liste des N points les plus proches de la destination parmi une liste de points.
+Entrée : 
+- destination
+- liste de noeuds
+- nombre de points à conserver
+Sortie :
+- liste des N noeuds les plus proches de la destination
+'''
+
+
+def N_plus_proches(destination : (float, float), liste : list, N : int) -> list:
+    if N < 0:
+        raise ValueError("N doit être positif.")
+    l = len(liste)
+    if l<=N:
+        return liste
+    low, high = 0, l - 1
+    while low <= high:
+        pivot_idx = partition(destination, liste, low, high)
+        if pivot_idx == N:
+            return liste[:N]
+        elif pivot_idx < N:
+            low = pivot_idx + 1
+        else:
+            high = pivot_idx - 1
+    return None
+    
+
+
+
+'''
+Fonction auxilaire nécessaire pour la fonction N_plus_proches
+'''
+
+
+def partition(destination, liste, low, high):
+    pivot = liste[high]
+    distance_pivot = distance_destination(destination, pivot.long, pivot.lat)
+    i = low - 1
+    for j in range(low, high):
+        if distance_destination(destination, liste[j].long, liste[j].lat) <= distance_pivot:
+            i += 1
+            liste[i], liste[j] = liste[j], liste[i]
+    liste[i + 1], liste[high] = liste[high], liste[i + 1]
+    return i + 1
+
+
+    
 
 
 
