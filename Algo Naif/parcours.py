@@ -311,8 +311,8 @@ Sortie : long, lat
 
 def mod(long: float, lat : float) -> (float, float):
     if lat<-90:
-        lat+=180
+        lat = -180-lat
     if lat>90:
-        lat-=180
+        lat = 180-lat
     return ((long+360)%360,lat)
 
