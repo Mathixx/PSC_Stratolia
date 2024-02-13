@@ -57,11 +57,11 @@ def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_
     if not(duree%6 == 0):
         raise ValueError("La durée d'exploration doit être un multiple de six heures.")
     
-    nombre_d_iterations = duree//6
-
     # On vérifie que le temps des changements de niveau de pression divise six heures.
     if not(21600%temps_chgmt_pression == 0):
         raise ValueError("Le temps des changements de niveau de pression doit diviser six heures.")
+    
+    nombre_d_iterations = (duree//6)*(21600//temps_chgmt_pression)
 
     # On vérifie que la limite d'éloignement choisie est suffisamment grande pour que l'algorithme fonctionne correctement.
     if distance_destination(destination, depart.long, depart.lat)>limite_eloignement:
@@ -89,8 +89,8 @@ def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_
             distance = distance_destination(destination, point.long, point.lat)
 
             # Premier cas : si on est trop loin de la destination on abandonne l'exploration à partir de ce point.
-            if distance > limite_eloignement :
-                continue
+            #if distance > limite_eloignement :
+                #continue
 
             # Deuxième cas : on continue l'exploration. On appelle parcours à Z pour tous les niveaux de pression
             # correspondant à notre point.
@@ -111,7 +111,7 @@ def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_
                 # Sinon on ajoute le nouveau point à la liste des futurs points. 
                 listeF.append(pointF)
         # On garde que les 100 éléments les plus proches.
-        listeP = N_plus_proches(destination, listeF, 100)
+        listeP = N_plus_proches(destination, listeF, 1)
         
         # On réduit la limite d'éloignement au fur et à mesure
         constante_de_retrecissement = 0.9

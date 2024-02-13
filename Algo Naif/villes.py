@@ -35,10 +35,62 @@ villes_france = [
     Ville("Aix-en-Provence", 5.4474, 43.5297)
 ]
 
+# Liste de villes dans le monde.
+
+villes_monde = [
+    Ville("Tokyo", 139.6917, 35.6895),
+    Ville("New Delhi", 77.1025, 28.7041),
+    Ville("Beijing", 116.4074, 39.9042),
+    Ville("Brasília", -47.9297, -15.7801),
+    Ville("Moscow", 37.6173, 55.7558),
+    Ville("Washington, D.C.", -77.0369, 38.8951),
+    Ville("London", -0.1278, 51.5074),
+    Ville("Paris", 2.3522, 48.8566),
+    Ville("Berlin", 13.4050, 52.5200),
+    Ville("Canberra", 149.1300, -35.2809),
+    Ville("Rome", 12.4964, 41.9028),
+    Ville("Ottawa", -75.6972, 45.4215),
+    Ville("Madrid", -3.7038, 40.4168),
+    Ville("Seoul", 126.9780, 37.5665),
+    Ville("Buenos Aires", -58.3816, -34.6037),
+    Ville("Cairo", 31.2357, 30.0444),
+    Ville("Brussels", 4.3517, 50.8503),
+    Ville("Mexico City", -99.1332, 19.4326),
+    Ville("Tokyo", 139.6917, 35.6895),
+    Ville("Buenos Aires", -58.3816, -34.6037),
+    Ville("Bangkok", 100.5018, 13.7563),
+    Ville("Canberra", 149.1300, -35.2809),
+    Ville("London", -0.1278, 51.5074),
+    Ville("Berlin", 13.4050, 52.5200),
+    Ville("Beijing", 116.4074, 39.9042),
+    Ville("Paris", 2.3522, 48.8566),
+    Ville("Moscow", 37.6173, 55.7558),
+    Ville("Washington, D.C.", -77.0369, 38.8951),
+    Ville("Madrid", -3.7038, 40.4168),
+    Ville("Ottawa", -75.6972, 45.4215),
+    Ville("Rome", 12.4964, 41.9028),
+    Ville("Seoul", 126.9780, 37.5665),
+    Ville("Bangkok", 100.5018, 13.7563),
+    Ville("Brussels", 4.3517, 50.8503),
+    Ville("Brasília", -47.9297, -15.7801),
+    Ville("Cairo", 31.2357, 30.0444),
+    Ville("New Delhi", 77.1025, 28.7041),
+    Ville("Mexico City", -99.1332, 19.4326),
+    Ville("Tokyo", 139.6917, 35.6895),
+    Ville("Beijing", 116.4074, 39.9042),
+    Ville("Berlin", 13.4050, 52.5200),
+    Ville("London", -0.1278, 51.5074),
+    Ville("Paris", 2.3522, 48.8566),
+    Ville("Moscow", 37.6173, 55.7558),
+    Ville("Washington, D.C.", -77.0369, 38.8951),
+    Ville("New Delhi", 77.1025, 28.7041),
+    Ville("Bangkok", 100.5018, 13.7563),
+    Ville("Brasília", -47.9297, -15.7801)
+]
+
 
 
 def choisir_ville_au_hasard(liste_villes):
     return random.choice(liste_villes)
 
 
-villes_200 = random.choices(villes_france, k=200)

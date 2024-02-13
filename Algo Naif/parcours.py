@@ -260,7 +260,7 @@ Sortie :
 def ventU_ventV_adj_lat(longitude : float, latitude : float, temps : int, pression : int, tab_vent: dict) -> (int,int):
     (case_longitude, case_latitude) = case(longitude, latitude)
     # On va chercher la case située en dessous pour la latitude.
-    case_latitude = case_latitude -1 if case_latitude>0 else 71
+    case_latitude = case_latitude -1 if case_latitude>0 else 0
     try:
         ventU = tab_vent['data'][temps][pression][case_longitude][case_latitude][0]
     except IndexError as e:
