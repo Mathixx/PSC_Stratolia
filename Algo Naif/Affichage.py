@@ -11,12 +11,17 @@ import matplotlib.dates as mdates
 from datetime import datetime, timedelta
 
 
-def animation(coords,heure_depart,step):
-    X, Y, Z = zip(*coords)
-    longitude_min, longitude_max = min(X)-1, max(X)+1 # Min et Max Longitudes
-    latitude_min, latitude_max = min(Y)-1, max(Y)+1  # Min et Max Latitudes
+def animation(coords,dest,echelle):
+    '''  crée une animation de la trajectoire du ballon, prenant en entrée une liste de coordonnées coords pour la trajectoire,
+    coords de la forme [(long_i,lat_i,z_i,h6_i,sec_i),]
+      un tuple dest pour la destination (long,lat),
+      une echelle pour la carte (en long/lat) -> Prendre 1 de base'''
+      
+    X, Y, Z, H, S = zip(*coords)
 
-  
+    longitude_min, longitude_max = min(X)-echelle, max(X)+echelle # Min et Max Longitudes
+    latitude_min, latitude_max = min(Y)-echelle, max(Y)+echelle  # Min et Max Latitudes
+
     # Configuration de GridSpec
     fig = plt.figure(figsize=(15, 12))
     gs = gridspec.GridSpec(1, 2, width_ratios=[2, 1])
@@ -36,16 +41,24 @@ def animation(coords,heure_depart,step):
     ax2 = fig.add_subplot(gs[1],projection=ccrs.PlateCarree())
     ax2.set_global()
 
-
-
     camera = Camera(fig)
-    heure_actuelle = heure_depart
-
+    
     # Création de chaque frame de l'animation
     for i in range(len(coords)):
-        
+        x, y, z = X[i],Y[i],Z[i]
 
-        x, y, z = coords[i]
+        # Depart et arrivée
+        ax1.scatter([X[0]], [Y[0]], [Z[0]], color='green', s=300, edgecolor='black', label='Départ',marker='^')
+        ax2.scatter([X[0]], [Y[0]], color='green', s=100, edgecolor='black', transform=ccrs.PlateCarree(), label='Départ',marker='^')
+
+        ax1.scatter([dest[0]],[dest[1]],[0] , color='green', s=300, label='Destination',marker='x')
+        ax2.scatter([dest[0]], [dest[1]], color='green', s=100, transform=ccrs.PlateCarree(), label='Destination',marker='x')  
+        
+        if i == 0:
+            ax1.legend(loc='upper left', fontsize = 16)
+
+        
+        
 
         # Graphique 3D 
         ax1.plot(X[:i+1], Y[:i+1], Z[:i+1], color='b')
@@ -54,7 +67,7 @@ def animation(coords,heure_depart,step):
         ax1.plot(X[:i+1], Y[:i+1], 0, color='r', linestyle='dashed', alpha=0.5)
         ax1.plot([x, x], [y, y], [0, z], color='grey', linestyle='-')
 
-        # Graphique 2D 
+        # Graphique 2D - Carte
         ax2.set_extent([longitude_min, longitude_max, latitude_min, latitude_max], crs=ccrs.PlateCarree())
         ax2.add_feature(cfeature.COASTLINE)
         ax2.add_feature(cfeature.COASTLINE)
@@ -66,14 +79,14 @@ def animation(coords,heure_depart,step):
         ax2.plot(X[:i+1], Y[:i+1], color='r',linestyle='dashed')
         ax2.scatter([x], [y], color='r', s=30)
 
+        
+        #Calcul et affiche de l'heure
+        heure_actuelle = datetime(2020, 1, 1, 0, 0, 0)+timedelta(hours = 6*H[i],seconds = S[i])
         ax2.text(0.5, 1.05, heure_actuelle.strftime('%Y-%m-%d %H:%M:%S'), 
                 ha='center', va='center', transform=ax2.transAxes, fontsize = 14)
         
         camera.snap()
 
-        #Changement d'heure
-        heure_actuelle += step
-        
 
     # Génération et sauvegarde de l'animation
     animation = camera.animate()
@@ -112,6 +125,8 @@ spirale = [
     (1.37, -1.04, 96.55),
     (0.0, 0.0, 100.0)
 ]
-# Heure de départ et intervalle de temps (step) en minutes
-heure_depart = datetime(2024, 1, 1, 8, 0, 0)  # Exemple : 8h00 du matin
-step = timedelta(minutes=30)  # Exemple : 30 minutes
+spirale_modifiee = [
+    (x, y, z, 0, 600*i) for i, (x, y, z) in enumerate(spirale)
+]
+
+#animation(spirale_modifiee, [0.0, 0.0, 100.0],1)
