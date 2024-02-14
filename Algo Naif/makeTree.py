@@ -111,7 +111,7 @@ def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_
                 # Sinon on ajoute le nouveau point à la liste des futurs points. 
                 listeF.append(pointF)
         # On garde que les 100 éléments les plus proches.
-        listeP = N_plus_proches(destination, listeF, 1)
+        listeP = N_plus_proches(destination, listeF, 60)
         
         # On réduit la limite d'éloignement au fur et à mesure
         constante_de_retrecissement = 0.9

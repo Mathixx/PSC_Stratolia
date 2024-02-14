@@ -7,6 +7,7 @@ import time
 
 from makeTree import *
 from villes import *
+from Affichage import animation
 
 
 ###########
@@ -17,17 +18,17 @@ from villes import *
 
 
 def test1_makeTree():
-    depart = choisir_ville_au_hasard(villes_monde)
+    depart = choisir_ville_au_hasard(villes_france)
     print("Départ : "+ str(depart))
-    dest = choisir_ville_au_hasard(villes_monde)
+    dest = choisir_ville_au_hasard(villes_france)
     # On ne veut pas que la destination soit égale au départ
     while(dest.nom == depart.nom):
-        dest = choisir_ville_au_hasard(villes_monde)
+        dest = choisir_ville_au_hasard(villes_france)
     print("Destination : "+str(dest))
     temps_I = random.randint(0, 100)
     print("Temps de départ : "+ str(temps_I))
     temps_sec = 0     # À modifier si besoin
-    pression = random.randint(0,16)
+    pression =  random.randint(0,16)
     print("Pression de départ : "+str(pression))
     # duree = int(input("Veuillez entrer la durée d'exploration (nombre d'heures divisible par 6) : "))
     duree = 600
@@ -36,7 +37,7 @@ def test1_makeTree():
     destination = (dest.long, dest.lat)
     n = Node(depart.long, depart.lat, temps=(temps_I, temps_sec), pression=pression, prev=None)
     temps_chgmt_pression = 6*3600  # Remplacez par la durée du changement de pression souhaitée
-    precision = 100000  # Précision de la destination
+    precision = 30000 # Précision de la destination
     limite_eloignement = 1.2*distance_destination(destination, depart.long, depart.lat) # Ajuster si besoin 
 
     # Exécution de la fonction
@@ -45,13 +46,21 @@ def test1_makeTree():
     temps_fin_execution = time.time()
     duree_execution = temps_fin_execution - temps_debut_execution
     print(f"Le code a pris {duree_execution} secondes pour s'exécuter.")
+
+    coords = []
+    for i in range(len(res)):
+        n = res[i]
+        coords.append((n.long, n.lat, convPression_altitude(n.p), n.t[0], n.t[1]))
+    #print(coords)
+    animation(coords, destination, 1)
+    
     
     # Renvoie si on a atteint la destination et le temps d'exécution.
     return (a_atteint_destination, duree_execution)
 
 
 # Exécution du test
-#test1_makeTree()
+test1_makeTree()
 
 
 def test2_makeTree():
@@ -72,7 +81,7 @@ def test2_makeTree():
 
 
 # Exécution du test
-test2_makeTree()
+#1test2_makeTree()
 
 
 
