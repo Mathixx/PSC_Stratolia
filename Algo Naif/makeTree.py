@@ -39,7 +39,7 @@ Sortie :
 """
 
 
-def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_chgmt_pression : int, precision : int, limite_eloignement : int, tab_vent : dict) -> (bool, list) :
+def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_chgmt_pression : int, precision : int, eloignement : float, tab_vent : dict) -> (bool, list) :
 
     # On vérifie que le noeud de départ n'a pas de parent.
     if not(depart.prev == None):
@@ -62,8 +62,13 @@ def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_
     nombre_d_iterations = (duree//6)*(21600//temps_chgmt_pression)
 
     # On vérifie que la limite d'éloignement choisie est suffisamment grande pour que l'algorithme fonctionne correctement.
-    if distance_destination(destination, depart.long, depart.lat)>limite_eloignement:
+    if eloignement<1:
         raise ValueError("La limite d'éloignement est inférieure à la distance entre le point de départ et la destination.")
+
+    limite_eloignement = distance_destination(destination, depart.long, depart.lat)*eloignement
+
+    # On réduit la limite d'éloignement au fur et à mesure pour qu'elle vaille un quart de la distance à la fin.
+    constante_de_retrecissement = (2.5/(10*eloignement))**(1/nombre_d_iterations)
 
     # On initialise la liste des points que nous explorons.
     listeP = [depart]
@@ -87,8 +92,8 @@ def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_
             distance = distance_destination(destination, point.long, point.lat)
 
             # Premier cas : si on est trop loin de la destination on abandonne l'exploration à partir de ce point.
-            #if distance > limite_eloignement :
-                #continue
+            if distance > limite_eloignement :
+                continue
 
             # Deuxième cas : on continue l'exploration. On appelle parcours à Z pour tous les niveaux de pression
             # correspondant à notre point.
@@ -111,8 +116,6 @@ def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_
         # On garde que les 100 éléments les plus proches.
         listeP = N_plus_proches(destination, listeF, 1)
         
-        # On réduit la limite d'éloignement au fur et à mesure
-        constante_de_retrecissement = 0.9
         limite_eloignement *= constante_de_retrecissement
 
     # Dans ce cas on a dépassé la limite temporelle d'exploration.

@@ -18,12 +18,12 @@ from villes import *
 
 
 def test1_makeTree():
-    depart = choisir_ville_au_hasard(villes_france)
+    depart = choisir_ville_au_hasard(villes_monde)
     print("Départ : "+ str(depart))
-    dest = choisir_ville_au_hasard(villes_france)
+    dest = choisir_ville_au_hasard(villes_monde)
     # On ne veut pas que la destination soit égale au départ
     while(dest.nom == depart.nom):
-        dest = choisir_ville_au_hasard(villes_france)
+        dest = choisir_ville_au_hasard(villes_monde)
     print("Destination : "+str(dest))
     temps_I = random.randint(0, 100)
     print("Temps de départ : "+ str(temps_I))
@@ -31,18 +31,18 @@ def test1_makeTree():
     pression =  random.randint(0,16)
     print("Pression de départ : "+str(pression))
     # duree = int(input("Veuillez entrer la durée d'exploration (nombre d'heures divisible par 6) : "))
-    duree = 60
+    duree = 600
     
     # Paramètres de test
     destination = (dest.long, dest.lat)
     n = Node(depart.long, depart.lat, temps=(temps_I, temps_sec), pression=pression, prev=None)
     temps_chgmt_pression = 6*3600  # Remplacez par la durée du changement de pression souhaitée
-    precision = 3000 # Précision de la destination
-    limite_eloignement = 1.2*distance_destination(destination, depart.long, depart.lat) # Ajuster si besoin 
+    precision = 100000 # Précision de la destination
+    eloignement = 1.2 # Ajuster si besoin 
 
     # Exécution de la fonction
     temps_debut_execution = time.time()
-    a_atteint_destination, res = Tree_Largeur(destination, n, duree, temps_chgmt_pression, precision, limite_eloignement, wind_data)
+    a_atteint_destination, res = Tree_Largeur(destination, n, duree, temps_chgmt_pression, precision, eloignement, wind_data)
     temps_fin_execution = time.time()
     duree_execution = temps_fin_execution - temps_debut_execution
     print(f"Le code a pris {duree_execution} secondes pour s'exécuter.")
