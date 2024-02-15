@@ -60,7 +60,7 @@ def test1_makeTree():
 
 
 # Exécution du test
-test1_makeTree()
+#test1_makeTree()
 
 
 def test2_makeTree():
@@ -81,7 +81,7 @@ def test2_makeTree():
 
 
 # Exécution du test
-#1test2_makeTree()
+test2_makeTree()
 
 
 

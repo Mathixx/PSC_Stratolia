@@ -109,7 +109,7 @@ def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_
                 # Sinon on ajoute le nouveau point à la liste des futurs points. 
                 listeF.append(pointF)
         # On garde que les 100 éléments les plus proches.
-        listeP = N_plus_proches(destination, listeF, 60)
+        listeP = N_plus_proches(destination, listeF, 1)
         
         # On réduit la limite d'éloignement au fur et à mesure
         constante_de_retrecissement = 0.9
@@ -180,6 +180,8 @@ def N_plus_proches(destination : (float, float), liste : list, N : int) -> list:
     l = len(liste)
     if l<=N:
         return liste
+    if N==1:
+        return min_liste(destination, liste)
     low, high = 0, l - 1
     while low <= high:
         pivot_idx = partition(destination, liste, low, high)
@@ -199,7 +201,7 @@ Fonction auxilaire nécessaire pour la fonction N_plus_proches
 '''
 
 
-def partition(destination, liste, low, high):
+def partition(destination : (float, float), liste : list, low : int, high : int) -> int:
     pivot = liste[high]
     distance_pivot = distance_destination(destination, pivot.long, pivot.lat)
     i = low - 1
@@ -211,6 +213,19 @@ def partition(destination, liste, low, high):
     return i + 1
 
 
+'''
+Fonction auxilaire nécessaire pour la fonction N_plus_proches
+'''
+
+def min_liste(destination : (float, float), liste : list) -> list:
+    minimum = liste[0]
+    distance_min = distance_destination(destination, minimum.long, minimum.lat)
+    for noeud in liste:
+        distance_noeud = distance_destination(destination, noeud.long, noeud.lat)
+        if distance_noeud < distance_min:
+            minimum = noeud
+            distance_min = distance_noeud
+    return [minimum]
     
 
 
