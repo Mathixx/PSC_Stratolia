@@ -160,3 +160,4 @@ cython_debug/
 #.idea/
 
 objet_wind_data_2020.pickle
+Animation_trajectoire.gif

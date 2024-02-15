@@ -18,7 +18,7 @@ def animation(coords,dest,echelle):
       une echelle pour la carte (en long/lat) -> Prendre 1 de base'''
       
     X, Y, Z, H, S = zip(*coords)
-
+    X = [(x-360 if x>180 else x ) for x in X]
     longitude_min, longitude_max = min(X)-echelle, max(X)+echelle # Min et Max Longitudes
     latitude_min, latitude_max = min(Y)-echelle, max(Y)+echelle  # Min et Max Latitudes
 
@@ -28,6 +28,8 @@ def animation(coords,dest,echelle):
 
     # Axe 3D
     ax1 = ax = fig.add_subplot(gs[0], projection='3d')  
+    m = max(max(X)-min(X),max(Y)-min(Y))
+    
     ax1.set_xlim([min(X), max(X)])
     ax1.set_ylim([min(Y), max(Y)])
     ax1.set_zlim([min(Z), max(Z)])
@@ -40,6 +42,8 @@ def animation(coords,dest,echelle):
     # Axe 2D
     ax2 = fig.add_subplot(gs[1],projection=ccrs.PlateCarree())
     ax2.set_global()
+    #ax2.set_xlim([(min(X)+max(X)-m)/2, (min(X)+max(X)+m)/2])
+    #ax2.set_ylim([(min(Y)+max(X)-m)/2, (min(X)+max(X)+m)/2])
 
     camera = Camera(fig)
     
