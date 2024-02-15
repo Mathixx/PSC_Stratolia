@@ -10,9 +10,7 @@ from parcours import parcours_a_Z
 from Node import *
 from parcours import distance_destination
 
-import pickle
-with open("objet_wind_data_2020.pickle", "rb") as f:
-    wind_data = pickle.load(f)
+from data_vent import *
 
 
 

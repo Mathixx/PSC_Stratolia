@@ -7,11 +7,8 @@ import math
 import sys
 # For test purposes only
 import time
+from data_vent import *
 
-
-import pickle
-with open("objet_wind_data_2020.pickle", "rb") as f:
-    wind_data = pickle.load(f)
 
 from Node import *
 
