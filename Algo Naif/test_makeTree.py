@@ -7,7 +7,7 @@ import time
 
 from makeTree import *
 from villes import *
-from Affichage import animation
+#from Affichage import animation
 
 
 ###########
@@ -52,7 +52,7 @@ def test1_makeTree():
         n = res[i]
         coords.append((n.long, n.lat, convPression_altitude(n.p), n.t[0], n.t[1]))
     #print(coords)
-    animation(coords, destination, 1)
+    #animation(coords, destination, 1)
     
     
     # Renvoie si on a atteint la destination et le temps d'exécution.

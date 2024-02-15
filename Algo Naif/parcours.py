@@ -61,22 +61,12 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
             return (True, Node(long, lat, (temps_init,temps[1]+temps_chgmt_pression-temps_restant), pression, n))
 
         # On récupère les données de vent (en m.s-1). Grâce aux hypothèses sur les temps on sait qu'on reste dans la même case temporelle.
-        (ventU, ventV) = ventU_ventV(long, lat, temps_init, pression, tab_vent)
-
         (case_longitude, case_latitude) = case(long, lat)
-
+        (ventU, ventV) = ventU_ventV(case_longitude, case_latitude, temps_init, pression, tab_vent)
 
         # On calcule le temps nécessaire pour changer de case.
-        if (ventU != 0) :
-            tempsU = math.ceil(k*(-90+2.5*(case_latitude+1)-lat)/ventU if ventU > 0 else -k*(lat-(-90+2.5*case_latitude))/ventU)
-        else :
-            tempsU = sys.maxsize
-        if (ventV != 0) :
-            tempsV =  math.ceil(k*math.cos(lat*math.pi/180)*(2.5*(case_longitude+1)-long)/ventV if ventV > 0 else -k*math.cos(lat*math.pi/180)*(long-2.5*case_longitude)/ventV)
-        else :
-            tempsV = sys.maxsize
+        tempsU, tempsV = tempsU_tempsV(long, lat, case_longitude, case_latitude, ventU, ventV)
         
-
         temps_evolution = min(temps_restant, temps_test_arrivee)
 
         # Cas particulier : on est à la limite entre deux case
@@ -84,7 +74,8 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
         # Sous-cas 1 : limite de case en longitude
         if long%2.5 == 0:
             # On regarde les données de vent dans la case adjacente.
-            (ventU_adj, ventV_adj) = ventU_ventV_adj_long(long, lat, temps_init, pression, tab_vent)
+            case_longitude_adj = case_longitude -1 if case_latitude>0 else 143
+            (ventU_adj, ventV_adj) = ventU_ventV(case_longitude_adj, case_latitude, temps_init, pression, tab_vent)
             if (ventV_adj >= 0 and ventV <= 0) or ventV_adj*ventV == 0:
                 # La longitude finale sera celle de la limite de case. On se ramène au cas général en ajustant ventV à 0.
                 ventV = 0
@@ -94,12 +85,13 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
                     break
             else:
                 # On ajuste simplement le calcul de tempsV et on revient dans le cas général.
-                tempsV =  math.ceil(k*math.cos(lat*math.pi/180)*(2.5*(case_longitude+1)-long)/ventV if ventV > 0 else -k*math.cos(lat*math.pi/180)*(long-2.5*(case_longitude-1))/ventV)
+                tempsV =  maj_tempsV(long, lat, case_longitude, case_latitude, ventV, ventV_adj)
 
         # Sous-cas 2 : limite de case en latitude
         if lat%2.5 == 0:
             # On regarde les données de vent dans la case adjacente.
-            (ventU_adj, ventV_adj) = ventU_ventV_adj_lat(long, lat, temps_init, pression, tab_vent)
+            case_latitude_adj = case_latitude -1 if case_latitude>0 else 0
+            (ventU_adj, ventV_adj) = ventU_ventV(case_longitude, case_latitude_adj, temps_init, pression, tab_vent)
             if (ventU_adj >=0 and ventU <= 0) or ventU_adj*ventU == 0:
                 # La latitude finale sera celle de la limite de case. On se ramène au cas général en ajustant ventU à 0.
                 ventU = 0
@@ -109,8 +101,7 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
                     break
             else:
                 # On ajuste simplement le calcul de tempsU et on revient dans le cas général.
-                tempsU =  math.ceil(k*(-90+2.5*(case_latitude+1)-lat)/ventU if ventU > 0 else -k*(lat-(-90+2.5*(case_latitude-1)))/ventU)
-                
+                tempsU =  maj_tempsU(long, lat, case_longitude, case_latitude, ventU, ventU_adj)
 
         # Cas général.
 
@@ -226,8 +217,7 @@ Sortie :
 '''
 
 
-def ventU_ventV(longitude : float, latitude : float, temps : int, pression : int, tab_vent: dict) -> (int,int):
-    (case_longitude, case_latitude) = case(longitude, latitude)
+def ventU_ventV(case_longitude : int, case_latitude : int, temps : int, pression : int, tab_vent: dict) -> (float,float):
     try:
         ventU = tab_vent['data'][temps][pression][case_longitude][case_latitude][0]
     except IndexError as e:
@@ -243,62 +233,70 @@ def ventU_ventV(longitude : float, latitude : float, temps : int, pression : int
 
 
 '''
-Fonction qui récupère les données de vent dans la case adjacente en latitude.
-Entrée :
-- position : longitude, latitude, temps, pression
-- données de vent
-
+Fonction qui détermine le temps nécessaire pour changer de case en fonction des données de vent.
+Entrée : 
+- longitude et latitude
+- cases de longitude et de latitude
+- vent U et ventV associés
 Sortie :
-- vent sud-nord (ventU) en m.s-1
-- vent ouest-est (ventV) en m.s-1
+- temps nécessaire pour changer de case
 '''
 
 
-def ventU_ventV_adj_lat(longitude : float, latitude : float, temps : int, pression : int, tab_vent: dict) -> (int,int):
-    (case_longitude, case_latitude) = case(longitude, latitude)
-    # On va chercher la case située en dessous pour la latitude.
-    case_latitude = case_latitude -1 if case_latitude>0 else 0
-    try:
-        ventU = tab_vent['data'][temps][pression][case_longitude][case_latitude][0]
-    except IndexError as e:
-        print(f"Erreur d'index : {e}")
-        print("long =", case_longitude, "lat =", case_latitude, "temps =", temps,"pression =", pression)
-    try:
-        ventV = tab_vent['data'][temps][pression][case_longitude][case_latitude][1]
-    except IndexError as e:
-        print(f"Erreur d'index : {e}")
-        print("long =", case_longitude, "lat =", case_latitude, "temps =", temps, "pression =", pression)
-    return (ventU,ventV)
+def tempsU_tempsV(long, lat, case_longitude, case_latitude, ventU, ventV) -> (int, int):
+    # Constante utile : (rayon de la Terre en m et conversion degrés en radians)
+    k = 1000 * 6371 * math.pi / 180
+    # Ce calcul n'est valable que dans le cas où l'on est pas à une limite de case.
+    if (ventU != 0) :
+            tempsU = math.ceil(k*(-90+2.5*(case_latitude+1)-lat)/ventU if ventU > 0 else -k*(lat-(-90+2.5*case_latitude))/ventU)
+    else :
+            tempsU = sys.maxsize
+    if (ventV != 0) :
+        tempsV =  math.ceil(k*math.cos(lat*math.pi/180)*(2.5*(case_longitude+1)-long)/ventV if ventV > 0 else -k*math.cos(lat*math.pi/180)*(long-2.5*case_longitude)/ventV)
+    else :
+        tempsV = sys.maxsize
+    return (tempsU, tempsV)
 
 
 
 '''
-Fonction qui récupère les données de vent dans la case adjacente en longitude.
-Entrée :
-- position : longitude, latitude, temps, pression
-- données de vent
+Mise à jour de la valeur de tempsU quand on est dans un cas précis
+'''
 
-Sortie :
-- vent sud-nord (ventU) en m.s-1
-- vent ouest-est (ventV) en m.s-1
+def maj_tempsU(long : float, lat : float, case_longitude : int, case_latitude : int, ventU : float, ventU_adj : float) -> int:
+    # Constante utile : (rayon de la Terre en m et conversion degrés en radians)
+    k = 1000 * 6371 * math.pi / 180
+    return math.ceil(k*(-90+2.5*(case_latitude+1)-lat)/ventU if ventU > 0 else -k*(lat-(-90+2.5*(case_latitude-1)))/ventU_adj)
+
+
+'''
+Mise à jour de la valeur de tempsU quand on est dans un cas précis
+'''
+
+def maj_tempsV(long : float, lat : float, case_longitude : int, case_latitude : int, ventV : float, ventV_adj : float) -> int:
+    # Constante utile : (rayon de la Terre en m et conversion degrés en radians)
+    k = 1000 * 6371 * math.pi / 180
+    return math.ceil(k*math.cos(lat*math.pi/180)*(2.5*(case_longitude+1)-long)/ventV if ventV > 0 else -k*math.cos(lat*math.pi/180)*(long-2.5*(case_longitude-1))/ventV_adj)
+
+
+
+
+
+'''
+Fonction qui interpole les données de vent sur les positions et le temps
+Entrée : 
+- case de latitude - longitude et temps 
+Sortie : 
+- données de vent interpolées
 '''
 
 
-def ventU_ventV_adj_long(longitude : float, latitude : float, temps : int, pression : int, tab_vent: dict) -> (int,int):
-    (case_longitude, case_latitude) = case(longitude, latitude)
-    # On va chercher la case située en dessous pour la longitude.
-    case_longitude = case_longitude -1 if case_latitude>0 else 143
-    try:
-        ventU = tab_vent['data'][temps][pression][case_longitude][case_latitude][0]
-    except IndexError as e:
-        print(f"Erreur d'index : {e}")
-        print("long =", case_longitude, "lat =", case_latitude, "temps =", temps,"pression =", pression)
-    try:
-        ventV = tab_vent['data'][temps][pression][case_longitude][case_latitude][1]
-    except IndexError as e:
-        print(f"Erreur d'index : {e}")
-        print("long =", case_longitude, "lat =", case_latitude, "temps =", temps, "pression =", pression)
-    return (ventU,ventV)
+def interpole(longitude : float, latitude : float, case_temps : int, temps_sec : int, pression : int, tab_vent : dict) -> (int, int):
+    # 1er cas : on est dans la première partie de la case
+    (ventU, ventV) = ventU_ventV(longitude, latitude, case_temps, pression, tab_vent)
+    (ventU_adj_long, ventV_adj_long) = ventU_ventV_adj_long
+
+
 
 '''
 Fonction qui recentre les valeurs de long et lat dans les bons intervalles
