@@ -61,13 +61,14 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
             return (True, Node(long, lat, (temps_init,temps[1]+temps_chgmt_pression-temps_restant), pression, n))
 
         # On récupère les données de vent (en m.s-1). Grâce aux hypothèses sur les temps on sait qu'on reste dans la même case temporelle.
-        (case_longitude, case_latitude) = case(long, lat)
-        (ventU, ventV) = ventU_ventV(case_longitude, case_latitude, temps_init, pression, tab_vent)
+        (ventU, ventV) = ventU_ventV(long, lat, temps_init, pression, tab_vent)
 
         # On calcule le temps nécessaire pour changer de case.
-        tempsU, tempsV = tempsU_tempsV(long, lat, case_longitude, case_latitude, ventU, ventV)
+        tempsU, tempsV = tempsU_tempsV(long, lat, ventU, ventV)
         
         temps_evolution = min(temps_restant, temps_test_arrivee)
+
+        case_longitude, case_latitude = case(long, lat)
 
         # Cas particulier : on est à la limite entre deux case
 
@@ -85,7 +86,7 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
                     break
             else:
                 # On ajuste simplement le calcul de tempsV et on revient dans le cas général.
-                tempsV =  maj_tempsV(long, lat, case_longitude, case_latitude, ventV, ventV_adj)
+                tempsV =  maj_tempsV(long, lat, ventV, ventV_adj)
 
         # Sous-cas 2 : limite de case en latitude
         if lat%2.5 == 0:
@@ -101,7 +102,7 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
                     break
             else:
                 # On ajuste simplement le calcul de tempsU et on revient dans le cas général.
-                tempsU =  maj_tempsU(long, lat, case_longitude, case_latitude, ventU, ventU_adj)
+                tempsU =  maj_tempsU(long, lat, ventU, ventU_adj)
 
         # Cas général.
 
@@ -217,7 +218,8 @@ Sortie :
 '''
 
 
-def ventU_ventV(case_longitude : int, case_latitude : int, temps : int, pression : int, tab_vent: dict) -> (float,float):
+def ventU_ventV(long : float, lat : float, temps : int, pression : int, tab_vent: dict) -> (float,float):
+    (case_longitude, case_latitude) = case(long, lat)
     try:
         ventU = tab_vent['data'][temps][pression][case_longitude][case_latitude][0]
     except IndexError as e:
@@ -243,7 +245,8 @@ Sortie :
 '''
 
 
-def tempsU_tempsV(long, lat, case_longitude, case_latitude, ventU, ventV) -> (int, int):
+def tempsU_tempsV(long, lat, ventU, ventV) -> (int, int):
+    (case_longitude, case_latitude) = case(long, lat)
     # Constante utile : (rayon de la Terre en m et conversion degrés en radians)
     k = 1000 * 6371 * math.pi / 180
     # Ce calcul n'est valable que dans le cas où l'on est pas à une limite de case.
@@ -263,7 +266,8 @@ def tempsU_tempsV(long, lat, case_longitude, case_latitude, ventU, ventV) -> (in
 Mise à jour de la valeur de tempsU quand on est dans un cas précis
 '''
 
-def maj_tempsU(long : float, lat : float, case_longitude : int, case_latitude : int, ventU : float, ventU_adj : float) -> int:
+def maj_tempsU(long : float, lat : float, ventU : float, ventU_adj : float) -> int:
+    (case_longitude, case_latitude) = case(long, lat)
     # Constante utile : (rayon de la Terre en m et conversion degrés en radians)
     k = 1000 * 6371 * math.pi / 180
     return math.ceil(k*(-90+2.5*(case_latitude+1)-lat)/ventU if ventU > 0 else -k*(lat-(-90+2.5*(case_latitude-1)))/ventU_adj)
@@ -273,28 +277,12 @@ def maj_tempsU(long : float, lat : float, case_longitude : int, case_latitude : 
 Mise à jour de la valeur de tempsU quand on est dans un cas précis
 '''
 
-def maj_tempsV(long : float, lat : float, case_longitude : int, case_latitude : int, ventV : float, ventV_adj : float) -> int:
+def maj_tempsV(long : float, lat : float, ventV : float, ventV_adj : float) -> int:
+    (case_longitude, case_latitude) = case(long, lat)
     # Constante utile : (rayon de la Terre en m et conversion degrés en radians)
     k = 1000 * 6371 * math.pi / 180
     return math.ceil(k*math.cos(lat*math.pi/180)*(2.5*(case_longitude+1)-long)/ventV if ventV > 0 else -k*math.cos(lat*math.pi/180)*(long-2.5*(case_longitude-1))/ventV_adj)
 
-
-
-
-
-'''
-Fonction qui interpole les données de vent sur les positions et le temps
-Entrée : 
-- case de latitude - longitude et temps 
-Sortie : 
-- données de vent interpolées
-'''
-
-
-def interpole(longitude : float, latitude : float, case_temps : int, temps_sec : int, pression : int, tab_vent : dict) -> (int, int):
-    # 1er cas : on est dans la première partie de la case
-    (ventU, ventV) = ventU_ventV(longitude, latitude, case_temps, pression, tab_vent)
-    (ventU_adj_long, ventV_adj_long) = ventU_ventV_adj_long
 
 
 
