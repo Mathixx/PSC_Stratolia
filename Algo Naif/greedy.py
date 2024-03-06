@@ -80,9 +80,9 @@ def greedy(destination : (float,float), depart : Node, duree : int, temps_chgmt_
                 # Sinon on met à jour le point le plus proche atteint.
                 if i==0:
                     closest = point_atteint
-                    distance_closest = distance_destination(closest)
+                    distance_closest = distance_destination(destination, closest.long, closest.lat)
                 else:
-                    distance_atteint = distance_destination(point_atteint) 
+                    distance_atteint = distance_destination(destination, point_atteint.long, point_atteint.lat)
                     if distance_atteint < distance_closest:
                         closest = point_atteint
                         distance_closest = distance_atteint
@@ -113,8 +113,9 @@ def chemin(point_atteint : Node) -> list:
     p = point_atteint
     while p.prev != None :
         p = p.prev
-        res.append(p)
-    return liste.reverse()
+        liste.append(p)
+    liste.reverse()
+    return liste
 
 
 

@@ -71,7 +71,7 @@ def N_closest(destination : (float,float), depart : Node, duree : int, temps_chg
     constante_de_retrecissement = (2.5/(10*eloignement))**(1/nombre_d_iterations)
 
     # Valeur de N (modifiable si besoin)
-    N = 100
+    N = 10000
 
     # On initialise la liste des points que nous explorons.
     listeP = [depart]
@@ -139,8 +139,9 @@ def chemin(point_atteint : Node) -> list:
     p = point_atteint
     while p.prev != None :
         p = p.prev
-        res.append(p)
-    return liste.reverse()
+        liste.append(p)
+    liste.reverse()
+    return liste
 
 
 '''

@@ -5,7 +5,7 @@
 import random
 import time
 
-from selection_search import *
+from greedy import *
 from villes import *
 #from Affichage import animation
 
@@ -15,9 +15,7 @@ from villes import *
 ###########
 
 
-
-
-def test1_N_closest():
+def test1_greedy():
     depart = choisir_ville_au_hasard(villes_france)
     print("Départ : "+ str(depart))
     dest = choisir_ville_au_hasard(villes_france)
@@ -38,11 +36,10 @@ def test1_N_closest():
     n = Node(depart.long, depart.lat, temps=(temps_I, temps_sec), pression=pression, prev=None)
     temps_chgmt_pression = 3600  # Remplacez par la durée du changement de pression souhaitée
     precision = 5000 # Précision de la destination
-    eloignement = 1.2 # Ajuster si besoin 
 
     # Exécution de la fonction
     temps_debut_execution = time.time()
-    a_atteint_destination, res = N_closest(destination, n, duree, temps_chgmt_pression, precision, eloignement, wind_data)
+    a_atteint_destination, res = greedy(destination, n, duree, temps_chgmt_pression, precision, wind_data)
     temps_fin_execution = time.time()
     duree_execution = temps_fin_execution - temps_debut_execution
     print(f"Le code a pris {duree_execution} secondes pour s'exécuter.")
@@ -60,17 +57,17 @@ def test1_N_closest():
 
 
 # Exécution du test
-#test1_N_closest()
+#test1_greedy()
 
 
-def test2_N_closest():
+def test2_greedy():
     # On fait varier la limite d'éloignement et la durée dans test1
-    nombre_tests = 10
+    nombre_tests = 1000
     moyenne_temps = 0
     moyenne_chemins_trouves = 0
     for i in range(nombre_tests):
         print(str(i)+"-ième test...")
-        (a_atteint_destination, duree_execution) = test1_N_closest()
+        (a_atteint_destination, duree_execution) = test1_greedy()
         if a_atteint_destination:
             moyenne_chemins_trouves += 1
         moyenne_temps += duree_execution
@@ -81,8 +78,5 @@ def test2_N_closest():
 
 
 # Exécution du test
-test2_N_closest()
-
-
-
+test2_greedy()
 

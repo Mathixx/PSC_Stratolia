@@ -75,7 +75,7 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
         # Sous-cas 1 : limite de case en longitude
         if long%2.5 == 0:
             # On regarde les données de vent dans la case adjacente.
-            case_longitude_adj = case_longitude -1 if case_latitude>0 else 143
+            case_longitude_adj = case_longitude -1 if case_longitude>0 else 143
             (ventU_adj, ventV_adj) = ventU_ventV(case_longitude_adj, case_latitude, temps_init, pression, tab_vent)
             if (ventV_adj >= 0 and ventV <= 0) or ventV_adj*ventV == 0:
                 # La longitude finale sera celle de la limite de case. On se ramène au cas général en ajustant ventV à 0.
