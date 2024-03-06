@@ -20,7 +20,8 @@ from data_vent import *
 
 
 """
-Programme qui détermine si on peut aller d'un point à un autre et qui renvoie le chemin dans le cas échéant
+Programme qui détermine si on peut aller d'un point à un autre et qui renvoie le chemin dans le cas échéant.
+Approche greedy : on garde à chaque étpe temporelle le point le plus proche de la destination.
 
 Entrée :
 - position de la destination : longitude, latitude
@@ -39,7 +40,7 @@ Sortie :
 """
 
 
-def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_chgmt_pression : int, precision : int, eloignement : float, tab_vent : dict) -> (bool, list) :
+def greedy(destination : (float,float), depart : Node, duree : int, temps_chgmt_pression : int, precision : int, tab_vent : dict) -> (bool, list) :
 
     # On vérifie que le noeud de départ n'a pas de parent.
     if not(depart.prev == None):
@@ -61,57 +62,33 @@ def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_
     
     nombre_d_iterations = (duree//6)*(21600//temps_chgmt_pression)
 
-    # On vérifie que la limite d'éloignement choisie est suffisamment grande pour que l'algorithme fonctionne correctement.
-    if eloignement<1:
-        raise ValueError("La limite d'éloignement est inférieure à la distance entre le point de départ et la destination.")
-
-    limite_eloignement = distance_destination(destination, depart.long, depart.lat)*eloignement
-
-    # On réduit la limite d'éloignement au fur et à mesure pour qu'elle vaille un quart de la distance à la fin.
-    constante_de_retrecissement = (2.5/(10*eloignement))**(1/nombre_d_iterations)
-
     # On initialise la liste des points que nous explorons.
-    listeP = [depart]
+    point = depart
   
-
     for count in range(nombre_d_iterations+1) : 
 
-        # On veut afficher dans quelle boucle la recherche est en cours.
-        print("Recherche dans la boucle "+str(count)+" ...")
+        # On explore à partir du point actuel.
+        for i in range(0, 17) :
 
-        # Si la liste des points à explorer est nulle on abandonne.
-        if len(listeP) == 0:
-            print("Aucun chemin n'a été concluant.")
-            return False, []
-        
-        # On initialise la liste des points qu'on va atteindre.
-        listeF = []
-
-        for point in listeP :
-            
-            distance = distance_destination(destination, point.long, point.lat)
-
-            # Premier cas : si on est trop loin de la destination on abandonne l'exploration à partir de ce point.
-            if distance > limite_eloignement :
-                continue
-
-            # Deuxième cas : on continue l'exploration. On appelle parcours à Z pour tous les niveaux de pression
-            # correspondant à notre point.
-            for i in range(0, 17) :
-
-                (a_rencontre_destination, pointF) = parcours_a_Z(destination, Node(point.long, point.lat, point.t, i, point), temps_chgmt_pression, precision, tab_vent)
+                (a_rencontre_destination, point_atteint) = parcours_a_Z(destination, Node(point.long, point.lat, point.t, i, point), temps_chgmt_pression, precision, tab_vent)
 
                 # Si on a rencontré la destination, on remonte l'arbre pour reconstituer le chemin complet.
                 if a_rencontre_destination:
-                    liste = chemin(pointF)
+                    liste = chemin(point_atteint)
                     affichage_liste(liste)
                     return (True, liste)
-                # Sinon on ajoute le nouveau point à la liste des futurs points. 
-                listeF.append(pointF)
-        # On garde que les 100 éléments les plus proches.
-        listeP = N_plus_proches(destination, listeF, 1)
+                # Sinon on met à jour le point le plus proche atteint.
+                if i==0:
+                    closest = point_atteint
+                    distance_closest = distance_destination(closest)
+                else:
+                    distance_atteint = distance_destination(point_atteint) 
+                    if distance_atteint < distance_closest:
+                        closest = point_atteint
+                        distance_closest = distance_atteint
         
-        limite_eloignement *= constante_de_retrecissement
+        # On met à jour le nouveau point d'exploration
+        point = closest
 
     # Dans ce cas on a dépassé la limite temporelle d'exploration.
     print("On a atteint la limite temporelle d'exploration.")
@@ -120,10 +97,10 @@ def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_
 
 
 
-
 ###########################
 ## FONCTIONS AUXILIAIRES ##
 ###########################
+
 
 '''
 Fonction qui reconstitue le chemin parcouru
@@ -138,6 +115,7 @@ def chemin(point_atteint : Node) -> list:
         p = p.prev
         res.append(p)
     return liste.reverse()
+
 
 
 '''
@@ -191,6 +169,8 @@ def N_plus_proches(destination : (float, float), liste : list, N : int) -> list:
     l = len(liste)
     if l<=N:
         return liste
+    if N==1:
+        return min_liste(destination, liste)
     low, high = 0, l - 1
     while low <= high:
         pivot_idx = partition(destination, liste, low, high)
@@ -222,36 +202,18 @@ def partition(destination : (float, float), liste : list, low : int, high : int)
     return i + 1
 
 
+'''
+Fonction auxilaire nécessaire pour la fonction N_plus_proches
+'''
+
+def min_liste(destination : (float, float), liste : list) -> list:
+    minimum = liste[0]
+    distance_min = distance_destination(destination, minimum.long, minimum.lat)
+    for noeud in liste:
+        distance_noeud = distance_destination(destination, noeud.long, noeud.lat)
+        if distance_noeud < distance_min:
+            minimum = noeud
+            distance_min = distance_noeud
+    return [minimum]
     
-
-
-
-###########
-## TESTS ##
-###########
-
-
-### OBJECTIF : Hippo doit rentrer chez lui ! MAIS il a mal au pied et n'a qu'un ballon stratosphérique à disposition
-# Trouvons quand partir
-"""
-son adresse :
-48.865013122558594 ; 2.2885401248931885
-
-73 bvrd des marechaux :
-48.71699905395508 ; 2.2039577960968018
-
-"""
-
-
-def test(): 
-    t = 0
-    while True :
-        res = Tree_Largeur((2.1675682067871094,48.710262298583984),Node(2.2039577960968018,48.71699905395508,(t,0),0,None),24,3*3600,100,40000,wind_data)
-        if res[0] == True :
-            print("un chemin a été trouvé :")
-            affichage_liste(res[1])
-            break
-        t +=1
-
-#test()
 
