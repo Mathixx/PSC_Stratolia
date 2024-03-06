@@ -39,7 +39,7 @@ Sortie :
 """
 
 
-def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_chgmt_pression : int, precision : int, eloignement : float, tab_vent : dict) -> (bool, list) :
+def N_closest(destination : (float,float), depart : Node, duree : int, temps_chgmt_pression : int, precision : int, eloignement : float, tab_vent : dict) -> (bool, list) :
 
     # On vérifie que le noeud de départ n'a pas de parent.
     if not(depart.prev == None):
@@ -69,6 +69,9 @@ def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_
 
     # On réduit la limite d'éloignement au fur et à mesure pour qu'elle vaille un quart de la distance à la fin.
     constante_de_retrecissement = (2.5/(10*eloignement))**(1/nombre_d_iterations)
+
+    # Valeur de N (modifiable si besoin)
+    N = 100
 
     # On initialise la liste des points que nous explorons.
     listeP = [depart]
@@ -108,8 +111,8 @@ def Tree_Largeur(destination : (float,float), depart : Node, duree : int, temps_
                     return (True, liste)
                 # Sinon on ajoute le nouveau point à la liste des futurs points. 
                 listeF.append(pointF)
-        # On garde que les 100 éléments les plus proches.
-        listeP = N_plus_proches(destination, listeF, 1)
+        # On garde que les N éléments les plus proches.
+        listeP = N_plus_proches(destination, listeF, N)
         
         limite_eloignement *= constante_de_retrecissement
 

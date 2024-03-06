@@ -5,7 +5,7 @@
 import random
 import time
 
-from makeTree import *
+from selection_search import *
 from villes import *
 #from Affichage import animation
 
@@ -42,7 +42,7 @@ def test1_makeTree():
 
     # Exécution de la fonction
     temps_debut_execution = time.time()
-    a_atteint_destination, res = Tree_Largeur(destination, n, duree, temps_chgmt_pression, precision, eloignement, wind_data)
+    a_atteint_destination, res = N_closest(destination, n, duree, temps_chgmt_pression, precision, eloignement, wind_data)
     temps_fin_execution = time.time()
     duree_execution = temps_fin_execution - temps_debut_execution
     print(f"Le code a pris {duree_execution} secondes pour s'exécuter.")
@@ -60,17 +60,17 @@ def test1_makeTree():
 
 
 # Exécution du test
-#test1_makeTree()
+test1_makeTree()
 
 
-def test2_makeTree():
+def test2_N_closest():
     # On fait varier la limite d'éloignement et la durée dans test1
     nombre_tests = 10
     moyenne_temps = 0
     moyenne_chemins_trouves = 0
     for i in range(nombre_tests):
         print(str(i)+"-ième test...")
-        (a_atteint_destination, duree_execution) = test1_makeTree()
+        (a_atteint_destination, duree_execution) = test1_N_closest()
         if a_atteint_destination:
             moyenne_chemins_trouves += 1
         moyenne_temps += duree_execution
@@ -81,7 +81,7 @@ def test2_makeTree():
 
 
 # Exécution du test
-test2_makeTree()
+#test2_N_closest()
 
 
 
