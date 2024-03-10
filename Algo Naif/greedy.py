@@ -40,7 +40,7 @@ Sortie :
 """
 
 
-def greedy(destination : (float,float), depart : Node, duree : int, temps_chgmt_pression : int, precision : int, tab_vent : dict) -> (bool, list) :
+def greedy(destination : (float,float), depart : Node, duree : int, temps_chgmt_pression : int, precision : int, tab_vent : dict) -> (bool, int, list) :
 
     # On vérifie que le noeud de départ n'a pas de parent.
     if not(depart.prev == None):
@@ -76,7 +76,7 @@ def greedy(destination : (float,float), depart : Node, duree : int, temps_chgmt_
                 if a_rencontre_destination:
                     liste = chemin(point_atteint)
                     affichage_liste(liste)
-                    return (True, liste)
+                    return (True, precision, liste)
                 # Sinon on met à jour le point le plus proche atteint.
                 if i==0:
                     closest = point_atteint
@@ -91,8 +91,10 @@ def greedy(destination : (float,float), depart : Node, duree : int, temps_chgmt_
         point = closest
 
     # Dans ce cas on a dépassé la limite temporelle d'exploration.
-    print("On a atteint la limite temporelle d'exploration.")
-    return False, []
+    print("On a atteint la limite temporelle d'exploration. Voici le meilleur chemin trouvé : ")
+    print("Distance de la destination = "+str(distance_closest))
+    liste = chemin(point)
+    return (False, distance_closest, liste)
 
 
 

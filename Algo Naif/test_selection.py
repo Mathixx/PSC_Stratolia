@@ -42,7 +42,7 @@ def test1_N_closest():
 
     # Exécution de la fonction
     temps_debut_execution = time.time()
-    a_atteint_destination, res = N_closest(destination, n, duree, temps_chgmt_pression, precision, eloignement, wind_data)
+    a_atteint_destination, distance_min, res = N_closest(destination, n, duree, temps_chgmt_pression, precision, eloignement, wind_data)
     temps_fin_execution = time.time()
     duree_execution = temps_fin_execution - temps_debut_execution
     print(f"Le code a pris {duree_execution} secondes pour s'exécuter.")
@@ -56,7 +56,7 @@ def test1_N_closest():
     
     
     # Renvoie si on a atteint la destination et le temps d'exécution.
-    return (a_atteint_destination, duree_execution)
+    return (a_atteint_destination, distance_min, duree_execution)
 
 
 # Exécution du test
@@ -68,20 +68,26 @@ def test2_N_closest():
     nombre_tests = 10
     moyenne_temps = 0
     moyenne_chemins_trouves = 0
+    moyenne_distance = 0
     for i in range(nombre_tests):
         print(str(i)+"-ième test...")
-        (a_atteint_destination, duree_execution) = test1_N_closest()
+        (a_atteint_destination, distance_min, duree_execution) = test1_N_closest()
         if a_atteint_destination:
             moyenne_chemins_trouves += 1
         moyenne_temps += duree_execution
+        moyenne_distance += distance_min/1000
     moyenne_chemins_trouves /= nombre_tests
     moyenne_temps = moyenne_temps / nombre_tests
+    moyenne_distance = moyenne_distance / nombre_tests
     print ("La fréquence de chemins trouvés est de : " + str(moyenne_chemins_trouves*100) +" %.")
+    print("La distance moyenne à la destination est de : "+str(moyenne_distance) + " km.")
     print ("La moyenne temporelle est de : " + str(moyenne_temps) +" secondes.")
 
 
 # Exécution du test
 test2_N_closest()
+
+# Résultats N=10 et 1000 tests : 28.8% de chemins trouvés / Moyenne temporelle 0.477s
 
 
 

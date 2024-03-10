@@ -39,7 +39,7 @@ Sortie :
 """
 
 
-def N_closest(destination : (float,float), depart : Node, duree : int, temps_chgmt_pression : int, precision : int, eloignement : float, tab_vent : dict) -> (bool, list) :
+def N_closest(destination : (float,float), depart : Node, duree : int, temps_chgmt_pression : int, precision : int, eloignement : float, tab_vent : dict) -> (bool, int, list) :
 
     # On vérifie que le noeud de départ n'a pas de parent.
     if not(depart.prev == None):
@@ -68,10 +68,10 @@ def N_closest(destination : (float,float), depart : Node, duree : int, temps_chg
     limite_eloignement = distance_destination(destination, depart.long, depart.lat)*eloignement
 
     # On réduit la limite d'éloignement au fur et à mesure pour qu'elle vaille un quart de la distance à la fin.
-    constante_de_retrecissement = (2.5/(10*eloignement))**(1/nombre_d_iterations)
+    constante_de_retrecissement = (1/(4*eloignement))**(1/nombre_d_iterations)
 
     # Valeur de N (modifiable si besoin)
-    N = 10000
+    N = 10
 
     # On initialise la liste des points que nous explorons.
     listeP = [depart]
@@ -85,7 +85,7 @@ def N_closest(destination : (float,float), depart : Node, duree : int, temps_chg
         # Si la liste des points à explorer est nulle on abandonne.
         if len(listeP) == 0:
             print("Aucun chemin n'a été concluant.")
-            return False, []
+            return (False, limite_eloignement, [])
         
         # On initialise la liste des points qu'on va atteindre.
         listeF = []
@@ -108,7 +108,7 @@ def N_closest(destination : (float,float), depart : Node, duree : int, temps_chg
                 if a_rencontre_destination:
                     liste = chemin(pointF)
                     affichage_liste(liste)
-                    return (True, liste)
+                    return (True, precision, liste)
                 # Sinon on ajoute le nouveau point à la liste des futurs points. 
                 listeF.append(pointF)
         # On garde que les N éléments les plus proches.
@@ -118,7 +118,8 @@ def N_closest(destination : (float,float), depart : Node, duree : int, temps_chg
 
     # Dans ce cas on a dépassé la limite temporelle d'exploration.
     print("On a atteint la limite temporelle d'exploration.")
-    return False, []
+    distance_minimale = distance_min(listeP, destination, limite_eloignement)
+    return (False, distance_minimale,[])
 
 
 
@@ -227,6 +228,19 @@ def partition(destination : (float, float), liste : list, low : int, high : int)
 
 
     
+'''
+Fonction qui renvoie la distance du point le plus proche de la destination dans une liste de points.
+Entrée : liste de points et la limite d'éloignement
+Sortie : distance du point le plus proche / limite d'éloignement si la liste est vide
+'''
+
+
+def distance_min(liste : list, destination : (float,float), limite_eloignement : int) -> int:
+    dmin = limite_eloignement
+    for x in liste:
+        d = distance_destination(destination, x.long, x.lat)
+        dmin = min(d,dmin)
+    return dmin
 
 
 
