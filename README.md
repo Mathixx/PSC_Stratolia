@@ -17,7 +17,7 @@ Notes sur les coordonnées :
     Les cases divisent la surface du globe en termes de latitude et de longitude avec une résolution de 2,5°. On peut en déduire la largeur et la longueur des cases lorsqu'on décide de projeter sur le plan de la surface terrestre. Les cases ont toutes la même longueur (au sens de la distance Nord-Sud) qui vaut environ 278km. Par contre la largeur d'une case (au sens de la distance Est-Ouest) dépend de la latitude suivant la formule : L = 278 * cos(lat).
 
     On note les positions sont la forme de deux flottants long-lat. On a donc les conversions suivantes pour obtenir les angles qui correspondent aux entiers.
-    Latitude d'une case : -90° + 2,5° * int <= lat <= -90° + 2,5° * (int+1)                   Total : 72 subdivisions.
+    Latitude d'une case : -90° + 2,5° * int <= lat <= -90° + 2,5° * (int+1)                   Total : 73 subdivisions.
     Longitude d'une case : 0° + 2,5° * int <= long <= 0° + 2,5° * (int+1)                     Total : 144 subdivisions.
     
 Note sur le coordonnées de temps : 

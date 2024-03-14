@@ -4,9 +4,6 @@
 
 
 import math
-import sys
-# For test purposes only
-import time
 from data_vent import *
 
 
@@ -155,83 +152,6 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
 ###########################
 
 
-'''
-Fonction donnant la distance (en m) entre un point donné et la destination
-
-Entrée :
-- destination (longitude, latitude)
-- position : longitude, latitude
-
-Sortie :
-- distance entre le point et la destination (en m)
-'''
-
-
-def distance_destination(destination : (float,float), long : float, lat : float) -> int:
-    # Convertir les coordonnées degrés en radians
-    dest_lat, dest_long, lat, long = map(math.radians, [destination[1], destination[0], lat, long])
-
-    # Calcul des différences de coordonnées
-    ecart_lat = lat - dest_lat
-    ecart_long = long - dest_long
-
-    # Formule de la haversine pour calculer la distance
-    a = math.sin(ecart_lat/2)**2 + math.cos(dest_lat) * math.cos(lat) * math.sin(ecart_long/2)**2
-    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
-
-    # Rayon de la Terre en mètres (environ 6371 km)
-    rayon = 6371000
-
-    # Calcul de la distance et conversion en entier
-    distance = int(rayon * c)
-
-    return distance
-
-
-
-
-'''
-Fonction auxiliaire qui détermine la case dans laquelle on se trouve en fonction de la longitude et de la latitude.
-
-Entrée :
-- position : longitude, latitude
-
-Sortie :
-- coordoonées de la case dans laquelle on se situe
-'''
-
-
-def case(longitude : float, latitude : float) -> (int, int):
-    return (int(longitude/2.5), int((latitude+90)/2.5))
-
-
-'''
-Fonction auxiliare qui récupère les données de vent
-
-Entrée :
-- position : longitude, latitude, temps, pression
-- données de vent
-
-Sortie :
-- vent sud-nord (ventU) en m.s-1
-- vent ouest-est (ventV) en m.s-1
-'''
-
-
-def ventU_ventV(long : float, lat : float, temps : int, pression : int, tab_vent: dict) -> (float,float):
-    (case_longitude, case_latitude) = case(long, lat)
-    try:
-        ventU = tab_vent['data'][temps][pression][case_longitude][case_latitude][0]
-    except IndexError as e:
-        print(f"Erreur d'index : {e}")
-        print("long =", case_longitude, "lat =", case_latitude, "temps =", temps,"pression =", pression)
-    try:
-        ventV = tab_vent['data'][temps][pression][case_longitude][case_latitude][1]
-    except IndexError as e:
-        print(f"Erreur d'index : {e}")
-        print("long =", case_longitude, "lat =", case_latitude, "temps =", temps, "pression =", pression)
-    return (ventU,ventV)
-
 
 
 '''
@@ -286,16 +206,4 @@ def maj_tempsV(long : float, lat : float, ventV : float, ventV_adj : float) -> i
 
 
 
-'''
-Fonction qui recentre les valeurs de long et lat dans les bons intervalles
-Entrée : long, lat
-Sortie : long, lat
-'''
-
-def mod(long: float, lat : float) -> (float, float):
-    if lat<-90:
-        lat = -180-lat
-    if lat>90:
-        lat = 180-lat
-    return ((long+360)%360,lat)
 
