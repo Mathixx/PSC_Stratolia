@@ -57,7 +57,7 @@ def ventU_ventV(long : float, lat : float, temps : int, pression : int, tab_vent
 
 '''
 Fonction auxiliare qui récupère les données de vent avec interpolation linéaire des données dans les huit cases autour. Les vents renvoyés sont
-tronqués à la première décimale.
+tronqués à la deuxième décimale.
 
 Entrée :
 - position : longitude, latitude, temps, pression
@@ -91,7 +91,7 @@ def ventU_ventV_interpolate(long : float, lat : float, temps : int, pression : i
                 numV += dist*ventV
                 den += dist
     
-    return math.floor(numU/den * 10) / 100, math.floor(numV/den * 10) / 10
+    return math.floor(numU/den * 100) / 100, math.floor(numV/den * 100) / 100
 
 
 
@@ -200,4 +200,3 @@ def mod_lat(lat : float) -> float:
     return lat
 
 
-print(ventU_ventV_interpolate(0.5, 3.5, 233873, 10, wind_data))
