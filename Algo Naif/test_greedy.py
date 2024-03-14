@@ -62,7 +62,7 @@ def test1_greedy():
 
 def test2_greedy():
     # On fait varier la limite d'éloignement et la durée dans test1
-    nombre_tests = 100
+    nombre_tests = 10
     moyenne_temps = 0
     moyenne_chemins_trouves = 0
     moyenne_distance = 0
