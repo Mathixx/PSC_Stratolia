@@ -37,9 +37,9 @@ Sortie :
 def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : int, precision : int, tab_vent : dict) -> (bool,Node)  :
     long = n.long
     lat = n.lat
-    temps = n.t
     pression = n.p
-    temps_init = temps[0]
+    temps_init = case_tps(n.t)
+    temps_case = n.t%21600
     temps_restant = temps_chgmt_pression
    
     # On utilise la précision pour déterminer la fréquence à laquelle on vérifie si on a atteint la destination (temps en secondes). 
@@ -58,7 +58,7 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
 
         # On vérifie si on a atteint la destination. Si oui on renvoie notre position.
         if distance_destination(destination,long,lat)<=precision:
-            return (True, Node(long, lat, (temps_init,temps[1]+temps_chgmt_pression-temps_restant), pression, n))
+            return (True, Node(long, lat, (temps_init,temps_case+temps_chgmt_pression-temps_restant), pression, n))
 
         # On récupère les données de vent (en m.s-1). Grâce aux hypothèses sur les temps on sait qu'on reste dans la même case temporelle.
         (ventU, ventV) = ventU_ventV(long, lat, temps_init, pression, tab_vent)
@@ -151,96 +151,14 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
     # On s'assure que les valeurs de longitude et latitude soient dans le bon intervalle.
     (long, lat) = mod(long, lat)
         
-    # On renvoie notre position finale sachant qu'on a pas rencontré la destination. On vérifie si on a atteint une nouvelle 
-    # fenêtre de six heures.
-    if temps[1]+temps_chgmt_pression>=21600:
-        return (False, Node(long, lat, (temps_init+1, 0), pression, n))
-    return (False, Node(long, lat, (temps_init, temps[1]+temps_chgmt_pression), pression, n))
+    # On renvoie notre position finale sachant qu'on a pas rencontré la destination. 
+    return (False, Node(long, lat, n.t+temps_chgmt_pression, pression, n))
     
 
 
 ###########################
 ## FONCTIONS AUXILIAIRES ##
 ###########################
-
-
-'''
-Fonction donnant la distance (en m) entre un point donné et la destination
-
-Entrée :
-- destination (longitude, latitude)
-- position : longitude, latitude
-
-Sortie :
-- distance entre le point et la destination (en m)
-'''
-
-
-def distance_destination(destination : (float,float), long : float, lat : float) -> int:
-    # Convertir les coordonnées degrés en radians
-    dest_lat, dest_long, lat, long = map(math.radians, [destination[1], destination[0], lat, long])
-
-    # Calcul des différences de coordonnées
-    ecart_lat = lat - dest_lat
-    ecart_long = long - dest_long
-
-    # Formule de la haversine pour calculer la distance
-    a = math.sin(ecart_lat/2)**2 + math.cos(dest_lat) * math.cos(lat) * math.sin(ecart_long/2)**2
-    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
-
-    # Rayon de la Terre en mètres (environ 6371 km)
-    rayon = 6371000
-
-    # Calcul de la distance et conversion en entier
-    distance = int(rayon * c)
-
-    return distance
-
-
-
-
-'''
-Fonction auxiliaire qui détermine la case dans laquelle on se trouve en fonction de la longitude et de la latitude.
-
-Entrée :
-- position : longitude, latitude
-
-Sortie :
-- coordoonées de la case dans laquelle on se situe
-'''
-
-
-def case(longitude : float, latitude : float) -> (int, int):
-    return (int(longitude/2.5), int((latitude+90)/2.5))
-
-
-'''
-Fonction auxiliare qui récupère les données de vent
-
-Entrée :
-- position : longitude, latitude, temps, pression
-- données de vent
-
-Sortie :
-- vent sud-nord (ventU) en m.s-1
-- vent ouest-est (ventV) en m.s-1
-'''
-
-
-def ventU_ventV(long : float, lat : float, temps : int, pression : int, tab_vent: dict) -> (float,float):
-    (case_longitude, case_latitude) = case(long, lat)
-    try:
-        ventU = tab_vent['data'][temps][pression][case_longitude][case_latitude][0]
-    except IndexError as e:
-        print(f"Erreur d'index : {e}")
-        print("long =", case_longitude, "lat =", case_latitude, "temps =", temps,"pression =", pression)
-    try:
-        ventV = tab_vent['data'][temps][pression][case_longitude][case_latitude][1]
-    except IndexError as e:
-        print(f"Erreur d'index : {e}")
-        print("long =", case_longitude, "lat =", case_latitude, "temps =", temps, "pression =", pression)
-    return (ventU,ventV)
-
 
 
 '''
@@ -326,12 +244,11 @@ def test_parcours_a_Z():
     destination_long = float(input("Veuillez entrer la longitude de la destination : "))
     destination_lat = float(input("Veuillez entrer la latitude de la destination : "))
     temps_I = int(input("Veuillez entrer le temps de départ du parcours : "))
-    temps_sec = int(input("Veuillez entrer le temps de départ du parcours au sein de la case temporelle : "))
     pression = int(input("Veuillez entrer la pression (entier compris entre 0 et 16 inclus) : "))
 
     # Paramètres de test
     destination = (destination_long, destination_lat)
-    n = Node(longitude=longInit, latitude=latInit, temps=(temps_I, temps_sec), pression=pression, prev=None)
+    n = Node(longitude=longInit, latitude=latInit, temps=temps_I*21600, pression=pression, prev=None)
     temps_chgmt_pression = 6*3600  # Remplacez par la durée du changement de pression souhaitée
     precision = 1000  # Précision de la destination
 

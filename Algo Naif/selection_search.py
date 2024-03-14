@@ -25,7 +25,7 @@ Programme qui détermine si on peut aller d'un point à un autre et qui renvoie 
 Entrée :
 - position de la destination : longitude, latitude
 - position intiale : noeud
-Attention : on commence toujours sur un temps rond (au sens des données de vent ie temps[1] = 0)
+Attention : on commence toujours sur un temps rond (au sens des données de vent ie multiple de six heures)
 - durée de l'exploration (en heures)
 Attention : on impose que la durée d'exploration soit un multiple de 6 heures !
 - fréquence temporelle des changements de niveau de pression (en secondes)
@@ -47,9 +47,9 @@ def N_closest(destination : (float,float), depart : Node, duree : int, temps_chg
         
     # On vérifie qu'on commence sur un temps 'rond'.
     if not(depart.t[1] == 0):
-        raise ValueError("On doit commencer sur un temps 'rond', ie temps[1]=0.")
+        raise ValueError("On doit commencer sur un temps 'rond', ie multiple de six heures.")
     
-    temps_initial = depart.t[0]
+    temps_initial = case_tps(depart.t)
 
     # On vérifie que la durée d'exploration est un multiple de six heures.
     if not(duree%6 == 0):

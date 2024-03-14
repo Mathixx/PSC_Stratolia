@@ -28,7 +28,7 @@ with open("objet_wind_data_2020.pickle", "rb") as f:
 Fonction auxiliare qui récupère les données de vent
 
 Entrée :
-- position : longitude, latitude, temps (case de temps), pression
+- position : longitude, latitude, temps, pression
 - données de vent
 
 Sortie :
@@ -39,16 +39,17 @@ Sortie :
 
 def ventU_ventV(long : float, lat : float, temps : int, pression : int, tab_vent: dict) -> (float,float):
     (case_longitude, case_latitude) = case(long, lat)
+    case_temps = case_tps(temps)
     try:
-        ventU = tab_vent['data'][temps][pression][case_longitude][case_latitude][0]
+        ventU = tab_vent['data'][case_temps][pression][case_longitude][case_latitude][0]
     except IndexError as e:
         print(f"Erreur d'index : {e}")
-        print("long =", case_longitude, "lat =", case_latitude, "temps =", temps,"pression =", pression)
+        print("long =", case_longitude, "lat =", case_latitude, "case_temps =", case_temps,"pression =", pression)
     try:
-        ventV = tab_vent['data'][temps][pression][case_longitude][case_latitude][1]
+        ventV = tab_vent['data'][case_temps][pression][case_longitude][case_latitude][1]
     except IndexError as e:
         print(f"Erreur d'index : {e}")
-        print("long =", case_longitude, "lat =", case_latitude, "temps =", temps, "pression =", pression)
+        print("long =", case_longitude, "lat =", case_latitude, "case_temps =", case_temps, "pression =", pression)
     return (ventU,ventV)
 
 
@@ -59,7 +60,7 @@ Fonction auxiliare qui récupère les données de vent avec interpolation linéa
 tronqués à la première décimale.
 
 Entrée :
-- position : longitude, latitude, temps (ici temps est le temps en seconde depuis le début de l'année !!), pression
+- position : longitude, latitude, temps, pression
 - données de vent
 
 Sortie :

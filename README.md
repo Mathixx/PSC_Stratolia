@@ -21,8 +21,7 @@ Notes sur les coordonnées :
     Longitude d'une case : 0° + 2,5° * int <= long <= 0° + 2,5° * (int+1)                     Total : 144 subdivisions.
     
 Note sur le coordonnées de temps : 
-    On décrit le temps avec un couple (int, int). La première coordonnée décrit notre position dans le tableau wind_data et la deuxième le nombre de secondes écoulées au sein de cette case (qui dure six heures pour rappel).
-
+    On décrit le temps avec un entier int qui donne le nombre de secondes ecoulées depuis le début de l'année.
 
 
 Historique modifications : 

@@ -34,9 +34,9 @@ Sortie :
 def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : int, precision : int, tab_vent : dict) -> (bool,Node)  :
     long = n.long
     lat = n.lat
-    temps = n.t
     pression = n.p
-    temps_init = temps[0]
+    temps_init = case_tps(n.t)
+    temps_case = n.t%21600
     temps_restant = temps_chgmt_pression
    
     # On utilise la précision pour déterminer la fréquence à laquelle on vérifie si on a atteint la destination (temps en secondes). 
@@ -54,7 +54,7 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
 
         # On vérifie si on a atteint la destination. Si oui on renvoie notre position.
         if distance_destination(destination,long,lat)<=precision:
-            return (True, Node(long, lat, (temps_init,temps[1]+temps_chgmt_pression-temps_restant), pression, n))
+            return (True, Node(long, lat, (temps_init,temps_case+temps_chgmt_pression-temps_restant), pression, n))
 
         # On récupère les données de vent (en m.s-1). Grâce aux hypothèses sur les temps on sait qu'on reste dans la même case temporelle.
         (ventU, ventV) = ventU_ventV(long, lat, temps_init, pression, tab_vent)
@@ -138,12 +138,10 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
     # On s'assure que les valeurs de longitude et latitude soient dans le bon intervalle.
     (long, lat) = mod(long, lat)
         
-    # On renvoie notre position finale sachant qu'on a pas rencontré la destination. On vérifie si on a atteint une nouvelle 
-    # fenêtre de six heures.
-    if temps[1]+temps_chgmt_pression>=21600:
-        return (False, Node(long, lat, (temps_init+1, 0), pression, n))
-    return (False, Node(long, lat, (temps_init, temps[1]+temps_chgmt_pression), pression, n))
+    # On renvoie notre position finale sachant qu'on a pas rencontré la destination. 
+    return (False, Node(long, lat, n.t+temps_chgmt_pression, pression, n))
     
+
 
 
 ###########################
