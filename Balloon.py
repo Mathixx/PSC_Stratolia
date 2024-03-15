@@ -127,7 +127,10 @@ class Balloon:
         tabVent.append(ventU_ventV_interpolate(long, lat, temps, p, tab_vent))
         coords = coord_list(long, lat, temps, p)
         for i in range(len(coords)):
-            tabVent.append(ventU_ventV_interpolate(coords[i][0], coords[i][1], coords[i][2], coords[i][3], tab_vent))
+            if coords[i][0] :
+                tabVent.append(ventU_ventV_interpolate(coords[i][1][0], coords[i][1][1], coords[i][1][2], coords[i][1][3], tab_vent))
+            else :
+                tabVent.append((0,0))
         return  tabVent
 
     def exact_winds(self, tab_vent: dict):
@@ -158,30 +161,34 @@ def coord_list(long, lat, temps, p) :
     cote = 10000
     for i in range(2):
         if ((p + 2*i-1) >= 0 and (p + 2*i-1) <= 16) :
-            res.append([long, lat, temps+131, p + 2*i-1])
+            res.append([True, [long, lat, temps+131, p + 2*i-1]])
+        else :
+            res.append([False, []])
     for i in range(2):
         if ((p + 2*(2*i-1)) >= 0 and (p + 2*(2*i-1)) <= 16) :
-            res.append([long, lat, temps+2*131, p + 2*(2*i-1)])
+            res.append([True, [long, lat, temps+2*131, p + 2*(2*i-1)]])
+        else :
+            res.append([False, []])
     
     #Ajout des logitudes modifiées
     r_ajus = 1000 * 6371 * math.cos(lat*math.pi/180)
     delta_long = 360 * cote/(2*math.pi*r_ajus)
     for i in range(2):
         long_ajus = long +(2*i-1)*delta_long
-        res.append([mod_long(long_ajus), lat, temps+131, p])
+        res.append([True,[mod_long(long_ajus), lat, temps+131, p]])
     for i in range(2):
         long_ajus = long +(2*i-1)*2*delta_long
-        res.append([mod_long(long_ajus), lat, temps+2*131, p])
+        res.append([True,[mod_long(long_ajus), lat, temps+2*131, p]])
     
     #Ajout des latitudes modifiées
     r_ajus = 1000 * 6371
     delta_lat = 360 * cote/(2*math.pi*r_ajus)
     for i in range(2):
         lat_ajus = lat +(2*i-1)*delta_lat
-        res.append([long, mod_lat(lat_ajus), temps+131, p])
+        res.append([True,[long, mod_lat(lat_ajus), temps+131, p]])
     for i in range(2):
         lat_ajus = lat +(2*i-1)*2*delta_lat
-        res.append([long, mod_lat(lat_ajus), temps+2*131, p])
+        res.append([True,[long, mod_lat(lat_ajus), temps+2*131, p]])
     return res
 
 
@@ -189,7 +196,8 @@ def test() :
     long, lat, temps, p = 2.2118199376859393,48.710240264856644, 0, 4
     coords = coord_list(long, lat, temps, p)    
     for i in range(len(coords)):
-        print(distance_destination((coords[i][0], coords[i][1]), long, lat))
+        if coords[i][0] :
+            print(coords[i][1])
 
 #test()
         
@@ -197,7 +205,7 @@ def test() :
 def testClass() :
     ballon : Balloon
     #print(type(ballon))
-    long, lat, temps, p = 2.2118199376859393,48.710240264856644, 1000, 4
+    long, lat, temps, p = 2.2118199376859393,48.710240264856644, 1000, 1
     date = dt.datetime(2020, 1, 1) + dt.timedelta(seconds=temps)
 
     ballon = Balloon(long, lat, date, p, None, 1000)
@@ -209,8 +217,8 @@ def testClass() :
     """
     print(ballon.exact_winds(wind_data))
     print("voici le tableau des vents")
-    print(ballon.get_winds(wind_data))
+    print(len(ballon.get_winds(wind_data)))
 
 
 
-#testClass()
+testClass()
