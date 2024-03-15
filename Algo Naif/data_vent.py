@@ -177,7 +177,7 @@ def case_lat(latitude : float) -> int:
     return int((latitude+90)/2.5)
 
 def case_tps(temps : int) -> int:
-    return temps//21600
+    return int(temps//21600)
 
 
 '''
