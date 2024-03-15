@@ -200,3 +200,4 @@ def mod_lat(lat : float) -> float:
     return lat
 
 
+print(ventU_ventV(2,45,1818000,0,wind_data))

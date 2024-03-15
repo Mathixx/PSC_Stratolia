@@ -7,6 +7,7 @@ import math
 import sys
 
 from parcours import parcours_a_Z
+from parcours_interpolate import parcours_a_Z_interpolate
 from Node import *
 from parcours import distance_destination
 
@@ -47,10 +48,10 @@ def greedy(destination : (float,float), depart : Node, duree : int, temps_chgmt_
         raise ValueError("Le point de départ ne doit pas avoir de parent.")
         
     # On vérifie qu'on commence sur un temps 'rond'.
-    if not(depart.t[1] == 0):
+    if not(depart.t%21600 == 0):
         raise ValueError("On doit commencer sur un temps 'rond', ie mutliple de six heures.")
     
-    temps_initial = case_temps(depart.t)
+    temps_initial = case_tps(depart.t)
 
     # On vérifie que la durée d'exploration est un multiple de six heures.
     if not(duree%6 == 0):
@@ -92,7 +93,7 @@ def greedy(destination : (float,float), depart : Node, duree : int, temps_chgmt_
 
     # Dans ce cas on a dépassé la limite temporelle d'exploration.
     print("On a atteint la limite temporelle d'exploration. Voici le meilleur chemin trouvé : ")
-    print("Distance de la destination = "+str(distance_closest))
+    print("Distance de la destination = "+str(distance_closest//1000))
     liste = chemin(point)
     return (False, distance_closest, liste)
 

@@ -46,7 +46,7 @@ def N_closest(destination : (float,float), depart : Node, duree : int, temps_chg
         raise ValueError("Le point de départ ne doit pas avoir de parent.")
         
     # On vérifie qu'on commence sur un temps 'rond'.
-    if not(depart.t[1] == 0):
+    if not(depart.t%21600 == 0):
         raise ValueError("On doit commencer sur un temps 'rond', ie multiple de six heures.")
     
     temps_initial = case_tps(depart.t)

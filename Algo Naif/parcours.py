@@ -54,7 +54,7 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
 
         # On vérifie si on a atteint la destination. Si oui on renvoie notre position.
         if distance_destination(destination,long,lat)<=precision:
-            return (True, Node(long, lat, (temps_init,temps_case+temps_chgmt_pression-temps_restant), pression, n))
+            return (True, Node(long, lat, n.t+temps_chgmt_pression-temps_restant, pression, n))
 
         # On récupère les données de vent (en m.s-1). Grâce aux hypothèses sur les temps on sait qu'on reste dans la même case temporelle.
         (ventU, ventV) = ventU_ventV(long, lat, temps_init, pression, tab_vent)
