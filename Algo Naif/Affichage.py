@@ -17,7 +17,7 @@ def animation(coords,dest,echelle):
       un tuple dest pour la destination (long,lat),
       une echelle pour la carte (en long/lat) -> Prendre 1 de base'''
       
-    X, Y, Z, H, S = zip(*coords)
+    X, Y, Z, S = zip(*coords)
     X = [(x-360 if x>180 else x ) for x in X]
     longitude_min, longitude_max = min(X)-echelle, max(X)+echelle # Min et Max Longitudes
     latitude_min, latitude_max = min(Y)-echelle, max(Y)+echelle  # Min et Max Latitudes
@@ -85,7 +85,7 @@ def animation(coords,dest,echelle):
 
         
         #Calcul et affiche de l'heure
-        heure_actuelle = datetime(2020, 1, 1, 0, 0, 0)+timedelta(hours = 6*H[i],seconds = S[i])
+        heure_actuelle = datetime(2020, 1, 1, 0, 0, 0)+timedelta(seconds = S[i])
         ax2.text(0.5, 1.05, heure_actuelle.strftime('%Y-%m-%d %H:%M:%S'), 
                 ha='center', va='center', transform=ax2.transAxes, fontsize = 14)
         
