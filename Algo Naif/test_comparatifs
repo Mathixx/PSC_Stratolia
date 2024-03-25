@@ -1,0 +1,24 @@
+from greedy import *
+from selection_search import *
+from villes import *
+
+def test():
+    # On va tester les deux algorithmes sur les mêmes données.
+    # On va choisir deux villes et juste faire changer le temps de départ.
+    depart = Ville("Paris", 2.3522, 48.8566)
+    dest = Ville("Marseille", 5.3698, 43.2965)
+    duree = 96
+    temps_chgmt_pression = 3*3600
+    precision = 50000
+    tab_reussi_greedy = 200*[0]
+    tab_reussi_selection = 200*[0]
+    for i in range(0,200):
+        tab_reussi_greedy[i] = greedy((dest.long, dest.lat), Node(depart.long, depart.lat, i*10*21600, pression=0, prev=None), duree, temps_chgmt_pression, precision, wind_data)[0]
+        tab_reussi_selection[i] = N_closest((dest.long, dest.lat), Node(depart.long, depart.lat, i*10*21600, pression=0, prev=None), duree, temps_chgmt_pression, precision, 1.2, wind_data)[0]
+    for i in range(0,200):
+        print("Temps départ = "+str(i*10)+ " : "+str(tab_reussi_greedy[i])+ " | "+str(tab_reussi_selection[i]))
+    #print(greedy((dest.long, dest.lat), Node(depart.long, depart.lat, 234*21600, pression=0, prev=None), duree, temps_chgmt_pression, precision, wind_data)[0])
+    #print(N_closest((dest.long, dest.lat), Node(depart.long, depart.lat, 234*21600, pression=0, prev=None), duree, temps_chgmt_pression, precision, 1.2, wind_data)[0])
+
+test()
+    

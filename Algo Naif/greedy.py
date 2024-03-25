@@ -9,8 +9,6 @@ import sys
 from parcours import parcours_a_Z
 from parcours_interpolate import parcours_a_Z_interpolate
 from Node import *
-from parcours import distance_destination
-
 from data_vent import *
 
 
@@ -22,7 +20,7 @@ from data_vent import *
 
 """
 Programme qui détermine si on peut aller d'un point à un autre et qui renvoie le chemin dans le cas échéant.
-Approche greedy : on garde à chaque étpe temporelle le point le plus proche de la destination.
+Approche greedy : on garde à chaque étape temporelle le point le plus proche de la destination.
 
 Entrée :
 - position de la destination : longitude, latitude
@@ -66,7 +64,7 @@ def greedy(destination : (float,float), depart : Node, duree : int, temps_chgmt_
     # On initialise la liste des points que nous explorons.
     point = depart
   
-    for count in range(nombre_d_iterations+1) : 
+    for count in range(nombre_d_iterations) : 
 
         # On explore à partir du point actuel.
         for i in range(0, 17) :
@@ -81,7 +79,7 @@ def greedy(destination : (float,float), depart : Node, duree : int, temps_chgmt_
                 # Sinon on met à jour le point le plus proche atteint.
                 if i==0:
                     closest = point_atteint
-                    distance_closest = distance_destination(destination, closest.long, closest.lat)
+                    distance_closest = distance_destination(destination, point_atteint.long, point_atteint.lat)
                 else:
                     distance_atteint = distance_destination(destination, point_atteint.long, point_atteint.lat)
                     if distance_atteint < distance_closest:
@@ -90,10 +88,11 @@ def greedy(destination : (float,float), depart : Node, duree : int, temps_chgmt_
         
         # On met à jour le nouveau point d'exploration
         point = closest
+        print(closest)
 
     # Dans ce cas on a dépassé la limite temporelle d'exploration.
     print("On a atteint la limite temporelle d'exploration. Voici le meilleur chemin trouvé : ")
-    print("Distance de la destination = "+str(distance_closest//1000))
+    print("Distance de la destination = "+str(distance_closest//1000)+ " km.")
     liste = chemin(point)
     return (False, distance_closest, liste)
 

@@ -14,7 +14,7 @@ import random
 
 
 with open("objet_wind_data_2020.pickle", "rb") as f:
-    wind_data = pickle.load(f)
+   wind_data = pickle.load(f)
 
 
 
@@ -171,10 +171,10 @@ def case(longitude : float, latitude : float) -> (int, int):
     return (case_long(longitude), case_lat(latitude))
 
 def case_long(longitude : float) -> int:
-    return int(longitude/2.5)
+    return int(longitude/(2.5))
 
 def case_lat(latitude : float) -> int:
-    return int((latitude+90)/2.5)
+    return int((latitude+90)/(2.5))
 
 def case_tps(temps : int) -> int:
     return temps//21600
@@ -200,4 +200,5 @@ def mod_lat(lat : float) -> float:
     return lat
 
 
-print(ventU_ventV(2,45,1818000,0,wind_data))
+
+

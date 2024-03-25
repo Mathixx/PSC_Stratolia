@@ -68,16 +68,16 @@ def N_closest(destination : (float,float), depart : Node, duree : int, temps_chg
     limite_eloignement = distance_destination(destination, depart.long, depart.lat)*eloignement
 
     # On réduit la limite d'éloignement au fur et à mesure pour qu'elle vaille un quart de la distance à la fin.
-    constante_de_retrecissement = (1/(4*eloignement))**(1/nombre_d_iterations)
+    constante_de_retrecissement = (1/(10*eloignement))**(1/nombre_d_iterations)
 
     # Valeur de N (modifiable si besoin)
-    N = 10
+    N = 100
 
     # On initialise la liste des points que nous explorons.
     listeP = [depart]
   
 
-    for count in range(nombre_d_iterations+1) : 
+    for count in range(nombre_d_iterations) : 
 
         # On veut afficher dans quelle boucle la recherche est en cours.
         print("Recherche dans la boucle "+str(count)+" ...")
@@ -95,8 +95,8 @@ def N_closest(destination : (float,float), depart : Node, duree : int, temps_chg
             distance = distance_destination(destination, point.long, point.lat)
 
             # Premier cas : si on est trop loin de la destination on abandonne l'exploration à partir de ce point.
-            if distance > limite_eloignement :
-                continue
+            #if distance > limite_eloignement :
+               # continue
 
             # Deuxième cas : on continue l'exploration. On appelle parcours à Z pour tous les niveaux de pression
             # correspondant à notre point.
@@ -113,6 +113,7 @@ def N_closest(destination : (float,float), depart : Node, duree : int, temps_chg
                 listeF.append(pointF)
         # On garde que les N éléments les plus proches.
         listeP = N_plus_proches(destination, listeF, N)
+        
         
         limite_eloignement *= constante_de_retrecissement
 

@@ -35,8 +35,8 @@ def test1_N_closest():
     # Paramètres de test
     destination = (dest.long, dest.lat)
     n = Node(depart.long, depart.lat, temps_I*21600, pression=pression, prev=None)
-    temps_chgmt_pression = 3600  # Remplacez par la durée du changement de pression souhaitée
-    precision = 5000 # Précision de la destination
+    temps_chgmt_pression = 2*3600  # Remplacez par la durée du changement de pression souhaitée
+    precision = 20000 # Précision de la destination
     eloignement = 1.2 # Ajuster si besoin 
 
     # Exécution de la fonction
