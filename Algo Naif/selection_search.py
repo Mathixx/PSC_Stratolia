@@ -71,7 +71,7 @@ def N_closest(destination : (float,float), depart : Node, duree : int, temps_chg
     constante_de_retrecissement = (1/(10*eloignement))**(1/nombre_d_iterations)
 
     # Valeur de N (modifiable si besoin)
-    N = 100
+    N = 10
 
     # On initialise la liste des points que nous explorons.
     listeP = [depart]

@@ -58,7 +58,7 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
             return (True, Node(long, lat, temps+temps_chgmt_pression-temps_restant, pression, n))
 
         # On récupère les données de vent (en m.s-1). Grâce aux hypothèses sur les temps on sait qu'on reste dans la même case temporelle.
-        (ventU, ventV) = ventU_ventV(long, lat, temps_init, pression, tab_vent)
+        (ventU, ventV) = ventU_ventV(long, lat, temps+temps_chgmt_pression-temps_restant, pression, tab_vent)
 
         # On calcule le temps nécessaire pour changer de case.
         tempsU, tempsV = tempsU_tempsV(long, lat, ventU, ventV)
@@ -73,7 +73,7 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
         if long%2.5 == 0:
             # On regarde les données de vent dans la case adjacente.
             case_longitude_adj = case_longitude -1 if case_longitude>0 else 143
-            (ventU_adj, ventV_adj) = ventU_ventV(case_longitude_adj, case_latitude, temps_init, pression, tab_vent)
+            (ventU_adj, ventV_adj) = ventU_ventV(case_longitude_adj, case_latitude, temps+temps_chgmt_pression-temps_restant, pression, tab_vent)
             if (ventV_adj >= 0 and ventV <= 0) or ventV_adj*ventV == 0:
                 # La longitude finale sera celle de la limite de case. On se ramène au cas général en ajustant ventV à 0.
                 ventV = 0
@@ -89,7 +89,7 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
         if lat%2.5 == 0:
             # On regarde les données de vent dans la case adjacente.
             case_latitude_adj = case_latitude -1 if case_latitude>0 else 0
-            (ventU_adj, ventV_adj) = ventU_ventV(case_longitude, case_latitude_adj, temps_init, pression, tab_vent)
+            (ventU_adj, ventV_adj) = ventU_ventV(case_longitude, case_latitude_adj, temps+temps_chgmt_pression-temps_restant, pression, tab_vent)
             if (ventU_adj >=0 and ventU <= 0) or ventU_adj*ventU == 0:
                 # La latitude finale sera celle de la limite de case. On se ramène au cas général en ajustant ventU à 0.
                 ventU = 0
