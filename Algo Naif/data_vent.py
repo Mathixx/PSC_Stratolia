@@ -76,7 +76,7 @@ def ventU_ventV_interpolate(long : float, lat : float, temps : int, pression : i
 
     LG = [case_longitude*2.5, case_long(mod_long(long + 2.5))*2.5]
     LT = [-90+case_latitude*2.5, -90+case_lat(mod_lat(lat + 2.5))*2.5]
-    TPS = [case_temps, case_temps+1]
+    TPS = [temps, temps+21600]
 
     numU = 0
     numV = 0

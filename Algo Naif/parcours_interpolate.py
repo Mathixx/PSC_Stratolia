@@ -35,8 +35,7 @@ def parcours_a_Z_interpolate(destination : (float,float), n : Node, temps_chgmt_
     long = n.long
     lat = n.lat
     pression = n.p
-    temps_init = case_tps(n.t)
-    temps_case = n.t%21600
+    temps = n.t
     temps_restant = temps_chgmt_pression
 
     # On utilise la précision pour déterminer la fréquence à laquelle on vérifie si on a atteint la destination (temps en secondes). 
@@ -54,10 +53,10 @@ def parcours_a_Z_interpolate(destination : (float,float), n : Node, temps_chgmt_
 
         # On vérifie si on a atteint la destination. Si oui on renvoie notre position.
         if distance_destination(destination,long,lat) <= precision:
-            return (True, Node(long, lat, temps_case+temps_chgmt_pression-temps_restant, pression, n))
+            return (True, Node(long, lat, temps+temps_chgmt_pression-temps_restant, pression, n))
         
         # On récupère les données de vent (en m.s-1). Grâce aux hypothèses sur les temps on sait qu'on reste dans la même case temporelle.
-        (ventU, ventV) = ventU_ventV_interpolate(long, lat, temps_case+temps_chgmt_pression-temps_restant, pression, tab_vent)
+        (ventU, ventV) = ventU_ventV_interpolate(long, lat, temps+temps_chgmt_pression-temps_restant, pression, tab_vent)
 
         # On met à jour les valeurs de longitude et latitude.
         temps_evolution = min(temps_restant, temps_test_arrivee)
@@ -69,7 +68,7 @@ def parcours_a_Z_interpolate(destination : (float,float), n : Node, temps_chgmt_
     (long, lat) = mod(long, lat)
         
     # On renvoie notre position finale sachant qu'on a pas rencontré la destination. 
-    return (False, Node(long, lat, n.t+temps_chgmt_pression, pression, n))
+    return (False, Node(long, lat, temps+temps_chgmt_pression, pression, n))
 
 
 

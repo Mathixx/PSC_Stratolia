@@ -7,6 +7,7 @@ import math
 import sys
 
 from parcours import parcours_a_Z
+from parcours_interpolate import parcours_a_Z_interpolate
 from Node import *
 from parcours import distance_destination
 
@@ -71,7 +72,7 @@ def N_closest(destination : (float,float), depart : Node, duree : int, temps_chg
     constante_de_retrecissement = (1/(10*eloignement))**(1/nombre_d_iterations)
 
     # Valeur de N (modifiable si besoin)
-    N = 10
+    N = 25
 
     # On initialise la liste des points que nous explorons.
     listeP = [depart]
