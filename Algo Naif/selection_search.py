@@ -86,7 +86,7 @@ def N_closest(destination : (float,float), depart : Node, duree : int, temps_chg
         # Si la liste des points à explorer est nulle on abandonne.
         if len(listeP) == 0:
             print("Aucun chemin n'a été concluant.")
-            return (False, limite_eloignement, [])
+            return (False, limite_eloignement, [pointF])
         
         # On initialise la liste des points qu'on va atteindre.
         listeF = []
@@ -121,7 +121,7 @@ def N_closest(destination : (float,float), depart : Node, duree : int, temps_chg
     # Dans ce cas on a dépassé la limite temporelle d'exploration.
     print("On a atteint la limite temporelle d'exploration.")
     distance_minimale = distance_min(listeP, destination, limite_eloignement)
-    return (False, distance_minimale,[])
+    return (False, distance_minimale,[listeP[0]])
 
 
 

@@ -27,6 +27,11 @@ def test():
 
         resS= N_closest((dest.long, dest.lat), Node(depart.long, depart.lat, i*10*21600, pression=0, prev=None), duree, temps_chgmt_pression, precision, 1.2, wind_data)
         tab_reussi_selection[i] = resS[0]
+        try:
+            lastNodeS = resS[2][len(resS[2])-1]
+        except IndexError as e:
+            print(f"Erreur d'index : {e}")
+            print("len(resS) =", len(resS[2]))
         lastNodeS = resS[2][len(resS[2])-1]
         tab_affichage_select.append([lastNodeS.long, lastNodeS.lat, lastNodeS.p, lastNodeS.t])
     # On compte le nombre de paires true, true; true, false; false, true; false, false
