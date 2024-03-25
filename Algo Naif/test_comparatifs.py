@@ -8,10 +8,10 @@ def test():
     depart = Ville("Paris", 2.3522, 48.8566)
     dest = Ville("Marseille", 5.3698, 43.2965)
     duree = 180
-    temps_chgmt_pression = 3*3600
+    temps_chgmt_pression = 3600
     precision = 10000
-    tab_reussi_greedy = 25*[0]
-    tab_reussi_selection = 25*[0]
+    tab_reussi_greedy = 50*[0]
+    tab_reussi_selection = 50*[0]
     for i in range(0,25):
         tab_reussi_greedy[i] = greedy((dest.long, dest.lat), Node(depart.long, depart.lat, i*10*21600, pression=0, prev=None), duree, temps_chgmt_pression, precision, wind_data)[0]
         tab_reussi_selection[i] = N_closest((dest.long, dest.lat), Node(depart.long, depart.lat, i*10*21600, pression=0, prev=None), duree, temps_chgmt_pression, precision, 1.2, wind_data)[0]

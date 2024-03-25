@@ -72,7 +72,7 @@ def N_closest(destination : (float,float), depart : Node, duree : int, temps_chg
     constante_de_retrecissement = (1/(10*eloignement))**(1/nombre_d_iterations)
 
     # Valeur de N (modifiable si besoin)
-    N = 25
+    N = 100
 
     # On initialise la liste des points que nous explorons.
     listeP = [depart]
@@ -96,8 +96,8 @@ def N_closest(destination : (float,float), depart : Node, duree : int, temps_chg
             distance = distance_destination(destination, point.long, point.lat)
 
             # Premier cas : si on est trop loin de la destination on abandonne l'exploration à partir de ce point.
-            #if distance > limite_eloignement :
-               # continue
+            if distance > limite_eloignement :
+               continue
 
             # Deuxième cas : on continue l'exploration. On appelle parcours à Z pour tous les niveaux de pression
             # correspondant à notre point.
