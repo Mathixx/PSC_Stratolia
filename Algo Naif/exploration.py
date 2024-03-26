@@ -64,7 +64,7 @@ def wide_search(destination : (float,float), depart : Node, duree : int, temps_c
     nombre_d_iterations = (duree//6)*(21600//temps_chgmt_pression)
 
     # On intialise l'écart minimal entre deux chemins explorés (en m)
-    ecart_min = precision*50
+    ecart_min = 100000
 
     # On initialise la liste des points que nous explorons.
     listeP = [depart]
@@ -183,7 +183,7 @@ def convPression_altitude(pressionData : int) -> int :
 
 
 '''
-
+À écrire
 '''
 
 
@@ -191,8 +191,10 @@ def selection_opti(destination : (float,float), liste : list, ecart_min : int) -
     liste.sort(key = lambda x : distance_destination(destination, x.long, x.lat))
     res = []
     for x in liste:
+        if len(res) == 1000:
+            break
         # On ajoute x dans la liste seulement si la distance entre x et tous les éléments de res est supérieure à ecart_min
-        if all(distance_destination((y.long,y.lat), x.long, x.lat) > ecart_min for y in res):
+        if all(distance_destination((y.long,y.lat), x.long, x.lat) > distance_destination(destination, y.long, y.lat)/30 for y in res):
             res.append(x)
     return res
 
@@ -215,7 +217,7 @@ def test_wide():
     #temps_I = int(input("Veuillez entrer le temps de départ du parcours : "))
     dep = Ville("Paris", 2.3522, 48.8566)
     dest = Ville("Marseille", 5.3698, 43.2965)
-    depart = Node(dep.long, dep.lat, 0, 0, None)
+    depart = Node(dep.long, dep.lat, 20*21600, 0, None)
     destination = (dest.long, dest.lat)
     duree = 120
     temps_chgmt_pression = 6*3600
