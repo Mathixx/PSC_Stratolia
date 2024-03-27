@@ -27,7 +27,6 @@ def test1_N_closest():
     print("Destination : "+str(dest))
     temps_I = random.randint(0, 100)
     print("Temps de départ : "+ str(temps_I))
-    temps_sec = 0     # À modifier si besoin
     pression =  random.randint(0,16)
     print("Pression de départ : "+str(pression))
     # duree = int(input("Veuillez entrer la durée d'exploration (nombre d'heures divisible par 6) : "))
@@ -35,9 +34,9 @@ def test1_N_closest():
     
     # Paramètres de test
     destination = (dest.long, dest.lat)
-    n = Node(depart.long, depart.lat, temps=(temps_I, temps_sec), pression=pression, prev=None)
-    temps_chgmt_pression = 3600  # Remplacez par la durée du changement de pression souhaitée
-    precision = 5000 # Précision de la destination
+    n = Node(depart.long, depart.lat, temps_I*21600, pression=pression, prev=None)
+    temps_chgmt_pression = 2*3600  # Remplacez par la durée du changement de pression souhaitée
+    precision = 20000 # Précision de la destination
     eloignement = 1.2 # Ajuster si besoin 
 
     # Exécution de la fonction
@@ -47,10 +46,10 @@ def test1_N_closest():
     duree_execution = temps_fin_execution - temps_debut_execution
     print(f"Le code a pris {duree_execution} secondes pour s'exécuter.")
 
-    coords = []
-    for i in range(len(res)):
-        n = res[i]
-        coords.append((n.long, n.lat, convPression_altitude(n.p), n.t[0], n.t[1]))
+    #coords = []
+    #for i in range(len(res)):
+    #    n = res[i]
+    #    coords.append((n.long, n.lat, convPression_altitude(n.p), n.t[0], n.t[1]))
     #print(coords)
     #animation(coords, destination, 1)
     
@@ -65,7 +64,7 @@ def test1_N_closest():
 
 def test2_N_closest():
     # On fait varier la limite d'éloignement et la durée dans test1
-    nombre_tests = 10
+    nombre_tests = 100
     moyenne_temps = 0
     moyenne_chemins_trouves = 0
     moyenne_distance = 0

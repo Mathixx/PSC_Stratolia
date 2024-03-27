@@ -98,6 +98,6 @@ def affiche_ventsGIF(temps, longmin, longmax, latmin,latmax,show = True, save = 
 
 
 #### Tests ####
-#affiche_vents3D(0,20,30,-5,5)
+affiche_vents3D(0,20,30,-5,5)
 #affiche_vents2D(0,10,40,-5,5,200)
 #affiche_ventsGIF(0,10,40,-5,5,show = True, save = False)

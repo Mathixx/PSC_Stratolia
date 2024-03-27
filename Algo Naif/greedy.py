@@ -7,9 +7,8 @@ import math
 import sys
 
 from parcours import parcours_a_Z
+from parcours_interpolate import parcours_a_Z_interpolate
 from Node import *
-from parcours import distance_destination
-
 from data_vent import *
 
 
@@ -21,12 +20,12 @@ from data_vent import *
 
 """
 Programme qui détermine si on peut aller d'un point à un autre et qui renvoie le chemin dans le cas échéant.
-Approche greedy : on garde à chaque étpe temporelle le point le plus proche de la destination.
+Approche greedy : on garde à chaque étape temporelle le point le plus proche de la destination.
 
 Entrée :
 - position de la destination : longitude, latitude
 - position intiale : noeud
-Attention : on commence toujours sur un temps rond (au sens des données de vent ie temps[1] = 0)
+Attention : on commence toujours sur un temps rond (temps % 21600 = 0)
 - durée de l'exploration (en heures)
 Attention : on impose que la durée d'exploration soit un multiple de 6 heures !
 - fréquence temporelle des changements de niveau de pression (en secondes)
@@ -47,10 +46,10 @@ def greedy(destination : (float,float), depart : Node, duree : int, temps_chgmt_
         raise ValueError("Le point de départ ne doit pas avoir de parent.")
         
     # On vérifie qu'on commence sur un temps 'rond'.
-    if not(depart.t[1] == 0):
-        raise ValueError("On doit commencer sur un temps 'rond', ie temps[1]=0.")
+    if not(depart.t%21600 == 0):
+        raise ValueError("On doit commencer sur un temps 'rond', ie mutliple de six heures.")
     
-    temps_initial = depart.t[0]
+    temps_initial = case_tps(depart.t)
 
     # On vérifie que la durée d'exploration est un multiple de six heures.
     if not(duree%6 == 0):
@@ -64,8 +63,12 @@ def greedy(destination : (float,float), depart : Node, duree : int, temps_chgmt_
 
     # On initialise la liste des points que nous explorons.
     point = depart
+
+    # On initialise le point le plus proche trouvé
+    closest_ever = depart
+    distance_closest_ever = distance_destination(destination, depart.long, depart.lat)
   
-    for count in range(nombre_d_iterations+1) : 
+    for count in range(nombre_d_iterations) : 
 
         # On explore à partir du point actuel.
         for i in range(0, 17) :
@@ -80,7 +83,7 @@ def greedy(destination : (float,float), depart : Node, duree : int, temps_chgmt_
                 # Sinon on met à jour le point le plus proche atteint.
                 if i==0:
                     closest = point_atteint
-                    distance_closest = distance_destination(destination, closest.long, closest.lat)
+                    distance_closest = distance_destination(destination, point_atteint.long, point_atteint.lat)
                 else:
                     distance_atteint = distance_destination(destination, point_atteint.long, point_atteint.lat)
                     if distance_atteint < distance_closest:
@@ -90,9 +93,17 @@ def greedy(destination : (float,float), depart : Node, duree : int, temps_chgmt_
         # On met à jour le nouveau point d'exploration
         point = closest
 
+        # On met à jour le point le plus proche atteint.
+        if (distance_closest < distance_closest_ever):
+            closest = point
+            distance_closest_ever = distance_closest
+
     # Dans ce cas on a dépassé la limite temporelle d'exploration.
     print("On a atteint la limite temporelle d'exploration. Voici le meilleur chemin trouvé : ")
-    print("Distance de la destination = "+str(distance_closest))
+    print("Distance de la destination = "+str(distance_closest//1000)+ " km.")
+    print("Point final : "+str(point))
+    print("Meilleure distance atteinte = "+str(distance_closest_ever//1000)+ " km.")
+    print("Point le plus proche : "+str(closest_ever)) 
     liste = chemin(point)
     return (False, distance_closest, liste)
 
@@ -155,68 +166,5 @@ def convPression_altitude(pressionData : int) -> int :
 
 
 
-'''
-Fonction qui renvoie la liste des N points les plus proches de la destination parmi une liste de points.
-Entrée : 
-- destination
-- liste de noeuds
-- nombre de points à conserver
-Sortie :
-- liste des N noeuds les plus proches de la destination
-'''
 
-
-def N_plus_proches(destination : (float, float), liste : list, N : int) -> list:
-    if N < 0:
-        raise ValueError("N doit être positif.")
-    l = len(liste)
-    if l<=N:
-        return liste
-    if N==1:
-        return min_liste(destination, liste)
-    low, high = 0, l - 1
-    while low <= high:
-        pivot_idx = partition(destination, liste, low, high)
-        if pivot_idx == N:
-            return liste[:N]
-        elif pivot_idx < N:
-            low = pivot_idx + 1
-        else:
-            high = pivot_idx - 1
-    return None
-    
-
-
-
-'''
-Fonction auxilaire nécessaire pour la fonction N_plus_proches
-'''
-
-
-def partition(destination : (float, float), liste : list, low : int, high : int) -> int:
-    pivot = liste[high]
-    distance_pivot = distance_destination(destination, pivot.long, pivot.lat)
-    i = low - 1
-    for j in range(low, high):
-        if distance_destination(destination, liste[j].long, liste[j].lat) <= distance_pivot:
-            i += 1
-            liste[i], liste[j] = liste[j], liste[i]
-    liste[i + 1], liste[high] = liste[high], liste[i + 1]
-    return i + 1
-
-
-'''
-Fonction auxilaire nécessaire pour la fonction N_plus_proches
-'''
-
-def min_liste(destination : (float, float), liste : list) -> list:
-    minimum = liste[0]
-    distance_min = distance_destination(destination, minimum.long, minimum.lat)
-    for noeud in liste:
-        distance_noeud = distance_destination(destination, noeud.long, noeud.lat)
-        if distance_noeud < distance_min:
-            minimum = noeud
-            distance_min = distance_noeud
-    return [minimum]
-    
 

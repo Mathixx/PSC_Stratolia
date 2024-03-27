@@ -25,17 +25,16 @@ def test1_greedy():
     print("Destination : "+str(dest))
     temps_I = random.randint(0, 100)
     print("Temps de départ : "+ str(temps_I))
-    temps_sec = 0     # À modifier si besoin
     pression =  random.randint(0,16)
     print("Pression de départ : "+str(pression))
     # duree = int(input("Veuillez entrer la durée d'exploration (nombre d'heures divisible par 6) : "))
-    duree = 72
+    duree = 150
     
     # Paramètres de test
     destination = (dest.long, dest.lat)
-    n = Node(depart.long, depart.lat, temps=(temps_I, temps_sec), pression=pression, prev=None)
-    temps_chgmt_pression = 3600  # Remplacez par la durée du changement de pression souhaitée
-    precision = 5000 # Précision de la destination
+    n = Node(depart.long, depart.lat, temps_I*21600, pression=pression, prev=None)
+    temps_chgmt_pression = 3*3600  # Remplacez par la durée du changement de pression souhaitée
+    precision = 50000 # Précision de la destination
 
     # Exécution de la fonction
     temps_debut_execution = time.time()
@@ -44,10 +43,10 @@ def test1_greedy():
     duree_execution = temps_fin_execution - temps_debut_execution
     print(f"Le code a pris {duree_execution} secondes pour s'exécuter.")
 
-    coords = []
-    for i in range(len(res)):
-        n = res[i]
-        coords.append((n.long, n.lat, convPression_altitude(n.p), n.t[0], n.t[1]))
+    #coords = []
+    #for i in range(len(res)):
+        #n = res[i]
+        #coords.append((n.long, n.lat, convPression_altitude(n.p), n.t[0], n.t[1]))
     #print(coords)
     #animation(coords, destination, 1)
     
@@ -85,3 +84,5 @@ def test2_greedy():
 test2_greedy()
 
 # Résultats pour N=10000 : temps = 0.0471439 // fréquence = 23.64 % de chemins trouvés
+
+

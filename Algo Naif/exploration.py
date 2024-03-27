@@ -12,6 +12,7 @@ from Node import *
 from parcours import distance_destination
 
 from data_vent import *
+from villes import *
 
 
 
@@ -40,7 +41,7 @@ Sortie :
 """
 
 
-def N_closest(destination : (float,float), depart : Node, duree : int, temps_chgmt_pression : int, precision : int, eloignement : float, tab_vent : dict) -> (bool, int, list) :
+def wide_search(destination : (float,float), depart : Node, duree : int, temps_chgmt_pression : int, precision : int, tab_vent : dict) -> (bool, int, list) :
 
     # On vérifie que le noeud de départ n'a pas de parent.
     if not(depart.prev == None):
@@ -62,21 +63,15 @@ def N_closest(destination : (float,float), depart : Node, duree : int, temps_chg
     
     nombre_d_iterations = (duree//6)*(21600//temps_chgmt_pression)
 
-    # On vérifie que la limite d'éloignement choisie est suffisamment grande pour que l'algorithme fonctionne correctement.
-    if eloignement<1:
-        raise ValueError("La limite d'éloignement est inférieure à la distance entre le point de départ et la destination.")
-
-    limite_eloignement = distance_destination(destination, depart.long, depart.lat)*eloignement
-
-    # On réduit la limite d'éloignement au fur et à mesure pour qu'elle vaille un quart de la distance à la fin.
-    constante_de_retrecissement = (1/(10*eloignement))**(1/nombre_d_iterations)
-
-    # Valeur de N (modifiable si besoin)
-    N = 100
+    # On intialise l'écart minimal entre deux chemins explorés (en m)
+    ecart_min = 100000
 
     # On initialise la liste des points que nous explorons.
     listeP = [depart]
-  
+
+    # On initialise le point le plus proche trouvé
+    closest = depart
+    distance_closest = distance_destination(destination, depart.long, depart.lat)
 
     for count in range(nombre_d_iterations) : 
 
@@ -95,15 +90,11 @@ def N_closest(destination : (float,float), depart : Node, duree : int, temps_chg
             
             distance = distance_destination(destination, point.long, point.lat)
 
-            # Premier cas : si on est trop loin de la destination on abandonne l'exploration à partir de ce point.
-            if distance > limite_eloignement :
-               continue
-
-            # Deuxième cas : on continue l'exploration. On appelle parcours à Z pour tous les niveaux de pression
+            # On continue l'exploration. On appelle parcours à Z pour tous les niveaux de pression
             # correspondant à notre point.
             for i in range(0, 17) :
 
-                (a_rencontre_destination, pointF) = parcours_a_Z(destination, Node(point.long, point.lat, point.t, i, point), temps_chgmt_pression, precision, tab_vent)
+                (a_rencontre_destination, pointF) = parcours_a_Z_interpolate(destination, Node(point.long, point.lat, point.t, i, point), temps_chgmt_pression, precision, tab_vent)
 
                 # Si on a rencontré la destination, on remonte l'arbre pour reconstituer le chemin complet.
                 if a_rencontre_destination:
@@ -113,15 +104,23 @@ def N_closest(destination : (float,float), depart : Node, duree : int, temps_chg
                 # Sinon on ajoute le nouveau point à la liste des futurs points. 
                 listeF.append(pointF)
         # On garde que les N éléments les plus proches.
-        listeP = N_plus_proches(destination, listeF, N)
+        listeP = selection_opti(destination, listeF, ecart_min)
+        print("Nombre de points en cours d'exploration : "+str(len(listeP)))
+
+        # On met à jour le point le plus proche atteint.
+        dist = distance_destination(destination, listeP[0].long, listeP[0].lat)
+        if (dist < distance_closest):
+            closest = listeP[0]
+            distance_closest = dist
         
-        
-        limite_eloignement *= constante_de_retrecissement
 
     # Dans ce cas on a dépassé la limite temporelle d'exploration.
     print("On a atteint la limite temporelle d'exploration.")
-    distance_minimale = distance_min(listeP, destination, limite_eloignement)
+    distance_minimale = min(distance_destination(destination, point.long, point.lat) for point in listeP)
     print("Distance de la destination = "+str(distance_minimale//1000)+ " km.")
+    print("Meilleur point final : "+str(listeP[0]))
+    print("Meilleure distance atteinte = "+str(distance_closest//1000)+ " km.")
+    print("Point le plus proche : "+str(closest)) 
     liste = chemin(listeP[0])
     return (False, distance_minimale,liste)
 
@@ -184,67 +183,23 @@ def convPression_altitude(pressionData : int) -> int :
 
 
 '''
-Fonction qui renvoie la liste des N points les plus proches de la destination parmi une liste de points.
-Entrée : 
-- destination
-- liste de noeuds
-- nombre de points à conserver
-Sortie :
-- liste des N noeuds les plus proches de la destination
+À écrire
 '''
 
 
-def N_plus_proches(destination : (float, float), liste : list, N : int) -> list:
-    if N < 0:
-        raise ValueError("N doit être positif.")
-    l = len(liste)
-    if l<=N:
-        return liste
-    low, high = 0, l - 1
-    while low <= high:
-        pivot_idx = partition(destination, liste, low, high)
-        if pivot_idx == N:
-            return liste[:N]
-        elif pivot_idx < N:
-            low = pivot_idx + 1
-        else:
-            high = pivot_idx - 1
-    return None
-    
-
-
-
-'''
-Fonction auxilaire nécessaire pour la fonction N_plus_proches
-'''
-
-
-def partition(destination : (float, float), liste : list, low : int, high : int) -> int:
-    pivot = liste[high]
-    distance_pivot = distance_destination(destination, pivot.long, pivot.lat)
-    i = low - 1
-    for j in range(low, high):
-        if distance_destination(destination, liste[j].long, liste[j].lat) <= distance_pivot:
-            i += 1
-            liste[i], liste[j] = liste[j], liste[i]
-    liste[i + 1], liste[high] = liste[high], liste[i + 1]
-    return i + 1
-
-
-    
-'''
-Fonction qui renvoie la distance du point le plus proche de la destination dans une liste de points.
-Entrée : liste de points et la limite d'éloignement
-Sortie : distance du point le plus proche / limite d'éloignement si la liste est vide
-'''
-
-
-def distance_min(liste : list, destination : (float,float), limite_eloignement : int) -> int:
-    dmin = limite_eloignement
+def selection_opti(destination : (float,float), liste : list, ecart_min : int) -> list:
+    liste.sort(key = lambda x : distance_destination(destination, x.long, x.lat))
+    res = []
     for x in liste:
-        d = distance_destination(destination, x.long, x.lat)
-        dmin = min(d,dmin)
-    return dmin
+        if len(res) == 1000:
+            break
+        # On ajoute x dans la liste seulement si la distance entre x et tous les éléments de res est supérieure à ecart_min
+        if all(distance_destination((y.long,y.lat), x.long, x.lat) > distance_destination(destination, y.long, y.lat)/30 for y in res):
+            res.append(x)
+    return res
+
+    
+
 
 
 
@@ -253,27 +208,20 @@ def distance_min(liste : list, destination : (float,float), limite_eloignement :
 ###########
 
 
-### OBJECTIF : Hippo doit rentrer chez lui ! MAIS il a mal au pied et n'a qu'un ballon stratosphérique à disposition
-# Trouvons quand partir
-"""
-son adresse :
-48.865013122558594 ; 2.2885401248931885
+def test_wide():
+    # Demander à l'utilisateur d'entrer les données d'entrée
+    #longInit = float(input("Veuillez entrer la longitude du point de départ : "))
+    #latInit = float(input("Veuillez entrer la latitude du point de départ : "))
+    #destination_long = float(input("Veuillez entrer la longitude de la destination : "))
+    #destination_lat = float(input("Veuillez entrer la latitude de la destination : "))
+    #temps_I = int(input("Veuillez entrer le temps de départ du parcours : "))
+    dep = Ville("Paris", 2.3522, 48.8566)
+    dest = Ville("Marseille", 5.3698, 43.2965)
+    depart = Node(dep.long, dep.lat, 20*21600, 0, None)
+    destination = (dest.long, dest.lat)
+    duree = 120
+    temps_chgmt_pression = 6*3600
+    precision = 10000
+    return wide_search(destination, depart, duree, temps_chgmt_pression, precision, wind_data)
 
-73 bvrd des marechaux :
-48.71699905395508 ; 2.2039577960968018
-
-"""
-
-
-def test(): 
-    t = 0
-    while True :
-        res = Tree_Largeur((2.1675682067871094,48.710262298583984),Node(2.2039577960968018,48.71699905395508,(t,0),0,None),24,3*3600,100,40000,wind_data)
-        if res[0] == True :
-            print("un chemin a été trouvé :")
-            affichage_liste(res[1])
-            break
-        t +=1
-
-#test()
-
+test_wide()
