@@ -63,6 +63,10 @@ def greedy(destination : (float,float), depart : Node, duree : int, temps_chgmt_
 
     # On initialise la liste des points que nous explorons.
     point = depart
+
+    # On initialise le point le plus proche trouvé
+    closest_ever = depart
+    distance_closest_ever = distance_destination(destination, depart.long, depart.lat)
   
     for count in range(nombre_d_iterations) : 
 
@@ -88,11 +92,18 @@ def greedy(destination : (float,float), depart : Node, duree : int, temps_chgmt_
         
         # On met à jour le nouveau point d'exploration
         point = closest
-        print(closest)
+
+        # On met à jour le point le plus proche atteint.
+        if (distance_closest < distance_closest_ever):
+            closest = point
+            distance_closest_ever = distance_closest
 
     # Dans ce cas on a dépassé la limite temporelle d'exploration.
     print("On a atteint la limite temporelle d'exploration. Voici le meilleur chemin trouvé : ")
     print("Distance de la destination = "+str(distance_closest//1000)+ " km.")
+    print("Point final : "+str(point))
+    print("Meilleure distance atteinte = "+str(distance_closest_ever//1000)+ " km.")
+    print("Point le plus proche : "+str(closest_ever)) 
     liste = chemin(point)
     return (False, distance_closest, liste)
 
@@ -165,7 +176,6 @@ def convPression_altitude(pressionData : int) -> int :
     tabPhP = [10,20,30,50,70,100,150,200,250,300,400,500,600,700,850,925,1000]
     pressionHp = tabPhP[pressionData]
     return 0.3048*145366.45*(1-(pressionHp/1013.25)**0.190284)
-
 
 
 
