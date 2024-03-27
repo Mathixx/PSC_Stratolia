@@ -10,6 +10,38 @@ import cartopy.feature as cfeature
 import matplotlib.dates as mdates
 from datetime import datetime, timedelta
 
+def visupoints(liste,echelle=1):
+    X,Y = [],[]
+    
+    for n in liste :
+        X.append(n.long)
+        Y.append(n.lat)
+    X = [(x-360 if x>180 else x ) for x in X]
+    longitude_min, longitude_max = min(X)-echelle, max(X)+echelle # Min et Max Longitudes
+    latitude_min, latitude_max = min(Y)-echelle, max(Y)+echelle  # Min et Max Latitudes
+     # Création de la figure
+    fig = plt.figure(figsize=(15, 12))
+    ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
+
+    # Ajout des points sur la carte
+    
+    ax.set_extent([longitude_min, longitude_max, latitude_min, latitude_max], crs=ccrs.PlateCarree())
+    ax.add_feature(cfeature.COASTLINE)
+    ax.add_feature(cfeature.COASTLINE)
+    ax.add_feature(cfeature.BORDERS, linestyle=':')
+    ax.add_feature(cfeature.LAND)
+    ax.add_feature(cfeature.OCEAN)
+    ax.add_feature(cfeature.LAKES)
+    ax.add_feature(cfeature.RIVERS)
+    ax.scatter(X, Y, transform=ccrs.PlateCarree(), color='red', marker='o', s=30)
+
+
+    
+    # Enregistrement de l'image
+    nom = "points "+str(liste[0].t)+".png"
+    plt.savefig(nom)
+
+    
 
 def animation(coords,dest,echelle):
     '''  crée une animation de la trajectoire du ballon, prenant en entrée une liste de coordonnées coords pour la trajectoire,
@@ -130,7 +162,7 @@ spirale = [
     (0.0, 0.0, 100.0)
 ]
 spirale_modifiee = [
-    (x, y, z, 0, 600*i) for i, (x, y, z) in enumerate(spirale)
+    (x, y, z,  600*i) for i, (x, y, z) in enumerate(spirale)
 ]
 
 #animation(spirale_modifiee, [0.0, 0.0, 100.0],1)

@@ -13,8 +13,8 @@ from parcours import distance_destination
 
 from data_vent import *
 from villes import *
-
-
+from Affichage import animation
+from Affichage import visupoints
 
 #########################
 ## FONCTION PRINCIPALE ##
@@ -98,7 +98,7 @@ def wide_search(destination : (float,float), depart : Node, duree : int, temps_c
 
                 # Si on a rencontré la destination, on remonte l'arbre pour reconstituer le chemin complet.
                 if a_rencontre_destination:
-                    liste = chemin(pointF)
+                    liste = chemin_animation(pointF)
                     affichage_liste(liste)
                     return (True, precision, liste)
                 # Sinon on ajoute le nouveau point à la liste des futurs points. 
@@ -106,6 +106,7 @@ def wide_search(destination : (float,float), depart : Node, duree : int, temps_c
         # On garde que les N éléments les plus proches.
         listeP = selection_opti(destination, listeF, ecart_min)
         print("Nombre de points en cours d'exploration : "+str(len(listeP)))
+        visupoints(listeP,1)
 
         # On met à jour le point le plus proche atteint.
         dist = distance_destination(destination, listeP[0].long, listeP[0].lat)
@@ -121,7 +122,7 @@ def wide_search(destination : (float,float), depart : Node, duree : int, temps_c
     print("Meilleur point final : "+str(listeP[0]))
     print("Meilleure distance atteinte = "+str(distance_closest//1000)+ " km.")
     print("Point le plus proche : "+str(closest)) 
-    liste = chemin(listeP[0])
+    liste = chemin_animation(listeP[0])
     return (False, distance_minimale,liste)
 
 
@@ -146,6 +147,23 @@ def chemin(point_atteint : Node) -> list:
         liste.append(p)
     liste.reverse()
     return liste
+
+
+'''
+Fonction qui reconstitue le chemin parcouru
+Entrée : noeud d'arrivée
+Sortie : la liste des points parcourus dans le format de la fonction animation [(long,lat,alt,sec)]
+'''
+
+
+def chemin_animation(point_atteint : Node) -> list:
+    coords = []
+    p = point_atteint
+    while p.prev != None:
+        coords.append((p.long,p.lat,convPression_altitude(p.p),p.t))
+        p = p.prev
+    coords.reverse()
+    return coords
 
 
 '''
@@ -217,11 +235,12 @@ def test_wide():
     #temps_I = int(input("Veuillez entrer le temps de départ du parcours : "))
     dep = Ville("Paris", 2.3522, 48.8566)
     dest = Ville("Marseille", 5.3698, 43.2965)
-    depart = Node(dep.long, dep.lat, 20*21600, 0, None)
+    depart = Node(dep.long, dep.lat, 0, 0, None)
     destination = (dest.long, dest.lat)
     duree = 120
     temps_chgmt_pression = 6*3600
     precision = 10000
-    return wide_search(destination, depart, duree, temps_chgmt_pression, precision, wind_data)
+    (boool,dist,liste) = wide_search(destination, depart, duree, temps_chgmt_pression, precision, wind_data)
+    animation(liste,destination,1)
 
 test_wide()
