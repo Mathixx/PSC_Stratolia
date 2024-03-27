@@ -211,7 +211,7 @@ def selection_opti(destination : (float,float), liste : list, ecart_min : int) -
     for x in liste:
         if len(res) == 1000:
             break
-        # On ajoute x dans la liste seulement si la distance entre x et tous les éléments de res est supérieure à ecart_min
+        # On ajoute x dans la liste seulement si la distance entre x et tous les éléments de res est suffisament grande.
         if all(distance_destination((y.long,y.lat), x.long, x.lat) > distance_destination(destination, y.long, y.lat)/30 for y in res):
             res.append(x)
     return res

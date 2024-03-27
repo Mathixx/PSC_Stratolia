@@ -34,7 +34,7 @@ def test1_greedy():
     destination = (dest.long, dest.lat)
     n = Node(depart.long, depart.lat, temps_I*21600, pression=pression, prev=None)
     temps_chgmt_pression = 3*3600  # Remplacez par la durée du changement de pression souhaitée
-    precision = 50000 # Précision de la destination
+    precision = 10000 # Précision de la destination
 
     # Exécution de la fonction
     temps_debut_execution = time.time()
@@ -61,7 +61,7 @@ def test1_greedy():
 
 def test2_greedy():
     # On fait varier la limite d'éloignement et la durée dans test1
-    nombre_tests = 100
+    nombre_tests = 10000
     moyenne_temps = 0
     moyenne_chemins_trouves = 0
     moyenne_distance = 0

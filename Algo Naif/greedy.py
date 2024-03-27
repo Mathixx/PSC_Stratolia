@@ -73,7 +73,7 @@ def greedy(destination : (float,float), depart : Node, duree : int, temps_chgmt_
         # On explore à partir du point actuel.
         for i in range(0, 17) :
 
-                (a_rencontre_destination, point_atteint) = parcours_a_Z(destination, Node(point.long, point.lat, point.t, i, point), temps_chgmt_pression, precision, tab_vent)
+                (a_rencontre_destination, point_atteint) = parcours_a_Z_interpolate(destination, Node(point.long, point.lat, point.t, i, point), temps_chgmt_pression, precision, tab_vent)
 
                 # Si on a rencontré la destination, on remonte l'arbre pour reconstituer le chemin complet.
                 if a_rencontre_destination:
