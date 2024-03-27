@@ -119,6 +119,19 @@ def chemin(point_atteint : Node) -> list:
     liste.reverse()
     return liste
 
+'''
+Fonction qui reconstitue le chemin parcouru en un format de donnée utilisable par l'algorithme de Mohammed
+Entrée : liste des poids (format Node) parcourus depuis le départ jusqu'a l'arrivée
+Sortie : la liste de coordonnées en format [(long_i,lat_i,z_i,sec_i),]i
+'''
+
+def chemin_graphic(chemin_node : list) -> list:
+    liste = []
+    for i in range(len(chemin_node)):
+        n = chemin_node[i]
+        liste.append([n.long, n.lat, altitude_from_indice(n.p), n.t])
+    return liste
+
 
 
 '''

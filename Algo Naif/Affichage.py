@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 
 def animation(coords,dest,echelle):
     '''  crée une animation de la trajectoire du ballon, prenant en entrée une liste de coordonnées coords pour la trajectoire,
-    coords de la forme [(long_i,lat_i,z_i,h6_i,sec_i),]
+    coords de la forme [(long_i,lat_i,z_i,sec_i),]
       un tuple dest pour la destination (long,lat),
       une echelle pour la carte (en long/lat) -> Prendre 1 de base'''
       

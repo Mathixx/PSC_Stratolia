@@ -199,6 +199,19 @@ def mod_lat(lat : float) -> float:
         lat = 180-lat
     return lat
 
+"""
+Fonction qui retourne l'altiude d'un point en fonction de l'indice de sa coordonnées de pression
+Entrée : un entier  i entre 0 et 16
+Sortie : Un float (representant l'altiude en km)
+"""
+pressions = [1000, 925, 850, 700, 600, 500, 400, 300, 250, 200, 150, 100, 70, 50, 30, 20, 10]
+
+def altitude_from_indice(i : int) -> float :
+    pression = pressions[i]
+    h = 0.3048 * (1 - (pression/1013.25)**(0.190284)) * 145366.45
+
+    return h
+
 
 
 
