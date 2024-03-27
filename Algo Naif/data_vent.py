@@ -199,4 +199,15 @@ def mod_lat(lat : float) -> float:
         lat = 180-lat
     return lat
 
+'''
+Fonction qui convertit la donnée de case de pression en une altitude (en m??)
 
+Entrée : case de pression (int dans [0,17[)
+Sortie : altitude (int)
+'''
+
+def convPression_altitude(pressionData : int) -> int :
+    # Formules admises fournies par Louis Hart-Davis
+    tabPhP = [10,20,30,50,70,100,150,200,250,300,400,500,600,700,850,925,1000]
+    pressionHp = tabPhP[pressionData]
+    return 0.3048*145366.45*(1-(pressionHp/1013.25)**0.190284)

@@ -13,6 +13,7 @@ import matplotlib.gridspec as gridspec
 with open("objet_wind_data_2020.pickle", "rb") as f:
     wind_data = pickle.load(f)
 
+
 def convPression_altitude(p):
     '''hPA -> km'''
     # Formule admise fournie par Louis Hart-Davis
