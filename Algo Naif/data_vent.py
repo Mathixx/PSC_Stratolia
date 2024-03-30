@@ -14,7 +14,7 @@ import random
 
 
 with open("objet_wind_data_2020.pickle", "rb") as f:
-    wind_data = pickle.load(f)
+   wind_data = pickle.load(f)
 
 
 
@@ -76,7 +76,7 @@ def ventU_ventV_interpolate(long : float, lat : float, temps : int, pression : i
 
     LG = [case_longitude*2.5, case_long(mod_long(long + 2.5))*2.5]
     LT = [-90+case_latitude*2.5, -90+case_lat(mod_lat(lat + 2.5))*2.5]
-    TPS = [case_temps, case_temps+1]
+    TPS = [temps, temps+21600]
 
     numU = 0
     numV = 0
@@ -171,10 +171,10 @@ def case(longitude : float, latitude : float) -> (int, int):
     return (case_long(longitude), case_lat(latitude))
 
 def case_long(longitude : float) -> int:
-    return int(longitude/2.5)
+    return int(longitude/(2.5))
 
 def case_lat(latitude : float) -> int:
-    return int((latitude+90)/2.5)
+    return int((latitude+90)/(2.5))
 
 def case_tps(temps : int) -> int:
     return int(temps//21600)
@@ -199,15 +199,19 @@ def mod_lat(lat : float) -> float:
         lat = 180-lat
     return lat
 
-'''
-Fonction qui convertit la donnée de case de pression en une altitude (en m??)
+"""
+Fonction qui retourne l'altiude d'un point en fonction de l'indice de sa coordonnées de pression
+Entrée : un entier  i entre 0 et 16
+Sortie : Un float (representant l'altiude en km)
+"""
+pressions = [1000, 925, 850, 700, 600, 500, 400, 300, 250, 200, 150, 100, 70, 50, 30, 20, 10]
 
-Entrée : case de pression (int dans [0,17[)
-Sortie : altitude (int)
-'''
+def altitude_from_indice(i : int) -> float :
+    pression = pressions[i]
+    h = 0.3048 * (1 - (pression/1013.25)**(0.190284)) * 145366.45
 
-def convPression_altitude(pressionData : int) -> int :
-    # Formules admises fournies par Louis Hart-Davis
-    tabPhP = [10,20,30,50,70,100,150,200,250,300,400,500,600,700,850,925,1000]
-    pressionHp = tabPhP[pressionData]
-    return 0.3048*145366.45*(1-(pressionHp/1013.25)**0.190284)
+    return h
+
+
+
+

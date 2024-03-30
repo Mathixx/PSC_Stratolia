@@ -1,13 +1,8 @@
-import sys
-import math 
-import pickle
-import numpy as np
-import random as rd
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
+import sys, math, pickle, numpy as np, random as rd, matplotlib.pyplot as plt, matplotlib.animation as animation
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 import matplotlib.gridspec as gridspec
+
 
 #Importation des données NOAA
 with open("objet_wind_data_2020.pickle", "rb") as f:
@@ -39,14 +34,11 @@ def affiche_vents3D(temps,longmin, longmax, latmin,latmax):
      # Meshgrid pour les coordonnées filtrées et tous les niveaux de pression
      Z,Y,X = np.meshgrid( alts, lats[lat_indices],longs[long_indices], indexing='ij')
      
-     
-
      fig = plt.figure()
      ax = fig.add_subplot(111, projection='3d')
     
      ax.quiver(X, Y, Z, u, v, 0, length=0.1, arrow_length_ratio=0.4, normalize=False, pivot = "middle" ) 
      ax.set_zlim(min(alts), max(alts)) #On doit inverser l'axe des altitudes car il n'est pas dans le mm sens que pression
-
 
      ax.set_xlabel('Longitude')
      ax.set_ylabel('Latitude')
@@ -72,9 +64,7 @@ def affiche_vents2D(temps, longmin, longmax, latmin,latmax, pression, indice = F
 
     X, Y = np.meshgrid(longs[long_indices], lats[lat_indices])
 
-    
-    if ret: 
-        return (X,Y,u,v)
+    if ret: return (X,Y,u,v)
     else :
         #Affichage des vents 2D
         plt.figure(figsize=(10, 8))
@@ -95,7 +85,6 @@ def affiche_ventsGIF(temps, longmin, longmax, latmin,latmax,show = True, save = 
         qr.set_UVC(u,v) 
         ax.set_title(f'Pression : {pres[nummod]} hPA / Altitude {format(alts[nummod],'.2f')} km')
         
-    
     fig,ax = plt.subplots()
     ax.set_xlabel('Longitude')
     ax.set_ylabel('Latitude')

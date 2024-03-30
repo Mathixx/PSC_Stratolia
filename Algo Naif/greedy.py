@@ -7,9 +7,8 @@ import math
 import sys
 
 from parcours import parcours_a_Z
+from parcours_interpolate import parcours_a_Z_interpolate
 from Node import *
-from parcours import distance_destination
-
 from data_vent import *
 
 
@@ -21,7 +20,7 @@ from data_vent import *
 
 """
 Programme qui détermine si on peut aller d'un point à un autre et qui renvoie le chemin dans le cas échéant.
-Approche greedy : on garde à chaque étpe temporelle le point le plus proche de la destination.
+Approche greedy : on garde à chaque étape temporelle le point le plus proche de la destination.
 
 Entrée :
 - position de la destination : longitude, latitude
@@ -47,10 +46,10 @@ def greedy(destination : (float,float), depart : Node, duree : int, temps_chgmt_
         raise ValueError("Le point de départ ne doit pas avoir de parent.")
         
     # On vérifie qu'on commence sur un temps 'rond'.
-    if not(depart.t[1] == 0):
+    if not(depart.t%21600 == 0):
         raise ValueError("On doit commencer sur un temps 'rond', ie mutliple de six heures.")
     
-    temps_initial = case_temps(depart.t)
+    temps_initial = case_tps(depart.t)
 
     # On vérifie que la durée d'exploration est un multiple de six heures.
     if not(duree%6 == 0):
@@ -64,13 +63,17 @@ def greedy(destination : (float,float), depart : Node, duree : int, temps_chgmt_
 
     # On initialise la liste des points que nous explorons.
     point = depart
+
+    # On initialise le point le plus proche trouvé
+    closest_ever = depart
+    distance_closest_ever = distance_destination(destination, depart.long, depart.lat)
   
-    for count in range(nombre_d_iterations+1) : 
+    for count in range(nombre_d_iterations) : 
 
         # On explore à partir du point actuel.
         for i in range(0, 17) :
 
-                (a_rencontre_destination, point_atteint) = parcours_a_Z(destination, Node(point.long, point.lat, point.t, i, point), temps_chgmt_pression, precision, tab_vent)
+                (a_rencontre_destination, point_atteint) = parcours_a_Z_interpolate(destination, Node(point.long, point.lat, point.t, i, point), temps_chgmt_pression, precision, tab_vent)
 
                 # Si on a rencontré la destination, on remonte l'arbre pour reconstituer le chemin complet.
                 if a_rencontre_destination:
@@ -80,7 +83,7 @@ def greedy(destination : (float,float), depart : Node, duree : int, temps_chgmt_
                 # Sinon on met à jour le point le plus proche atteint.
                 if i==0:
                     closest = point_atteint
-                    distance_closest = distance_destination(destination, closest.long, closest.lat)
+                    distance_closest = distance_destination(destination, point_atteint.long, point_atteint.lat)
                 else:
                     distance_atteint = distance_destination(destination, point_atteint.long, point_atteint.lat)
                     if distance_atteint < distance_closest:
@@ -90,9 +93,17 @@ def greedy(destination : (float,float), depart : Node, duree : int, temps_chgmt_
         # On met à jour le nouveau point d'exploration
         point = closest
 
+        # On met à jour le point le plus proche atteint.
+        if (distance_closest < distance_closest_ever):
+            closest = point
+            distance_closest_ever = distance_closest
+
     # Dans ce cas on a dépassé la limite temporelle d'exploration.
     print("On a atteint la limite temporelle d'exploration. Voici le meilleur chemin trouvé : ")
-    print("Distance de la destination = "+str(distance_closest))
+    print("Distance de la destination = "+str(distance_closest//1000)+ " km.")
+    print("Point final : "+str(point))
+    print("Meilleure distance atteinte = "+str(distance_closest_ever//1000)+ " km.")
+    print("Point le plus proche : "+str(closest_ever)) 
     liste = chemin(point)
     return (False, distance_closest, liste)
 
@@ -117,6 +128,19 @@ def chemin(point_atteint : Node) -> list:
         p = p.prev
         liste.append(p)
     liste.reverse()
+    return liste
+
+'''
+Fonction qui reconstitue le chemin parcouru en un format de donnée utilisable par l'algorithme de Mohammed
+Entrée : liste des poids (format Node) parcourus depuis le départ jusqu'a l'arrivée
+Sortie : la liste de coordonnées en format [(long_i,lat_i,z_i,sec_i),]i
+'''
+
+def chemin_graphic(chemin_node : list) -> list:
+    liste = []
+    for i in range(len(chemin_node)):
+        n = chemin_node[i]
+        liste.append([n.long, n.lat, altitude_from_indice(n.p), n.t])
     return liste
 
 
@@ -152,7 +176,6 @@ def convPression_altitude(pressionData : int) -> int :
     tabPhP = [10,20,30,50,70,100,150,200,250,300,400,500,600,700,850,925,1000]
     pressionHp = tabPhP[pressionData]
     return 0.3048*145366.45*(1-(pressionHp/1013.25)**0.190284)
-
 
 
 
