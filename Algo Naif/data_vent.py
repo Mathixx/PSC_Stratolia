@@ -1,3 +1,12 @@
+"""
+ * Utility Functions
+ * 
+ * This file contains a collection of commonly used utility functions 
+ * that can be reused across different parts of the codebase. These 
+ * functions are designed to perform common tasks. 
+ * 
+"""
+
 #########################
 ## MODULES NÉCESSAIRES ##
 #########################
@@ -6,6 +15,7 @@
 import pickle
 import math
 import random
+from Node import *
 
 
 ############################
@@ -18,9 +28,9 @@ with open("objet_wind_data_2020.pickle", "rb") as f:
 
 
 
-###########################
-## FONCTIONS PRINCIPALES ##
-###########################
+##################################################
+## FONCTIONS RELATIVES A L'EXTRACTION DES VENTS ##
+##################################################
 
 
 
@@ -118,9 +128,9 @@ def ventU_ventV_noise(long : float, lat : float, temps : int, pression : int, ta
 
 
 
-###########################
-## FONCTIONS AUXILIAIRES ##
-###########################
+#####################################################
+## FONCTIONS RELATIVES A LA POSITION DANS L'ESPACE ##
+#####################################################
 
 '''
 Fonction donnant la distance (en m) entre un point donné et la destination
@@ -132,7 +142,6 @@ Entrée :
 Sortie :
 - distance entre le point et la destination (en m)
 '''
-
 
 def distance_destination(destination : (float,float), long : float, lat : float) -> int:
     # Convertir les coordonnées degrés en radians
@@ -199,18 +208,93 @@ def mod_lat(lat : float) -> float:
         lat = 180-lat
     return lat
 
-"""
-Fonction qui retourne l'altiude d'un point en fonction de l'indice de sa coordonnées de pression
-Entrée : un entier  i entre 0 et 16
-Sortie : Un float (representant l'altiude en km)
-"""
-pressions = [1000, 925, 850, 700, 600, 500, 400, 300, 250, 200, 150, 100, 70, 50, 30, 20, 10]
 
-def altitude_from_indice(i : int) -> float :
-    pression = pressions[i]
-    h = 0.3048 * (1 - (pression/1013.25)**(0.190284)) * 145366.45
+'''
+Fonction qui convertit la donnée de case de pression en une altitude (en m)
 
-    return h
+Entrée : case de pression (int dans [0,17[)
+Sortie : altitude (int)
+'''
+
+def convPression_altitude(pressionData : int) -> int :
+    # Formules admises fournies par Louis Hart-Davis
+    tabPhP = [10,20,30,50,70,100,150,200,250,300,400,500,600,700,850,925,1000]
+    pressionHp = tabPhP[pressionData]
+    return 0.3048*145366.45*(1-(pressionHp/1013.25)**0.190284)
+
+
+##############################################################
+## FONCTIONS RELATIVES A LA RÉCUPÉRATION DU CHEMIN PARCOURU ##
+##############################################################
+
+'''
+Fonction qui reconstitue le chemin parcouru
+Entrée : noeud d'arrivée
+Sortie : la liste des points parcourus depuis le départ jusqu'à l'arrivée
+'''
+
+def chemin(point_atteint : Node) -> list:
+    liste = [point_atteint]
+    p = point_atteint
+    while p.prev != None :
+        p = p.prev
+        liste.append(p)
+    liste.reverse()
+    return liste
+
+'''
+Fonction qui reconstitue le chemin parcouru en un format de donnée utilisable par l'algorithme de Mohammed
+Entrée : liste des poids (format Node) parcourus depuis le départ jusqu'a l'arrivée
+Sortie : la liste de coordonnées en format [(long_i,lat_i,z_i,sec_i),]i
+'''
+
+def chemin_graphic(chemin_node : list) -> list:
+    liste = []
+    for i in range(len(chemin_node)):
+        n = chemin_node[i]
+        liste.append([n.long, n.lat, convPression_altitude(n.p), n.t])
+    return liste
+
+
+'''
+Fonction qui reconstitue le chemin parcouru
+Entrée : noeud d'arrivée
+Sortie : la liste des points parcourus dans le format de la fonction animation [(long,lat,alt,sec)]
+'''
+
+
+def chemin_animation(point_atteint : Node) -> list:
+    coords = []
+    p = point_atteint
+    while p.prev != None:
+        coords.append((p.long,p.lat,convPression_altitude(p.p),p.t))
+        p = p.prev
+    coords.reverse()
+    return coords
+
+
+
+'''
+Fonction qui affiche proprement la trajectoire trouvée
+
+Entrée : liste de Node
+Pas de sortie
+'''
+
+def affichage_liste(liste : list):
+    print()
+    print("Liste des points formant la trajectoire : ")
+    print()
+    for x in liste:
+        if isinstance(x, Node):
+            print(x)
+        else:
+            print("Erreur : un des éléments de la liste n'est pas une instance de la classe Node.")
+            return
+
+
+
+
 
 
 

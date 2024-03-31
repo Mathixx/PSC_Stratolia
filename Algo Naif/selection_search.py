@@ -9,7 +9,6 @@ import sys
 from parcours import parcours_a_Z
 from parcours_interpolate import parcours_a_Z_interpolate
 from Node import *
-from parcours import distance_destination
 
 from data_vent import *
 
@@ -132,71 +131,6 @@ def N_closest(destination : (float,float), depart : Node, duree : int, temps_chg
 ###########################
 ## FONCTIONS AUXILIAIRES ##
 ###########################
-
-'''
-Fonction qui reconstitue le chemin parcouru
-Entrée : noeud d'arrivée
-Sortie : la liste des points parcourus depuis le départ jusqu'à l'arrivée
-'''
-
-def chemin(point_atteint : Node) -> list:
-    liste = [point_atteint]
-    p = point_atteint
-    while p.prev != None :
-        p = p.prev
-        liste.append(p)
-    liste.reverse()
-    return liste
-
-'''
-Fonction qui reconstitue le chemin parcouru en un format de donnée utilisable par l'algorithme de Mohammed
-Entrée : liste des poids (format Node) parcourus depuis le départ jusqu'a l'arrivée
-Sortie : la liste de coordonnées en format [(long_i,lat_i,z_i,sec_i),]i
-'''
-
-def chemin_graphic(chemin_node : list) -> list:
-    liste = []
-    for i in range(len(chemin_node)):
-        n = chemin_node[i]
-        liste.append([n.long, n.lat, altitude_from_indice(n.p), n.t])
-    return liste
-
-
-
-'''
-Fonction qui affiche proprement la trajectoire trouvée
-
-Entrée : liste de Node
-Pas de sortie
-'''
-
-def affichage_liste(liste : list):
-    print()
-    print("Liste des points formant la trajectoire : ")
-    print()
-    for x in liste:
-        if isinstance(x, Node):
-            print(x)
-        else:
-            print("Erreur : un des éléments de la liste n'est pas une instance de la classe Node.")
-            return
-
-
-'''
-Fonction qui convertit la donnée de case de pression en une altitude (en m??)
-
-Entrée : case de pression (int dans [0,17[)
-Sortie : altitude (int)
-'''
-
-def convPression_altitude(pressionData : int) -> int :
-    # Formules admises fournies par Louis Hart-Davis
-    tabPhP = [10,20,30,50,70,100,150,200,250,300,400,500,600,700,850,925,1000]
-    pressionHp = tabPhP[pressionData]
-    return 0.3048*145366.45*(1-(pressionHp/1013.25)**0.190284)
-
-
-
 '''
 Fonction qui renvoie la liste des N points les plus proches de la destination parmi une liste de points.
 Entrée : 
@@ -251,8 +185,6 @@ Fonction qui renvoie la distance du point le plus proche de la destination dans 
 Entrée : liste de points et la limite d'éloignement
 Sortie : distance du point le plus proche / limite d'éloignement si la liste est vide
 '''
-
-
 def distance_min(liste : list, destination : (float,float), limite_eloignement : int) -> int:
     dmin = limite_eloignement
     for x in liste:
@@ -261,33 +193,4 @@ def distance_min(liste : list, destination : (float,float), limite_eloignement :
     return dmin
 
 
-
-###########
-## TESTS ##
-###########
-
-
-### OBJECTIF : Hippo doit rentrer chez lui ! MAIS il a mal au pied et n'a qu'un ballon stratosphérique à disposition
-# Trouvons quand partir
-"""
-son adresse :
-48.865013122558594 ; 2.2885401248931885
-
-73 bvrd des marechaux :
-48.71699905395508 ; 2.2039577960968018
-
-"""
-
-
-def test(): 
-    t = 0
-    while True :
-        res = Tree_Largeur((2.1675682067871094,48.710262298583984),Node(2.2039577960968018,48.71699905395508,(t,0),0,None),24,3*3600,100,40000,wind_data)
-        if res[0] == True :
-            print("un chemin a été trouvé :")
-            affichage_liste(res[1])
-            break
-        t +=1
-
-#test()
 

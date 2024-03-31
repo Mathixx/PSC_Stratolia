@@ -211,26 +211,6 @@ def maj_tempsV(long : float, lat : float, ventV : float, ventV_adj : float) -> i
     return math.ceil(k*math.cos(lat*math.pi/180)*(2.5*(case_longitude+1)-long)/ventV if ventV > 0 else -k*math.cos(lat*math.pi/180)*(long-2.5*(case_longitude-1))/ventV_adj)
 
 
-
-
-'''
-Fonction qui recentre les valeurs de long et lat dans les bons intervalles
-Entrée : long, lat
-Sortie : long, lat
-'''
-
-def mod(long: float, lat : float) -> (float, float):
-    if lat<-90:
-        lat = -180-lat
-    if lat>90:
-        lat = 180-lat
-    return ((long+360)%360,lat)
-
-
-
-
-
-
 ###########
 ## TESTS ##       
 ###########

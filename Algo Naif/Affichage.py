@@ -1,3 +1,7 @@
+#########################
+## MODULES NÉCESSAIRES ##
+#########################
+
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -9,6 +13,10 @@ import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import matplotlib.dates as mdates
 from datetime import datetime, timedelta
+
+###########################
+## FONCTIONS PRINCIPALES ##
+###########################
 
 def visupoints(liste,echelle=1):
     X,Y = [],[]

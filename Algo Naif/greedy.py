@@ -115,68 +115,6 @@ def greedy(destination : (float,float), depart : Node, duree : int, temps_chgmt_
 ###########################
 
 
-'''
-Fonction qui reconstitue le chemin parcouru
-Entrée : noeud d'arrivée
-Sortie : la liste des points parcourus depuis le départ jusqu'à l'arrivée
-'''
-
-def chemin(point_atteint : Node) -> list:
-    liste = [point_atteint]
-    p = point_atteint
-    while p.prev != None :
-        p = p.prev
-        liste.append(p)
-    liste.reverse()
-    return liste
-
-'''
-Fonction qui reconstitue le chemin parcouru en un format de donnée utilisable par l'algorithme de Mohammed
-Entrée : liste des poids (format Node) parcourus depuis le départ jusqu'a l'arrivée
-Sortie : la liste de coordonnées en format [(long_i,lat_i,z_i,sec_i),]i
-'''
-
-def chemin_graphic(chemin_node : list) -> list:
-    liste = []
-    for i in range(len(chemin_node)):
-        n = chemin_node[i]
-        liste.append([n.long, n.lat, altitude_from_indice(n.p), n.t])
-    return liste
-
-
-
-'''
-Fonction qui affiche proprement la trajectoire trouvée
-
-Entrée : liste de Node
-Pas de sortie
-'''
-
-def affichage_liste(liste : list):
-    print()
-    print("Liste des points formant la trajectoire : ")
-    print()
-    for x in liste:
-        if isinstance(x, Node):
-            print(x)
-        else:
-            print("Erreur : un des éléments de la liste n'est pas une instance de la classe Node.")
-            return
-
-
-'''
-Fonction qui convertit la donnée de case de pression en une altitude (en m??)
-
-Entrée : case de pression (int dans [0,17[)
-Sortie : altitude (int)
-'''
-
-def convPression_altitude(pressionData : int) -> int :
-    # Formules admises fournies par Louis Hart-Davis
-    tabPhP = [10,20,30,50,70,100,150,200,250,300,400,500,600,700,850,925,1000]
-    pressionHp = tabPhP[pressionData]
-    return 0.3048*145366.45*(1-(pressionHp/1013.25)**0.190284)
-
 
 
 

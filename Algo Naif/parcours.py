@@ -148,10 +148,6 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
 ###########################
 ## FONCTIONS AUXILIAIRES ##
 ###########################
-
-
-
-
 '''
 Fonction qui détermine le temps nécessaire pour changer de case en fonction des données de vent.
 Entrée : 

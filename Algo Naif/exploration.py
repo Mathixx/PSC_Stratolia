@@ -9,7 +9,6 @@ import sys
 from parcours import parcours_a_Z
 from parcours_interpolate import parcours_a_Z_interpolate
 from Node import *
-from parcours import distance_destination
 
 from data_vent import *
 from villes import *
@@ -98,7 +97,7 @@ def wide_search(destination : (float,float), depart : Node, duree : int, temps_c
 
                 # Si on a rencontré la destination, on remonte l'arbre pour reconstituer le chemin complet.
                 if a_rencontre_destination:
-                    liste = chemin_animation(pointF)
+                    liste = chemin(pointF)
                     affichage_liste(liste)
                     return (True, precision, liste)
                 # Sinon on ajoute le nouveau point à la liste des futurs points. 
@@ -122,7 +121,7 @@ def wide_search(destination : (float,float), depart : Node, duree : int, temps_c
     print("Meilleur point final : "+str(listeP[0]))
     print("Meilleure distance atteinte = "+str(distance_closest//1000)+ " km.")
     print("Point le plus proche : "+str(closest)) 
-    liste = chemin_animation(listeP[0])
+    liste = chemin(listeP[0])
     return (False, distance_minimale,liste)
 
 
@@ -132,73 +131,6 @@ def wide_search(destination : (float,float), depart : Node, duree : int, temps_c
 ###########################
 ## FONCTIONS AUXILIAIRES ##
 ###########################
-
-'''
-Fonction qui reconstitue le chemin parcouru
-Entrée : noeud d'arrivée
-Sortie : la liste des points parcourus depuis le départ jusqu'à l'arrivée
-'''
-
-def chemin(point_atteint : Node) -> list:
-    liste = [point_atteint]
-    p = point_atteint
-    while p.prev != None :
-        p = p.prev
-        liste.append(p)
-    liste.reverse()
-    return liste
-
-
-'''
-Fonction qui reconstitue le chemin parcouru
-Entrée : noeud d'arrivée
-Sortie : la liste des points parcourus dans le format de la fonction animation [(long,lat,alt,sec)]
-'''
-
-
-def chemin_animation(point_atteint : Node) -> list:
-    coords = []
-    p = point_atteint
-    while p.prev != None:
-        coords.append((p.long,p.lat,convPression_altitude(p.p),p.t))
-        p = p.prev
-    coords.reverse()
-    return coords
-
-
-'''
-Fonction qui affiche proprement la trajectoire trouvée
-
-Entrée : liste de Node
-Pas de sortie
-'''
-
-def affichage_liste(liste : list):
-    print()
-    print("Liste des points formant la trajectoire : ")
-    print()
-    for x in liste:
-        if isinstance(x, Node):
-            print(x)
-        else:
-            print("Erreur : un des éléments de la liste n'est pas une instance de la classe Node.")
-            return
-
-
-'''
-Fonction qui convertit la donnée de case de pression en une altitude (en m??)
-
-Entrée : case de pression (int dans [0,17[)
-Sortie : altitude (int)
-'''
-
-def convPression_altitude(pressionData : int) -> int :
-    # Formules admises fournies par Louis Hart-Davis
-    tabPhP = [10,20,30,50,70,100,150,200,250,300,400,500,600,700,850,925,1000]
-    pressionHp = tabPhP[pressionData]
-    return 0.3048*145366.45*(1-(pressionHp/1013.25)**0.190284)
-
-
 
 '''
 À écrire
@@ -241,6 +173,6 @@ def test_wide():
     temps_chgmt_pression = 6*3600
     precision = 10000
     (boool,dist,liste) = wide_search(destination, depart, duree, temps_chgmt_pression, precision, wind_data)
-    animation(liste,destination,1)
+    animation(chemin_graphic(liste),destination,1)
 
 test_wide()
