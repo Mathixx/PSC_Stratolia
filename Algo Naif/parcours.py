@@ -74,64 +74,64 @@ def parcours_a_Z(destination : (float,float), n : Node, temps_chgmt_pression : i
             # On regarde les données de vent dans la case adjacente.
             case_longitude_adj = case_longitude -1 if case_longitude>0 else 143
             (ventU_adj, ventV_adj) = ventU_ventV(case_longitude_adj, case_latitude, temps+temps_chgmt_pression-temps_restant, pression, tab_vent)
-            if (ventV_adj >= 0 and ventV <= 0) or ventV_adj*ventV == 0:
+            if (ventU_adj >= 0 and ventU <= 0) or ventU_adj*ventU == 0:
                 # La longitude finale sera celle de la limite de case. On se ramène au cas général en ajustant ventV à 0.
-                ventV = 0
-                tempsV = sys.maxsize
-                if ventU_adj >=0 and ventU <= 0:
-                    # On sera au même point à la fin de l'exploration.
-                    break
-            else:
-                # On ajuste simplement le calcul de tempsV et on revient dans le cas général.
-                tempsV =  maj_tempsV(long, lat, ventV, ventV_adj)
-
-        # Sous-cas 2 : limite de case en latitude
-        if lat%2.5 == 0:
-            # On regarde les données de vent dans la case adjacente.
-            case_latitude_adj = case_latitude -1 if case_latitude>0 else 0
-            (ventU_adj, ventV_adj) = ventU_ventV(case_longitude, case_latitude_adj, temps+temps_chgmt_pression-temps_restant, pression, tab_vent)
-            if (ventU_adj >=0 and ventU <= 0) or ventU_adj*ventU == 0:
-                # La latitude finale sera celle de la limite de case. On se ramène au cas général en ajustant ventU à 0.
                 ventU = 0
                 tempsU = sys.maxsize
                 if ventV_adj >=0 and ventV <= 0:
                     # On sera au même point à la fin de l'exploration.
                     break
             else:
-                # On ajuste simplement le calcul de tempsU et on revient dans le cas général.
+                # On ajuste simplement le calcul de tempsV et on revient dans le cas général.
                 tempsU =  maj_tempsU(long, lat, ventU, ventU_adj)
+
+        # Sous-cas 2 : limite de case en latitude
+        if lat%2.5 == 0:
+            # On regarde les données de vent dans la case adjacente.
+            case_latitude_adj = case_latitude -1 if case_latitude>0 else 0
+            (ventU_adj, ventV_adj) = ventU_ventV(case_longitude, case_latitude_adj, temps+temps_chgmt_pression-temps_restant, pression, tab_vent)
+            if (ventV_adj >=0 and ventV <= 0) or ventV_adj*ventV == 0:
+                # La latitude finale sera celle de la limite de case. On se ramène au cas général en ajustant ventU à 0.
+                ventV = 0
+                tempsV = sys.maxsize
+                if ventU_adj >=0 and ventU <= 0:
+                    # On sera au même point à la fin de l'exploration.
+                    break
+            else:
+                # On ajuste simplement le calcul de tempsU et on revient dans le cas général.
+                tempsV =  maj_tempsU(long, lat, ventV, ventV_adj)
 
         # Cas général.
 
         if (temps_evolution < min(tempsU,tempsV)) :
-            lat += (temps_evolution*ventU)/k
-            long += (temps_evolution*ventV)/k
+            lat += (temps_evolution*ventV)/k
+            long += (temps_evolution*ventU)/k
 
             temps_restant -= temps_evolution
 
         # Deuxième cas : on a changé de case en latitude.
-        elif (tempsU < tempsV) :
-            # Attention au cas où on passe le pôle Nord (d'où le %72).
-            lat = -90 + 2.5*(case_latitude+1) if ventU>0 else -90 + 2.5*case_latitude
-            # Il faut quand même mettre à jour la longitude.
-            long += (tempsU*ventV)/k
-
-            temps_restant -= tempsU
-
-        # Troisième cas : on a changé de case en longitude.
         elif (tempsV < tempsU) :
-            # Attention au cas où on passe le méridien 0 (d'où le %144).
-            long = 2.5*(case_longitude+1) if ventV>0 else 2.5 * case_longitude
-
-            # Il faut quand même mettre à jour la latitude.
-            lat += (tempsV*ventU)/k
+            # Attention au cas où on passe le pôle Nord (d'où le %72).
+            lat = -90 + 2.5*(case_latitude+1) if ventV>0 else -90 + 2.5*case_latitude
+            # Il faut quand même mettre à jour la longitude.
+            long += (tempsV*ventU)/k
 
             temps_restant -= tempsV
 
+        # Troisième cas : on a changé de case en longitude.
+        elif (tempsU < tempsV) :
+            # Attention au cas où on passe le méridien 0 (d'où le %144).
+            long = 2.5*(case_longitude+1) if ventU>0 else 2.5 * case_longitude
+
+            # Il faut quand même mettre à jour la latitude.
+            lat += (tempsU*ventV)/k
+
+            temps_restant -= tempsU
+
         # Quatrième cas : on change de case en latitude et en longitude simultanément (très peu probable).
         else :
-            lat = -90 + 2.5*(case_latitude+1) if ventU>0 else -90 + 2.5*case_latitude
-            long = 2.5*(case_longitude+1) if ventV>0 else 2.5 * case_longitude
+            lat = -90 + 2.5*(case_latitude+1) if ventV>0 else -90 + 2.5*case_latitude
+            long = 2.5*(case_longitude+1) if ventU>0 else 2.5 * case_longitude
 
             temps_restant -= tempsU
 
@@ -164,38 +164,38 @@ def tempsU_tempsV(long, lat, ventU, ventV) -> (int, int):
     # Constante utile : (rayon de la Terre en m et conversion degrés en radians)
     k = 1000 * 6371 * math.pi / 180
     # Ce calcul n'est valable que dans le cas où l'on est pas à une limite de case.
-    if (ventU != 0) :
-            tempsU = math.ceil(k*(-90+2.5*(case_latitude+1)-lat)/ventU if ventU > 0 else -k*(lat-(-90+2.5*case_latitude))/ventU)
-    else :
-            tempsU = sys.maxsize
     if (ventV != 0) :
-        tempsV =  math.ceil(k*math.cos(lat*math.pi/180)*(2.5*(case_longitude+1)-long)/ventV if ventV > 0 else -k*math.cos(lat*math.pi/180)*(long-2.5*case_longitude)/ventV)
+            tempsV = math.ceil(k*(-90+2.5*(case_latitude+1)-lat)/ventV if ventV > 0 else -k*(lat-(-90+2.5*case_latitude))/ventV)
     else :
-        tempsV = sys.maxsize
+            tempsV = sys.maxsize
+    if (ventU != 0) :
+        tempsU =  math.ceil(k*math.cos(lat*math.pi/180)*(2.5*(case_longitude+1)-long)/ventU if ventU > 0 else -k*math.cos(lat*math.pi/180)*(long-2.5*case_longitude)/ventU)
+    else :
+        tempsU = sys.maxsize
     return (tempsU, tempsV)
 
 
 
 '''
-Mise à jour de la valeur de tempsU quand on est dans un cas précis
+Mise à jour de la valeur de tempsV quand on est dans un cas précis
 '''
 
-def maj_tempsU(long : float, lat : float, ventU : float, ventU_adj : float) -> int:
+def maj_tempsV(long : float, lat : float, ventU : float, ventV_adj : float) -> int:
     (case_longitude, case_latitude) = case(long, lat)
     # Constante utile : (rayon de la Terre en m et conversion degrés en radians)
     k = 1000 * 6371 * math.pi / 180
-    return math.ceil(k*(-90+2.5*(case_latitude+1)-lat)/ventU if ventU > 0 else -k*(lat-(-90+2.5*(case_latitude-1)))/ventU_adj)
+    return math.ceil(k*(-90+2.5*(case_latitude+1)-lat)/ventV if ventV > 0 else -k*(lat-(-90+2.5*(case_latitude-1)))/ventV_adj)
 
 
 '''
 Mise à jour de la valeur de tempsU quand on est dans un cas précis
 '''
 
-def maj_tempsV(long : float, lat : float, ventV : float, ventV_adj : float) -> int:
+def maj_tempsU(long : float, lat : float, ventV : float, ventU_adj : float) -> int:
     (case_longitude, case_latitude) = case(long, lat)
     # Constante utile : (rayon de la Terre en m et conversion degrés en radians)
     k = 1000 * 6371 * math.pi / 180
-    return math.ceil(k*math.cos(lat*math.pi/180)*(2.5*(case_longitude+1)-long)/ventV if ventV > 0 else -k*math.cos(lat*math.pi/180)*(long-2.5*(case_longitude-1))/ventV_adj)
+    return math.ceil(k*math.cos(lat*math.pi/180)*(2.5*(case_longitude+1)-long)/ventU if ventU > 0 else -k*math.cos(lat*math.pi/180)*(long-2.5*(case_longitude-1))/ventU_adj)
 
 
 
