@@ -51,16 +51,17 @@ def random_path(liste_villes) :
     path = []
     ville_depart = choisir_ville_au_hasard(liste_villes)
     ville_destination = choisir_ville_au_hasard(liste_villes)
+
+    distance_max = 5000000 # 5000 km
+
+    while(ville_destination.nom == ville_depart.nom or distance_destination((ville_destination.long, ville_destination.lat), ville_depart.long, ville_depart.lat) > distance_max):
+        ville_destination = choisir_ville_au_hasard(liste_villes)
     
     temps = (generate_random_date(dt.datetime(2020, 1, 1), dt.datetime(2020, 10, 30))-dt.datetime(2020, 1, 1)).total_seconds()
     #Convert it in an integer
     temps = int(temps)
     depart = Node(ville_depart.long, ville_depart.lat, temps, 16, None) #long, lat, temps, pression, None
 
-    distance_max = 5000000 # 5000 km
-
-    while (distance_destination((ville_destination.long, ville_destination.lat), ville_depart.long, ville_depart.lat) > distance_max):
-        ville_destination = choisir_ville_au_hasard(liste_villes)
 
     print("Ville de départ : ", ville_depart.nom)
     print("Ville de destination : ", ville_destination.nom)

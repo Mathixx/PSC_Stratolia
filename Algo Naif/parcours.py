@@ -180,7 +180,7 @@ def tempsU_tempsV(long, lat, ventU, ventV) -> (int, int):
 Mise à jour de la valeur de tempsV quand on est dans un cas précis
 '''
 
-def maj_tempsV(long : float, lat : float, ventU : float, ventV_adj : float) -> int:
+def maj_tempsV(long : float, lat : float, ventV : float, ventV_adj : float) -> int:
     (case_longitude, case_latitude) = case(long, lat)
     # Constante utile : (rayon de la Terre en m et conversion degrés en radians)
     k = 1000 * 6371 * math.pi / 180
@@ -191,7 +191,7 @@ def maj_tempsV(long : float, lat : float, ventU : float, ventV_adj : float) -> i
 Mise à jour de la valeur de tempsU quand on est dans un cas précis
 '''
 
-def maj_tempsU(long : float, lat : float, ventV : float, ventU_adj : float) -> int:
+def maj_tempsU(long : float, lat : float, ventU : float, ventU_adj : float) -> int:
     (case_longitude, case_latitude) = case(long, lat)
     # Constante utile : (rayon de la Terre en m et conversion degrés en radians)
     k = 1000 * 6371 * math.pi / 180
