@@ -17,7 +17,7 @@ class BalloonNavigationEnv(gym.Env):
         high_obs = np.array([50,50,20,100] + [10] * (8000))
         self.observation_space = spaces.Box(low=low_obs, high=high_obs, dtype=np.float32)
 
-        #Définition de l'espace des actions : monter, rester à la même altitude, déscendre
+        #Définition de l'espace des actions : monter, rester à la même altitude, descendre
         self.action_space = spaces.Discrete(3) 
 
 
