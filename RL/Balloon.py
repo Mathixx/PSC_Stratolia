@@ -1,7 +1,9 @@
 import datetime as dt
 import sys
+
 sys.path.append('/Users/mathiasperez/Documents/GitHub/PSC_Stratolia/Algo Naif')
 from data_vent import *
+
 import math
 
 
@@ -45,20 +47,24 @@ class Balloon:
             long_width=long_decimal_length + 6, lat_width=lat_decimal_length + 6,
             pression_width=pression_width, time_width=time_decimal_length
         )
+    
+    ##################
+    ## DEPLACEMENTS ##
+    ##################
    
     def up(self, temps_exploration : int, goal_long, goal_lat, tab_vent : dict):
         if self.p == 0 :
             self.follow_wind(temps_exploration, goal_long, goal_lat, tab_vent)
             return
         self.p -= 1
-        self.t += dt.timedelta(seconds=131)
+        self.t += 0 # A MODIFIER Apres apprentissage
 
     def down(self, temps_exploration : int, goal_long, goal_lat, tab_vent : dict):
         if self.p == 16 :
             self.follow_wind(temps_exploration, goal_long, goal_lat, tab_vent)
             return
         self.p += 1
-        self.temps += dt.timedelta(seconds=131)
+        self.temps += 0 # A MODIFIER Apres apprentissage
 
     def follow_wind(self, temps_exploration : int, goal_long, goal_lat, tab_vent : dict) -> bool:
         # utiliser la fonction d'interpolation de hippo et 
@@ -109,7 +115,6 @@ class Balloon:
         # On s'assure que les valeurs de longitude et latitude soient dans le bon intervalle.
         (long, lat) = mod(long, lat)
         self.lat, self.long = lat, long
-
         
         # On renvoie notre position finale sachant qu'on a pas rencontré la destination. 
         return (False)
@@ -142,18 +147,41 @@ class Balloon:
 ## FONCTIONS AUXILIAIRES ##
 ###########################
 
-def mod_long(long : float) -> float:
-    return (long+360)%360
+def cubic_mask(delta, r_x, r_y, r_z, n_t):
+    d = delta
+    mask = []
+    for i in range(-r_x,r_x):
+        s = []
+        for j in range(-r_y,r_y):
+            u = []
+            for k in range(0,17):
+                v = []
+                for l in range(r_t):
+                    v.append((d*i,d*j,k,l))
+                u.append(v)
+            s.append(u)
+        mask.append(s)
 
-def mod_lat(lat : float) -> float:
-    if lat<-90:
-        lat = -180-lat
-    if lat>90:
-        lat = 180-lat
-    return lat
+    return mask
+
+def get_winds_around_point(longitude, latitude, temps,  tab_vent):
+    mask = cubic_mask(1, 1, 1, 1, 1)  # Example mask parameters, adjust as needed
+    coords = coord_list(longitude, latitude, 0, 0, mask)
+    winds = []
+    for coord in coords:
+        if coord[0]:
+            winds.append(ventU_ventV_interpolate(coord[1][0], coord[1][1], coord[1][2], coord[1][3], tab_vent))
+        else:
+            winds.append((0, 0))
+    return winds
 
 
-def coord_list(long, lat, temps, p) :
+
+
+#MONCEF decided : pas  = 50
+
+
+def coord_list(long, lat, temps, p, mask) : #ICI ON rajoute le masque fournit par MONCEF et on rajoute les coordonnées modifiées
     # Constante utile : (rayon de la Terre en m et conversion degrés en radians)
     k = 1000 * 6371 * math.pi / 180
     res = []

@@ -81,7 +81,7 @@ def test2_greedy():
 
 
 # Exécution du test
-test2_greedy()
+#test2_greedy()
 
 # Résultats pour N=10000 : temps = 0.0471439 // fréquence = 23.64 % de chemins trouvés
 

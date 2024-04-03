@@ -75,7 +75,7 @@ def wide_search(destination : (float,float), depart : Node, duree : int, temps_c
     for count in range(nombre_d_iterations) : 
 
         # On veut afficher dans quelle boucle la recherche est en cours.
-        print("Recherche dans la boucle "+str(count)+" ...")
+        #print("Recherche dans la boucle "+str(count)+" ...")
 
         # Si la liste des points à explorer est nulle on abandonne.
         if len(listeP) == 0:
@@ -98,14 +98,14 @@ def wide_search(destination : (float,float), depart : Node, duree : int, temps_c
                 # Si on a rencontré la destination, on remonte l'arbre pour reconstituer le chemin complet.
                 if a_rencontre_destination:
                     liste = chemin(pointF)
-                    affichage_liste(liste)
+                    #affichage_liste(liste)
                     return (True, precision, liste)
                 # Sinon on ajoute le nouveau point à la liste des futurs points. 
                 listeF.append(pointF)
         # On garde que les N éléments les plus proches.
         listeP = selection_opti(destination, listeF, ecart_min)
-        print("Nombre de points en cours d'exploration : "+str(len(listeP)))
-        visupoints(listeP,1)
+        #print("Nombre de points en cours d'exploration : "+str(len(listeP)))
+        #visupoints(listeP,1)
 
         # On met à jour le point le plus proche atteint.
         dist = distance_destination(destination, listeP[0].long, listeP[0].lat)
@@ -115,12 +115,12 @@ def wide_search(destination : (float,float), depart : Node, duree : int, temps_c
         
 
     # Dans ce cas on a dépassé la limite temporelle d'exploration.
-    print("On a atteint la limite temporelle d'exploration.")
+    #print("On a atteint la limite temporelle d'exploration.")
     distance_minimale = min(distance_destination(destination, point.long, point.lat) for point in listeP)
-    print("Distance de la destination = "+str(distance_minimale//1000)+ " km.")
-    print("Meilleur point final : "+str(listeP[0]))
-    print("Meilleure distance atteinte = "+str(distance_closest//1000)+ " km.")
-    print("Point le plus proche : "+str(closest)) 
+    #print("Distance de la destination = "+str(distance_minimale//1000)+ " km.")
+    #print("Meilleur point final : "+str(listeP[0]))
+    #print("Meilleure distance atteinte = "+str(distance_closest//1000)+ " km.")
+    #print("Point le plus proche : "+str(closest)) 
     liste = chemin(listeP[0])
     return (False, distance_minimale,liste)
 
@@ -175,4 +175,4 @@ def test_wide():
     (boool,dist,liste) = wide_search(destination, depart, duree, temps_chgmt_pression, precision, wind_data)
     animation(chemin_graphic(liste),destination,1)
 
-test_wide()
+#test_wide()

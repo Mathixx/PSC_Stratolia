@@ -56,5 +56,5 @@ def test(N):
     print("Nombre de triplets false, false, false : "+str(nb_false_false_false))
     
 
-test(10)
+#test(10)
     
