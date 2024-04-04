@@ -113,7 +113,7 @@ def create_data(path : list) :
     i = 0
     while (i+1 < len(path)):
         delta_altitude = path[i].p - path[i+1].p
-        if (path[i].p == path[i+1].p):
+        if (delta_altitude == 0):
             # Le ballon est à la même altitude, il a suivi les vents
             if (path[i].t == path[i+1].t):
                 # Le ballon n'a pas bougé, on ne le prend pas en compte
@@ -125,25 +125,24 @@ def create_data(path : list) :
                 i += 1
                 continue
             
-        elif (path[i].p > path[i+1].p) :
+        elif (delta_altitude > 0) :
             #Le ballon est monté en altitude, NORMALEMENT EN TEMPS CONSIDÉRÉ COMME INSTANTANÉ
-            delta_altitude = path[i].p - path[i+1].p
 
-            d_alt = 1
+            d_alt = 0
             while(d_alt < delta_altitude):
-                data.append([[path[i].long, path[i].lat, path[i].t, path[i].p - d_alt], 1])
                 d_alt += 1
+                data.append([[path[i].long, path[i].lat, path[i].t, path[i].p - d_alt], 1])
             i += 1
             continue
         
-        elif (path[i].p < path[i+1].p) :
+        elif (delta_altitude < 0) :
             #Le ballon est descendu en altitude, NORMALEMENT EN TEMPS CONSIDÉRÉ COMME INSTANTANÉ
-            delta_altitude = path[i+1].p - path[i].p
+            delta_altitude = -delta_altitude
 
-            d_alt = 1
+            d_alt = 0
             while(d_alt < delta_altitude):
-                data.append([[path[i].long, path[i].lat, path[i].t, path[i].p + d_alt], 2])
                 d_alt += 1
+                data.append([[path[i].long, path[i].lat, path[i].t, path[i].p + d_alt], 2])
             i += 1
             continue
     return data
