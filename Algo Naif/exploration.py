@@ -75,7 +75,7 @@ def wide_search(destination : (float,float), depart : Node, duree : int, temps_c
     for count in range(nombre_d_iterations) : 
 
         # On veut afficher dans quelle boucle la recherche est en cours.
-        #print("Recherche dans la boucle "+str(count)+" ...")
+        print("Recherche dans la boucle "+str(count)+" ...")
 
         # Si la liste des points à explorer est nulle on abandonne.
         if len(listeP) == 0:
@@ -104,8 +104,8 @@ def wide_search(destination : (float,float), depart : Node, duree : int, temps_c
                 listeF.append(pointF)
         # On garde que les N éléments les plus proches.
         listeP = selection_opti(destination, listeF, ecart_min)
-        #print("Nombre de points en cours d'exploration : "+str(len(listeP)))
-        #visupoints(listeP,1)
+        print("Nombre de points en cours d'exploration : "+str(len(listeP)))
+        visupoints(listeP,1)
 
         # On met à jour le point le plus proche atteint.
         dist = distance_destination(destination, listeP[0].long, listeP[0].lat)
@@ -165,14 +165,14 @@ def test_wide():
     #destination_long = float(input("Veuillez entrer la longitude de la destination : "))
     #destination_lat = float(input("Veuillez entrer la latitude de la destination : "))
     #temps_I = int(input("Veuillez entrer le temps de départ du parcours : "))
-    dep = Ville("Paris", 2.3522, 48.8566)
-    dest = Ville("Marseille", 5.3698, 43.2965)
-    depart = Node(dep.long, dep.lat, 0, 0, None)
+    dep = Ville("Reims", 4.0317, 49.2583)
+    dest = Ville("Toulouse", 1.4442, 43.6047)
+    depart = Node(dep.long, dep.lat, 21600*229, 12, None)
     destination = (dest.long, dest.lat)
     duree = 120
-    temps_chgmt_pression = 6*3600
+    temps_chgmt_pression = 3600
     precision = 10000
     (boool,dist,liste) = wide_search(destination, depart, duree, temps_chgmt_pression, precision, wind_data)
     animation(chemin_graphic(liste),destination,1)
 
-#test_wide()
+test_wide()

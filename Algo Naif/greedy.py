@@ -78,7 +78,7 @@ def greedy(destination : (float,float), depart : Node, duree : int, temps_chgmt_
                 # Si on a rencontré la destination, on remonte l'arbre pour reconstituer le chemin complet.
                 if a_rencontre_destination:
                     liste = chemin(point_atteint)
-                    #affichage_liste(liste)
+                    affichage_liste(liste)
                     return (True, precision, liste)
                 # Sinon on met à jour le point le plus proche atteint.
                 if i==0:
