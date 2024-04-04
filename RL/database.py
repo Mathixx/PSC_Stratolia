@@ -5,7 +5,7 @@
 import datetime as dt
 import sys
 
-sys.path.append('/Users/mathiasperez/Documents/GitHub/PSC_Stratolia/Algo Naif')
+sys.path.append('/Users/hippolytewallaert/Documents/2A/PSC/PSC_Stratolia/Algo Naif')
 from data_vent import *
 from villes import *
 from exploration import *
@@ -130,8 +130,8 @@ def create_data(path : list) :
 
             d_alt = 0
             while(d_alt < delta_altitude):
-                d_alt += 1
                 data.append([[path[i].long, path[i].lat, path[i].t, path[i].p - d_alt], 1])
+                d_alt += 1
             i += 1
             continue
         
@@ -141,8 +141,8 @@ def create_data(path : list) :
 
             d_alt = 0
             while(d_alt < delta_altitude):
-                d_alt += 1
                 data.append([[path[i].long, path[i].lat, path[i].t, path[i].p + d_alt], 2])
+                d_alt += 1
             i += 1
             continue
     return data
