@@ -147,26 +147,28 @@ def create_data(path : list) :
             continue
     return data
 
-def create_database(n : int, liste_villes : list) :
+def create_database_random(n : int, liste_villes : list) :
     """
     Fonction qui crée une base de données de n éléments et qui les ajoute dans un csv file
     """
     data = []
-    for _ in range(n):
+    i = 0
+    while (i < n) :
         # Generate a random path
         found, path = random_path(liste_villes)
         if found:
+            i += 1
             # Create data from the path
             data.extend(create_data(path))
     
     # Write data to a CSV file
-    with open("database.csv", "w") as f:
+    with open("database_random_paths.csv", "w") as f:
         writer = csv.writer(f)
         writer.writerows(data)
 
 
 # Create the database of 10 000 elements
-
+create_database_random(10, villes_france)
 
 
 
@@ -190,6 +192,6 @@ def test_path() :
     else :
         print("Chemin non trouvé.")
 
-test_path()
+#test_path()
 
 

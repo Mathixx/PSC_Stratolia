@@ -23,7 +23,7 @@ def test1_greedy():
     while(dest.nom == depart.nom):
         dest = choisir_ville_au_hasard(villes_france)
     print("Destination : "+str(dest))
-    temps_I = random.randint(0, 100)
+    temps_I = random.randint(0, 1000)
     print("Temps de départ : "+ str(temps_I))
     pression =  random.randint(0,16)
     print("Pression de départ : "+str(pression))
@@ -33,7 +33,7 @@ def test1_greedy():
     # Paramètres de test
     destination = (dest.long, dest.lat)
     n = Node(depart.long, depart.lat, temps_I*21600, pression=pression, prev=None)
-    temps_chgmt_pression = 3*3600  # Remplacez par la durée du changement de pression souhaitée
+    temps_chgmt_pression = 3600  # Remplacez par la durée du changement de pression souhaitée
     precision = 10000 # Précision de la destination
 
     # Exécution de la fonction
@@ -61,7 +61,7 @@ def test1_greedy():
 
 def test2_greedy():
     # On fait varier la limite d'éloignement et la durée dans test1
-    nombre_tests = 1000
+    nombre_tests = 10000
     moyenne_temps = 0
     moyenne_chemins_trouves = 0
     moyenne_distance = 0
