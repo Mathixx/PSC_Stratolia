@@ -56,7 +56,7 @@ def parcours_a_Z_interpolate(destination : (float,float), n : Node, temps_chgmt_
             return (True, Node(long, lat, temps+temps_chgmt_pression-temps_restant, pression, n))
         
         # On récupère les données de vent (en m.s-1). Grâce aux hypothèses sur les temps on sait qu'on reste dans la même case temporelle.
-        (ventU, ventV) = ventU_ventV_interpolate(long, lat, temps+temps_chgmt_pression-temps_restant, pression, tab_vent)
+        (ventU, ventV) = ventU_ventV_noise(long, lat, temps+temps_chgmt_pression-temps_restant, pression, tab_vent)
 
         # On met à jour les valeurs de longitude et latitude.
         temps_evolution = min(temps_restant, temps_test_arrivee)

@@ -56,12 +56,12 @@ def test1_greedy():
 
 
 # Exécution du test
-test1_greedy()
+#test1_greedy()
 
 
 def test2_greedy():
     # On fait varier la limite d'éloignement et la durée dans test1
-    nombre_tests = 10000
+    nombre_tests = 1000
     moyenne_temps = 0
     moyenne_chemins_trouves = 0
     moyenne_distance = 0
@@ -81,8 +81,8 @@ def test2_greedy():
 
 
 # Exécution du test
-#test2_greedy()
+test2_greedy()
 
-# Résultats pour N=10000 : temps = 0.0471439 // fréquence = 23.64 % de chemins trouvés
+
 
 
