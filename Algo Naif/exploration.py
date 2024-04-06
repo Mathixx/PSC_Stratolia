@@ -233,4 +233,4 @@ def test2_wide():
     print ("La moyenne temporelle est de : " + str(moyenne_temps) +" secondes.")
 
 
-test2_wide()
+#test2_wide()

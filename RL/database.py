@@ -162,7 +162,7 @@ def create_database_random(n : int, liste_villes : list) :
             # Create data from the path
             data.extend([["Chemin : " + str(ville_dep) +" to " +str(ville_arr) ]])
             data.extend(create_data(path))
-            with open("database_random_paths_france.csv", "a") as f:
+            with open("database_random_paths_monde.csv", "a") as f:
                 writer = csv.writer(f)
                 writer.writerows(data)
             data = []
