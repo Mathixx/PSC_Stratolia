@@ -227,7 +227,6 @@ def test() :
         if coords[i][0] :
             print(coords[i][1])
 
-#test()
         
 
 def testClass() :

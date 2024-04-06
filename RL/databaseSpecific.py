@@ -44,18 +44,15 @@ def generate_random_date(start_date, end_date):
 ## CREATION DE LA BASE DE DONNÉES ##
 ####################################
 
-def random_path(liste_villes) :
+def random_pathParis_Marseille() :
     """
     Fonction qui génère un chemin aléatoire entre 2 villes prise au hasard de la liste
     """
     path = []
-    ville_depart = choisir_ville_au_hasard(liste_villes)
-    ville_destination = choisir_ville_au_hasard(liste_villes)
+    ville_depart = Ville("Paris", 2.3522, 48.8566)
+    ville_destination = Ville("Marseille", 5.3698, 43.2965)
 
     distance_max = 5000000 # 5000 km
-
-    while(ville_destination.nom == ville_depart.nom or distance_destination((ville_destination.long, ville_destination.lat), ville_depart.long, ville_depart.lat) > distance_max):
-        ville_destination = choisir_ville_au_hasard(liste_villes)
     
     temps = (generate_random_date(dt.datetime(2020, 1, 1), dt.datetime(2020, 10, 30))-dt.datetime(2020, 1, 1)).total_seconds()
     #Convert it in an integer
@@ -63,9 +60,8 @@ def random_path(liste_villes) :
     depart = Node(ville_depart.long, ville_depart.lat, temps, 16, None) #long, lat, temps, pression, None
 
 
-    print("Ville de départ : ", ville_depart.nom)
-    print("Ville de destination : ", ville_destination.nom)
-    ville_arr = ville_destination
+    #print("Ville de départ : ", ville_depart.nom)
+    #print("Ville de destination : ", ville_destination.nom)
     ville_destination = (ville_destination.long, ville_destination.lat)
     
     technique = random.choice(["greedy"])
@@ -77,7 +73,7 @@ def random_path(liste_villes) :
 
         found, _ , path = greedy(ville_destination, depart, duree, temps_chgmt_pression, precision, wind_data)
         if found :
-            return found, ville_depart, ville_arr ,path
+            return found, path
     elif technique == "selection":
         duree = 120
         temps_chgmt_pression = 6*3600
@@ -86,17 +82,17 @@ def random_path(liste_villes) :
 
         found, _ , path = N_closest(ville_destination, depart, duree, temps_chgmt_pression, precision,eloignement, wind_data)
         if found :
-            return found, ville_depart, ville_arr ,path
+            return found, path
     elif technique == "exploration":
         duree = 120
-        temps_chgmt_pression = 6*3600
+        temps_chgmt_pression = 3600
         precision = 10000
 
         found, _ , path = wide_search(ville_destination, depart, duree, temps_chgmt_pression, precision, wind_data)
         if found :
-            return found, ville_depart, ville_arr,path
+            return found, path
     
-    return found ,ville_depart, ville_destination, []
+    return found, []
 
 
 """
@@ -105,7 +101,7 @@ def random_path(liste_villes) :
         Action 2 : You push the balloon downwards (goes down in altitude) (instanneous action)
 """
 
-def create_data( path : list) :
+def create_data(path : list) :
     """
     Fonction qui crée un élément de la base de données à partir d'un chemin
     """
@@ -148,28 +144,33 @@ def create_data( path : list) :
             continue
     return data
 
-def create_database_random(n : int, liste_villes : list) :
+def create_database_paris_marseille(n : int) :
     """
     Fonction qui crée une base de données de n éléments et qui les ajoute dans un csv file
     """
     data = []
     i = 0
+
+    
     while (i < n) :
+        print(i)
         # Generate a random path
-        found, ville_dep, ville_arr, path = random_path(liste_villes)
+        found, path = random_pathParis_Marseille()
         if found:
             i += 1
             # Create data from the path
-            data.extend([["Chemin : " + str(ville_dep) +" to " +str(ville_arr) ]])
+            data.extend([["Chemin :"]])
             data.extend(create_data(path))
-            with open("database_random_paths_france.csv", "a") as f:
+            # Write data to a CSV file
+            with open("database_paris_marseille.csv", "a") as f:
                 writer = csv.writer(f)
                 writer.writerows(data)
             data = []
+    
 
 
 # Create the database of 10 000 elements
-create_database_random(1000, villes_monde)
+#create_database_paris_marseille(10000)
 
 
 

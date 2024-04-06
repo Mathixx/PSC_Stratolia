@@ -26,8 +26,6 @@ from Node import *
 with open("objet_wind_data_2020.pickle", "rb") as f:
    wind_data = pickle.load(f)
 
-
-
 ##################################################
 ## FONCTIONS RELATIVES A L'EXTRACTION DES VENTS ##
 ##################################################
@@ -118,8 +116,8 @@ Sortie :
     
 
 def ventU_ventV_noise(long : float, lat : float, temps : int, pression : int, tab_vent: dict) -> (float,float):
-    noiseU = random.normalvariate(0, 1) # Paramètres à modifier !!!
-    noiseV = random.normalvariate(0, 1) # Paramètres à modifier !!!
+    noiseU = random.normalvariate(0, 5) # Paramètres à modifier !!!
+    noiseV = random.normalvariate(0, 5) # Paramètres à modifier !!!
     ventU, ventV = ventU_ventV_interpolate(long, lat, temps, pression, wind_data)
     return ventU+noiseU, ventV+noiseV
 

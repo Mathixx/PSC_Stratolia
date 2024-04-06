@@ -16,9 +16,9 @@ from villes import *
 
 
 def test1_greedy():
-    depart = choisir_ville_au_hasard(villes_france)
+    depart = Ville("Buenos Aires", -58.3816, -34.6037)
     print("Départ : "+ str(depart))
-    dest = choisir_ville_au_hasard(villes_france)
+    dest = Ville("Sao Paulo", -46.6333, -23.5505)
     # On ne veut pas que la destination soit égale au départ
     while(dest.nom == depart.nom):
         dest = choisir_ville_au_hasard(villes_france)
@@ -61,7 +61,7 @@ def test1_greedy():
 
 def test2_greedy():
     # On fait varier la limite d'éloignement et la durée dans test1
-    nombre_tests = 10000
+    nombre_tests = 1000
     moyenne_temps = 0
     moyenne_chemins_trouves = 0
     moyenne_distance = 0
@@ -83,6 +83,6 @@ def test2_greedy():
 # Exécution du test
 test2_greedy()
 
-# Résultats pour N=10000 : temps = 0.0471439 // fréquence = 23.64 % de chemins trouvés
+
 
 
