@@ -11,15 +11,16 @@ from villes import *
 import matplotlib.pyplot as plt
 
 
+
 ###########
 ## TESTS ##       
 ###########
 
 
 def test1_greedy():
-    depart = Ville("Buenos Aires", -58.3816, -34.6037)
+    depart = choisir_ville_au_hasard(villes_france)
     print("Départ : "+ str(depart))
-    dest = Ville("Sao Paulo", -46.6333, -23.5505)
+    dest = choisir_ville_au_hasard(villes_france)
     # On ne veut pas que la destination soit égale au départ
     while(dest.nom == depart.nom):
         dest = choisir_ville_au_hasard(villes_france)
@@ -29,12 +30,12 @@ def test1_greedy():
     pression =  random.randint(0,16)
     print("Pression de départ : "+str(pression))
     # duree = int(input("Veuillez entrer la durée d'exploration (nombre d'heures divisible par 6) : "))
-    duree = 150
+    duree = 60
     
     # Paramètres de test
     destination = (dest.long, dest.lat)
     n = Node(depart.long, depart.lat, temps_I*21600, pression=pression, prev=None)
-    temps_chgmt_pression = 3600  # Remplacez par la durée du changement de pression souhaitée
+    temps_chgmt_pression = 6*3600  # Remplacez par la durée du changement de pression souhaitée
     precision = 10000 # Précision de la destination
 
     # Exécution de la fonction
@@ -57,12 +58,12 @@ def test1_greedy():
 
 
 # Exécution du test
-#test1_greedy()
+test1_greedy()
 
 
 def test2_greedy():
     # On fait varier la limite d'éloignement et la durée dans test1
-    nombre_tests = 1000
+    nombre_tests = 10
     moyenne_temps = 0
     moyenne_chemins_trouves = 0
     moyenne_distance = 0
@@ -82,7 +83,7 @@ def test2_greedy():
 
 
 # Exécution du test
-test2_greedy()
+#test2_greedy()
 
 
 def graph_precision():

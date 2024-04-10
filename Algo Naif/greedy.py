@@ -7,7 +7,8 @@ import math
 import sys
 
 from parcours import parcours_a_Z
-from parcours_interpolate import parcours_a_Z_interpolate
+from parcours_interpolate import *
+from parcours_noise import *
 from Node import *
 from data_vent import *
 
@@ -78,7 +79,8 @@ def greedy(destination : (float,float), depart : Node, duree : int, temps_chgmt_
                 # Si on a rencontré la destination, on remonte l'arbre pour reconstituer le chemin complet.
                 if a_rencontre_destination:
                     liste = chemin(point_atteint)
-                    #affichage_liste(liste)
+                    affichage_liste(liste)
+                    print("La robustesse du chemin est environ de "+str(robust_dist(liste, destination, temps_chgmt_pression, precision))+" kilomètres")
                     return (True, precision, liste)
                 # Sinon on met à jour le point le plus proche atteint.
                 if i==0:
