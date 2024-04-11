@@ -26,8 +26,6 @@ from Node import *
 with open("objet_wind_data_2020.pickle", "rb") as f:
    wind_data = pickle.load(f)
 
-
-
 ##################################################
 ## FONCTIONS RELATIVES A L'EXTRACTION DES VENTS ##
 ##################################################
@@ -297,5 +295,6 @@ def affichage_liste(liste : list):
 
 
 
-
+    
+    
 

@@ -85,7 +85,26 @@ villes_monde = [
     Ville("Washington, D.C.", -77.0369, 38.8951),
     Ville("New Delhi", 77.1025, 28.7041),
     Ville("Bangkok", 100.5018, 13.7563),
-    Ville("Brasília", -47.9297, -15.7801)
+    Ville("Brasília", -47.9297, -15.7801),
+    #Rajout de villes 
+    Ville("Lima", -77.0428, -12.0464),
+    Ville("Santiago", -70.6483, -33.4372),
+    Ville("Bogota", -74.0721, 4.7110),
+    Ville("Quito", -78.4678, -0.1807),
+    Ville("Caracas", -66.9036, 10.4806),
+    Ville("La Paz", -68.1193, -16.5000),
+    Ville("Buenos Aires", -58.3816, -34.6037),
+    Ville("Sao Paulo", -46.6333, -23.5505),
+    #Rajout de villes en Angleterre
+    Ville("Manchester", -2.2426, 53.4808),
+    Ville("Liverpool", -2.9912, 53.4084),
+    Ville("Birmingham", -1.8936, 52.4862),
+    Ville("Leeds", -1.5491, 53.8008),
+    #Rajout de villes en Espagne
+    Ville("Barcelona", 2.1734, 41.3851),
+    Ville("Valencia", -0.3750, 39.4699),
+    Ville("Seville", -5.9845, 37.3891),
+    Ville("Zaragoza", -0.8773, 41.6488)
 ]
 
 

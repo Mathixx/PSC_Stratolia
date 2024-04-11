@@ -84,7 +84,7 @@ def test2_N_closest():
 
 
 # Exécution du test
-test2_N_closest()
+#test2_N_closest()
 
 # Résultats N=10 et 1000 tests : 28.8% de chemins trouvés / Moyenne temporelle 0.477s
 

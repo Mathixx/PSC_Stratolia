@@ -7,7 +7,8 @@ import math
 import sys
 
 from parcours import parcours_a_Z
-from parcours_interpolate import parcours_a_Z_interpolate
+from parcours_interpolate import *
+from parcours_noise import *
 from Node import *
 from data_vent import *
 
@@ -79,6 +80,7 @@ def greedy(destination : (float,float), depart : Node, duree : int, temps_chgmt_
                 if a_rencontre_destination:
                     liste = chemin(point_atteint)
                     affichage_liste(liste)
+                    print("La robustesse du chemin est environ de "+str(robust_dist(liste, destination, temps_chgmt_pression, precision))+" kilomètres")
                     return (True, precision, liste)
                 # Sinon on met à jour le point le plus proche atteint.
                 if i==0:
@@ -99,11 +101,11 @@ def greedy(destination : (float,float), depart : Node, duree : int, temps_chgmt_
             distance_closest_ever = distance_closest
 
     # Dans ce cas on a dépassé la limite temporelle d'exploration.
-    print("On a atteint la limite temporelle d'exploration. Voici le meilleur chemin trouvé : ")
-    print("Distance de la destination = "+str(distance_closest//1000)+ " km.")
-    print("Point final : "+str(point))
-    print("Meilleure distance atteinte = "+str(distance_closest_ever//1000)+ " km.")
-    print("Point le plus proche : "+str(closest_ever)) 
+    #print("On a atteint la limite temporelle d'exploration. Voici le meilleur chemin trouvé : ")
+    #print("Distance de la destination = "+str(distance_closest//1000)+ " km.")
+    #print("Point final : "+str(point))
+    #print("Meilleure distance atteinte = "+str(distance_closest_ever//1000)+ " km.")
+    #print("Point le plus proche : "+str(closest_ever)) 
     liste = chemin(point)
     return (False, distance_closest, liste)
 

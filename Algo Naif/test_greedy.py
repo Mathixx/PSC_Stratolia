@@ -8,6 +8,8 @@ import time
 from greedy import *
 from villes import *
 #from Affichage import animation
+import matplotlib.pyplot as plt
+
 
 
 ###########
@@ -23,17 +25,17 @@ def test1_greedy():
     while(dest.nom == depart.nom):
         dest = choisir_ville_au_hasard(villes_france)
     print("Destination : "+str(dest))
-    temps_I = random.randint(0, 100)
+    temps_I = random.randint(0, 1000)
     print("Temps de départ : "+ str(temps_I))
     pression =  random.randint(0,16)
     print("Pression de départ : "+str(pression))
     # duree = int(input("Veuillez entrer la durée d'exploration (nombre d'heures divisible par 6) : "))
-    duree = 150
+    duree = 60
     
     # Paramètres de test
     destination = (dest.long, dest.lat)
     n = Node(depart.long, depart.lat, temps_I*21600, pression=pression, prev=None)
-    temps_chgmt_pression = 3*3600  # Remplacez par la durée du changement de pression souhaitée
+    temps_chgmt_pression = 6*3600  # Remplacez par la durée du changement de pression souhaitée
     precision = 10000 # Précision de la destination
 
     # Exécution de la fonction
@@ -56,12 +58,12 @@ def test1_greedy():
 
 
 # Exécution du test
-#test1_greedy()
+test1_greedy()
 
 
 def test2_greedy():
     # On fait varier la limite d'éloignement et la durée dans test1
-    nombre_tests = 10000
+    nombre_tests = 10
     moyenne_temps = 0
     moyenne_chemins_trouves = 0
     moyenne_distance = 0
@@ -81,8 +83,40 @@ def test2_greedy():
 
 
 # Exécution du test
-test2_greedy()
+#test2_greedy()
 
-# Résultats pour N=10000 : temps = 0.0471439 // fréquence = 23.64 % de chemins trouvés
+
+def graph_precision():
+    # On veut obtenir un graphe de la performance de l'algorithme en fonction de la précision
+    # On fait varier la précision de 1000 à 100000
+    nombre_tests = 1000
+    temps_execution = []
+    frequence_succes = []
+    liste_precision = [1000, 2000, 3000, 4000, 5000, 7500, 10000, 15000, 20000, 30000, 40000, 50000, 75000, 100000]
+    for precision in liste_precision:
+        print("Précision : "+str(precision))
+        moyenne_temps = 0
+        moyenne_chemins_trouves = 0
+        for i in range(nombre_tests):
+            print(str(i)+"-ième test...")
+            (a_atteint_destination, distance, duree_execution) = test1_greedy()
+            if a_atteint_destination:
+                moyenne_chemins_trouves += 1
+            moyenne_temps += duree_execution
+        moyenne_chemins_trouves /= nombre_tests
+        moyenne_temps = moyenne_temps / nombre_tests
+        print ("La fréquence de chemins trouvés est de : " + str(moyenne_chemins_trouves*100) +" %.")
+        print ("La moyenne temporelle est de : " + str(moyenne_temps) +" secondes.")
+        temps_execution.append(moyenne_temps)
+        frequence_succes.append(moyenne_chemins_trouves*100)
+    # On utilise matplotlib pour tracer le graphe
+    plt.plot(liste_precision, temps_execution, label="Temps d'exécution")
+    plt.plot(liste_precision, frequence_succes, label="Fréquence de succès")
+    plt.xlabel("Précision")
+    plt.ylabel("Temps d'exécution/Fréquence de succès")
+    plt.legend("Performance de l'algortihme greedy en fonction de la précision")
+    plt.show()
+
+    
 
 

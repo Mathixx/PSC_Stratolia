@@ -80,11 +80,11 @@ def N_closest(destination : (float,float), depart : Node, duree : int, temps_chg
     for count in range(nombre_d_iterations) : 
 
         # On veut afficher dans quelle boucle la recherche est en cours.
-        print("Recherche dans la boucle "+str(count)+" ...")
+        #print("Recherche dans la boucle "+str(count)+" ...")
 
         # Si la liste des points à explorer est nulle on abandonne.
         if len(listeP) == 0:
-            print("Aucun chemin n'a été concluant.")
+            #print("Aucun chemin n'a été concluant.")
             return (False, limite_eloignement, [pointF])
         
         # On initialise la liste des points qu'on va atteindre.
@@ -102,12 +102,12 @@ def N_closest(destination : (float,float), depart : Node, duree : int, temps_chg
             # correspondant à notre point.
             for i in range(0, 17) :
 
-                (a_rencontre_destination, pointF) = parcours_a_Z(destination, Node(point.long, point.lat, point.t, i, point), temps_chgmt_pression, precision, tab_vent)
+                (a_rencontre_destination, pointF) = parcours_a_Z_interpolate(destination, Node(point.long, point.lat, point.t, i, point), temps_chgmt_pression, precision, tab_vent)
 
                 # Si on a rencontré la destination, on remonte l'arbre pour reconstituer le chemin complet.
                 if a_rencontre_destination:
                     liste = chemin(pointF)
-                    affichage_liste(liste)
+                    #affichage_liste(liste)
                     return (True, precision, liste)
                 # Sinon on ajoute le nouveau point à la liste des futurs points. 
                 listeF.append(pointF)
@@ -118,9 +118,9 @@ def N_closest(destination : (float,float), depart : Node, duree : int, temps_chg
         limite_eloignement *= constante_de_retrecissement
 
     # Dans ce cas on a dépassé la limite temporelle d'exploration.
-    print("On a atteint la limite temporelle d'exploration.")
+    #print("On a atteint la limite temporelle d'exploration.")
     distance_minimale = distance_min(listeP, destination, limite_eloignement)
-    print("Distance de la destination = "+str(distance_minimale//1000)+ " km.")
+    #print("Distance de la destination = "+str(distance_minimale//1000)+ " km.")
     liste = chemin(listeP[0])
     return (False, distance_minimale,liste)
 
