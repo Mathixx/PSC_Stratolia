@@ -234,3 +234,35 @@ def test2_wide():
 
 
 #test2_wide()
+
+def graph_precision():
+    # On veut obtenir un graphe de la performance de l'algorithme en fonction de la précision
+    # On fait varier la précision de 1000 à 100000
+    nombre_tests = 1000
+    temps_execution = []
+    frequence_succes = []
+    liste_precision = [1000, 2000, 3000, 4000, 5000, 7500, 10000, 15000, 20000, 30000, 40000, 50000, 75000, 100000]
+    for precision in liste_precision:
+        print("Précision : "+str(precision))
+        moyenne_temps = 0
+        moyenne_chemins_trouves = 0
+        for i in range(nombre_tests):
+            print(str(i)+"-ième test...")
+            (a_atteint_destination, distance, duree_execution) = test1_wide()
+            if a_atteint_destination:
+                moyenne_chemins_trouves += 1
+            moyenne_temps += duree_execution
+        moyenne_chemins_trouves /= nombre_tests
+        moyenne_temps = moyenne_temps / nombre_tests
+        print ("La fréquence de chemins trouvés est de : " + str(moyenne_chemins_trouves*100) +" %.")
+        print ("La moyenne temporelle est de : " + str(moyenne_temps) +" secondes.")
+        temps_execution.append(moyenne_temps)
+        frequence_succes.append(moyenne_chemins_trouves*100)
+    # On utilise matplotlib pour tracer le graphe
+    plt.plot(liste_precision, temps_execution, label="Temps d'exécution")
+    plt.plot(liste_precision, frequence_succes, label="Fréquence de succès")
+    plt.xlabel("Précision")
+    plt.ylabel("Temps d'exécution/Fréquence de succès")
+    plt.legend("Performance de l'algortihme greedy en fonction de la précision")
+    plt.show()
+
