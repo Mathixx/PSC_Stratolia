@@ -166,6 +166,8 @@ def create_database_random(n : int, liste_villes : list) :
                 writer = csv.writer(f)
                 writer.writerows(data)
             data = []
+        else :
+            continue
 
 
 # Create the database of 10 000 elements

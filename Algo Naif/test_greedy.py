@@ -58,7 +58,7 @@ def test1_greedy():
 
 
 # Exécution du test
-test1_greedy()
+#test1_greedy()
 
 
 def test2_greedy():
@@ -92,7 +92,7 @@ def graph_precision():
     nombre_tests = 1000
     temps_execution = []
     frequence_succes = []
-    liste_precision = [1000, 2000, 3000, 4000, 5000, 7500, 10000, 15000, 20000, 30000, 40000, 50000, 75000, 100000]
+    liste_precision = [1000, 5000, 10000, 20000]
     for precision in liste_precision:
         print("Précision : "+str(precision))
         moyenne_temps = 0
@@ -117,6 +117,7 @@ def graph_precision():
     plt.legend("Performance de l'algortihme greedy en fonction de la précision")
     plt.show()
 
+graph_precision()
     
 
 

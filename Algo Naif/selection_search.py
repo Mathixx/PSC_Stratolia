@@ -117,6 +117,9 @@ def N_closest(destination : (float,float), depart : Node, duree : int, temps_chg
         
         limite_eloignement *= constante_de_retrecissement
 
+    if len(listeP) == 0:
+            listeP = [pointF]
+    
     # Dans ce cas on a dépassé la limite temporelle d'exploration.
     #print("On a atteint la limite temporelle d'exploration.")
     distance_minimale = distance_min(listeP, destination, limite_eloignement)
