@@ -70,13 +70,6 @@ def test1(technique, liste_villes):
     ville_arr = ville_destination
     ville_destination = (ville_destination.long, ville_destination.lat)
 
-    # duree = int(input("Veuillez entrer la durée d'exploration (nombre d'heures divisible par 6) : "))
-    duree = 60
-    
-    # Paramètres de test
-    temps_chgmt_pression = 6*3600  # Remplacez par la durée du changement de pression souhaitée
-    precision = 10000 # Précision de la destination
-
     # Exécution de la fonction
     temps_debut_execution = time.time()
 
@@ -91,7 +84,7 @@ def test1(technique, liste_villes):
         duree = 120
         temps_chgmt_pression = 6*3600
         precision = 10000
-        eloignement = 1.2
+        eloignement = 1
 
         found, distance_min , path = N_closest(ville_destination, depart, duree, temps_chgmt_pression, precision,eloignement, wind_data)
 
@@ -116,25 +109,25 @@ def test1(technique, liste_villes):
 
 def test_commun(liste_villes):
     Technique = ["greedy", "selection", "exploration"]
-    """
-    with open("test_commun_villes_france.txt", "a") as file:
-        file.write("Test commun sur les villes de France.\n\n")
-        file.write("Les paramètres des test sont : \n")
+    '''
+    with open("test_commun_villes_europe.txt", "a") as file:
+        file.write("Test commun sur les villes d'Europe.\n\n")
+        file.write("Les paramètres des tests sont : \n")
         file.write("Durée d'exploration : 120 heures.\n")
         file.write("Temps de changement de pression : 6 heures.\n")
         file.write("Précision : 10000 m.\n")
-    """
+    '''
     for tech in Technique:
         if tech == "greedy" or tech == "selection":
             continue
-        with open("test_commun_villes_france.txt", "a") as file:
+        with open("test_commun_villes_europe.txt", "a") as file:
             file.write("Résulats de l'algorithme : " + tech +"\n")
         if tech == "selection":
-            with open("test_commun_villes_france.txt", "a") as file:
+            with open("test_commun_villes_europe.txt", "a") as file:
                 file.write("Pour ce test on a pris N : 100 " + tech +"\n")
-        nombre_tests = 10000
+        nombre_tests = 1000
         if tech == "exploration":
-            nombre_tests = 100
+            nombre_tests = 250
         moyenne_temps = 0
         moyenne_chemins_trouves = 0
         moyenne_distance = 0
@@ -148,11 +141,95 @@ def test_commun(liste_villes):
         moyenne_chemins_trouves /= nombre_tests
         moyenne_temps = moyenne_temps / nombre_tests
         moyenne_distance = moyenne_distance / nombre_tests
-        with open("test_commun_villes_france.txt", "a") as file:
+        with open("test_commun_villes_europe.txt", "a") as file:
             file.write("La fréquence de chemins trouvés est de : " + str(moyenne_chemins_trouves*100) +" %.\n")
             file.write("La distance moyenne à la destination est de : "+str(moyenne_distance) + " km.\n")
             file.write("La moyenne temporelle est de : " + str(moyenne_temps) +" secondes.\n")
             file.write("\n")
 
-test_commun(villes_france)
+test_commun(villes_europe)
+
+
+def gradation_performance() :
+    with open("test_gradation_performance.txt", "a") as file:
+        file.write("Receuil des trajectoires qui font defaut a certains algo et non a d'autres :\n\n")
+        file.write("Les paramètres des tests sont : \n")
+        file.write("Durée d'exploration : 120 heures.\n")
+        file.write("Temps de changement de pression : 6 heures.\n")
+        file.write("Précision : 10000 m.\n")
+
+    greedy_select = False
+    select_expl = False
+
+    liste_villes = villes_europe
+    
+    duree = 120
+    temps_chgmt_pression = 6*3600  # Remplacez par la durée du changement de pression souhaitée
+    precision = 10000
+    
+    while (greedy_select == False or select_expl == False):
+        print("Test en cours...")
+
+        ville_depart = choisir_ville_au_hasard(liste_villes)
+        ville_destination = choisir_ville_au_hasard(liste_villes)
+
+        while(ville_destination.nom == ville_depart.nom):
+            ville_destination = choisir_ville_au_hasard(liste_villes)
+    
+        temps = (generate_random_date(dt.datetime(2020, 1, 1), dt.datetime(2020, 10, 30))-dt.datetime(2020, 1, 1)).total_seconds()
+        tempsB = temps
+        #Convert it in an integer
+        temps = int(temps)
+        depart = Node(ville_depart.long, ville_depart.lat, temps, 16, None) #long, lat, temps, pression, None
+
+
+        print("Ville de départ : ", ville_depart.nom)
+        print("Ville de destination : ", ville_destination.nom)
+        ville_arr = ville_destination
+        ville_destination = (ville_destination.long, ville_destination.lat)
+
+        found, distance_min , path = greedy(ville_destination, depart, duree, temps_chgmt_pression, precision, wind_data)
+
+        if not found:
+            found, distance_min , path = N_closest(ville_destination, depart, duree, temps_chgmt_pression, precision,1, wind_data)
+
+            if found :
+                if greedy_select:
+                    continue
+                greedy_select = True
+                coords = chemin_graphic(path)
+                with open("test_gradation_performance.txt", "a") as file:
+                    file.write("Echec de Greedy et réussite de select : \n")
+                    file.write("Ville de départ : " + ville_depart.nom + "\n")
+                    file.write("Ville de destination : " + ville_arr.nom + "\n")
+                    file.write("Temps de départ : " + str(tempsB) + "\n\n")
+                animation(coords, ville_destination, 1, "Greedy<Select:Chemin_"+ville_depart.nom+"_"+ville_arr.nom+".gif")
+
+                
+                continue
+            else:
+                if select_expl:
+                    continue
+                found, distance_min , path = wide_search(ville_destination, depart, duree, temps_chgmt_pression, precision, wind_data)
+                if found :
+                    select_expl = True
+                    coords = chemin_graphic(path)
+                    with open("test_gradation_performance.txt", "a") as file:
+                        file.write("Echec de Select (et Greedy) et réussite de exploration : \n")
+                        file.write("Ville de départ : " + ville_depart.nom + "\n")
+                        file.write("Ville de destination : " + ville_arr.nom + "\n")
+                        file.write("Temps de départ : " + str(tempsB) + "\n\n")
+                    animation(coords, ville_destination, 1, "Select<Exploration:Chemin_"+ville_depart.nom+"_"+ville_arr.nom+".gif")
+                    
+                    continue
+            
+
+#gradation_performance()
+
+
+
+
+        
+    
+
    

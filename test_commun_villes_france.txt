@@ -25,3 +25,8 @@ La fréquence de chemins trouvés est de : 83.0 %.
 La distance moyenne à la destination est de : 55.35672999999999 km.
 La moyenne temporelle est de : 85.91067085266113 secondes.
 
+Résulats de l'algorithme : exploration
+La fréquence de chemins trouvés est de : 85.0 %.
+La distance moyenne à la destination est de : 58.10241 km.
+La moyenne temporelle est de : 84.01339803934097 secondes.
+
