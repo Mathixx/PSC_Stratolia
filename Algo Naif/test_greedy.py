@@ -7,6 +7,7 @@ import time
 
 from greedy import *
 from villes import *
+from Affichage import animation
 #from Affichage import animation
 import matplotlib.pyplot as plt
 
@@ -18,12 +19,12 @@ import matplotlib.pyplot as plt
 
 
 def test1_greedy():
-    depart = choisir_ville_au_hasard(villes_france)
+    depart = choisir_ville_au_hasard(villes_europe)
     print("Départ : "+ str(depart))
-    dest = choisir_ville_au_hasard(villes_france)
+    dest = choisir_ville_au_hasard(villes_europe)
     # On ne veut pas que la destination soit égale au départ
     while(dest.nom == depart.nom):
-        dest = choisir_ville_au_hasard(villes_france)
+        dest = choisir_ville_au_hasard(villes_europe)
     print("Destination : "+str(dest))
     temps_I = random.randint(0, 1000)
     print("Temps de départ : "+ str(temps_I))
@@ -45,21 +46,28 @@ def test1_greedy():
     duree_execution = temps_fin_execution - temps_debut_execution
     print(f"Le code a pris {duree_execution} secondes pour s'exécuter.")
 
-    #coords = []
-    #for i in range(len(res)):
-        #n = res[i]
-        #coords.append((n.long, n.lat, convPression_altitude(n.p), n.t[0], n.t[1]))
-    #print(coords)
-    #animation(coords, destination, 1)
-    
+    if a_atteint_destination:
+        print("trouvé :")
+        coords = chemin_graphic(res)
+        nom = "Chemin_"+depart.nom+"_"+dest.nom+".gif"
+        animation(coords, destination, 1, nom)
     
     # Renvoie si on a atteint la destination et le temps d'exécution.
     return (a_atteint_destination, distance, duree_execution)
 
 
 # Exécution du test
-test1_greedy()
+#test1_greedy()
 
+def obtention_gif():
+    count  = 0
+    while count < 10:
+        if test1_greedy()[0]:
+            count += 1
+            print(count)
+
+obtention_gif()
+        
 
 def test2_greedy():
     # On fait varier la limite d'éloignement et la durée dans test1
@@ -92,7 +100,7 @@ def graph_precision():
     nombre_tests = 1000
     temps_execution = []
     frequence_succes = []
-    liste_precision = [1000, 2000, 3000, 4000, 5000, 7500, 10000, 15000, 20000, 30000, 40000, 50000, 75000, 100000]
+    liste_precision = [1000, 5000, 10000, 20000]
     for precision in liste_precision:
         print("Précision : "+str(precision))
         moyenne_temps = 0
@@ -117,6 +125,7 @@ def graph_precision():
     plt.legend("Performance de l'algortihme greedy en fonction de la précision")
     plt.show()
 
+#graph_precision()
     
 
 

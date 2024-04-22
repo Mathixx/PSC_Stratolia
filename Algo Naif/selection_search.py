@@ -95,8 +95,8 @@ def N_closest(destination : (float,float), depart : Node, duree : int, temps_chg
             distance = distance_destination(destination, point.long, point.lat)
 
             # Premier cas : si on est trop loin de la destination on abandonne l'exploration à partir de ce point.
-            if distance > limite_eloignement :
-               continue
+            #if distance > limite_eloignement :
+            #   continue
 
             # Deuxième cas : on continue l'exploration. On appelle parcours à Z pour tous les niveaux de pression
             # correspondant à notre point.
@@ -115,8 +115,11 @@ def N_closest(destination : (float,float), depart : Node, duree : int, temps_chg
         listeP = N_plus_proches(destination, listeF, N)
         
         
-        limite_eloignement *= constante_de_retrecissement
+        #limite_eloignement *= constante_de_retrecissement
 
+    if len(listeP) == 0:
+            listeP = [pointF]
+    
     # Dans ce cas on a dépassé la limite temporelle d'exploration.
     #print("On a atteint la limite temporelle d'exploration.")
     distance_minimale = distance_min(listeP, destination, limite_eloignement)

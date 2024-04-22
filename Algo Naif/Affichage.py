@@ -51,11 +51,12 @@ def visupoints(liste,echelle=1):
 
     
 
-def animation(coords,dest,echelle):
+def animation(coords,dest,echelle, nom= "Animation_trajectoire.gif"):
     '''  crée une animation de la trajectoire du ballon, prenant en entrée une liste de coordonnées coords pour la trajectoire,
     coords de la forme [(long_i,lat_i,z_i,sec_i),]
       un tuple dest pour la destination (long,lat),
       une echelle pour la carte (en long/lat) -> Prendre 1 de base'''
+
       
     X, Y, Z, S = zip(*coords)
     X = [(x-360 if x>180 else x ) for x in X]
@@ -134,7 +135,7 @@ def animation(coords,dest,echelle):
 
     # Génération et sauvegarde de l'animation
     animation = camera.animate()
-    animation.save('Animation_trajectoire.gif', writer='Pillow', fps=2)
+    animation.save(nom, writer='Pillow', fps=2)
 
 ##Example 
 spirale = [
@@ -174,3 +175,4 @@ spirale_modifiee = [
 ]
 
 #animation(spirale_modifiee, [0.0, 0.0, 100.0],1)
+

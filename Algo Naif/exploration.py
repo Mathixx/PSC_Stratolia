@@ -123,7 +123,7 @@ def wide_search(destination : (float,float), depart : Node, duree : int, temps_c
     #print("Meilleure distance atteinte = "+str(distance_closest//1000)+ " km.")
     #print("Point le plus proche : "+str(closest)) 
     liste = chemin(listeP[0])
-    return (False, distance_minimale,liste)
+    return (False, distance_closest,liste)
 
 
 
