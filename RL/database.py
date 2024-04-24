@@ -99,6 +99,40 @@ def random_path(liste_villes) :
     return found ,ville_depart, ville_destination, []
 
 
+
+def random_path_bis(liste_villes):
+
+    greedy_select = False
+    select_expl = False
+    
+    duree = 120
+    temps_chgmt_pression = 6*3600  # Remplacez par la durée du changement de pression souhaitée
+    precision = 10000
+
+    ville_depart = choisir_ville_au_hasard(liste_villes)
+    ville_destination = choisir_ville_au_hasard(liste_villes)
+
+    while(ville_destination.nom == ville_depart.nom):
+        ville_destination = choisir_ville_au_hasard(liste_villes)
+    
+    temps = (generate_random_date(dt.datetime(2020, 1, 1), dt.datetime(2020, 10, 30))-dt.datetime(2020, 1, 1)).total_seconds()
+    tempsB = temps
+    #Convert it in an integer
+    temps = int(temps)
+    depart = Node(ville_depart.long, ville_depart.lat, temps, 16, None) #long, lat, temps, pression, None
+
+
+    ville_arr = ville_destination
+    ville_destination = (ville_destination.long, ville_destination.lat)
+
+    found, distance_min , path = greedy(ville_destination, depart, duree, temps_chgmt_pression, precision, wind_data)
+
+    if not found:
+        found, distance_min , path = N_closest(ville_destination, depart, duree, temps_chgmt_pression, precision,1, wind_data)
+        return found, ville_depart, ville_arr ,path
+    else:
+        return False, ville_depart, ville_arr, []
+    
 """
         Action 0 : You do nothing and let the balloon follow the wind for temps_exploration seconds
         Action 1 : You push the balloon upwards (goes up in altitude) (instanneous action)
@@ -156,13 +190,13 @@ def create_database_random(n : int, liste_villes : list) :
     i = 0
     while (i < n) :
         # Generate a random path
-        found, ville_dep, ville_arr, path = random_path(liste_villes)
+        found, ville_dep, ville_arr, path = random_path_bis(liste_villes)
         if found:
             i += 1
             # Create data from the path
             data.extend([["Chemin : " + str(ville_dep) +" to " +str(ville_arr) ]])
             data.extend(create_data(path))
-            with open("database_random_paths_monde.csv", "a") as f:
+            with open("database_select>greedy.csv", "a") as f:
                 writer = csv.writer(f)
                 writer.writerows(data)
             data = []
@@ -171,7 +205,7 @@ def create_database_random(n : int, liste_villes : list) :
 
 
 # Create the database of 10 000 elements
-create_database_random(1000, villes_monde)
+create_database_random(100, villes_france)
 
 
 

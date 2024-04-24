@@ -50,7 +50,7 @@ def generate_random_date(start_date, end_date):
     random_time = dt.time(hour=hr, minute=0, second=0, microsecond=0, tzinfo=None, fold=0)
     return dt.datetime.combine(random_date, random_time)
 
-def test1(technique, liste_villes):
+def test1(technique, liste_villes, t_derive = 6*3600):
     ville_depart = choisir_ville_au_hasard(liste_villes)
     ville_destination = choisir_ville_au_hasard(liste_villes)
 
@@ -75,7 +75,7 @@ def test1(technique, liste_villes):
 
     if technique == "greedy":
         duree = 120
-        temps_chgmt_pression = 6*3600
+        temps_chgmt_pression = t_derive
         precision = 10000
 
         found, distance_min , path = greedy(ville_destination, depart, duree, temps_chgmt_pression, precision, wind_data)
@@ -108,24 +108,26 @@ def test1(technique, liste_villes):
 ####################################
 
 def test_commun(liste_villes):
+
     Technique = ["greedy", "selection", "exploration"]
-    '''
-    with open("test_commun_villes_europe.txt", "a") as file:
-        file.write("Test commun sur les villes d'Europe.\n\n")
+    T_derive = [3600, 2*3600, 3*3600, 6*3600]
+    
+    with open("test_specifique_greedy.txt", "a") as file:
+        file.write("Test spécifique Greedy.\n\n")
         file.write("Les paramètres des tests sont : \n")
         file.write("Durée d'exploration : 120 heures.\n")
-        file.write("Temps de changement de pression : 6 heures.\n")
+        file.write("Temps de changement de pression : Variable.\n")
         file.write("Précision : 10000 m.\n")
-    '''
-    for tech in Technique:
-        if tech == "greedy" or tech == "selection":
-            continue
-        with open("test_commun_villes_europe.txt", "a") as file:
+    
+    #for tech in Technique:
+    for t_derive in T_derive:
+        tech = "greedy"
+        with open("test_specifique_greedy.txt", "a") as file:
             file.write("Résulats de l'algorithme : " + tech +"\n")
         if tech == "selection":
-            with open("test_commun_villes_europe.txt", "a") as file:
+            with open("test_specifique_greedy.txt", "a") as file:
                 file.write("Pour ce test on a pris N : 100 " + tech +"\n")
-        nombre_tests = 1000
+        nombre_tests = 10000
         if tech == "exploration":
             nombre_tests = 250
         moyenne_temps = 0
@@ -133,7 +135,7 @@ def test_commun(liste_villes):
         moyenne_distance = 0
         for i in range(nombre_tests):
             print(str(i)+"-ième test...")
-            (a_atteint_destination, distance, duree_execution) = test1(tech, liste_villes)
+            (a_atteint_destination, distance, duree_execution) = test1(tech, liste_villes, t_derive)
             if a_atteint_destination:
                 moyenne_chemins_trouves += 1
             moyenne_temps += duree_execution
@@ -141,14 +143,17 @@ def test_commun(liste_villes):
         moyenne_chemins_trouves /= nombre_tests
         moyenne_temps = moyenne_temps / nombre_tests
         moyenne_distance = moyenne_distance / nombre_tests
-        with open("test_commun_villes_europe.txt", "a") as file:
+        with open("test_specifique_greedy.txt", "a") as file:
             file.write("La fréquence de chemins trouvés est de : " + str(moyenne_chemins_trouves*100) +" %.\n")
             file.write("La distance moyenne à la destination est de : "+str(moyenne_distance) + " km.\n")
             file.write("La moyenne temporelle est de : " + str(moyenne_temps) +" secondes.\n")
             file.write("\n")
 
-test_commun(villes_europe)
+def tests_greedy() :
+    test_commun(villes_france)
+    test_commun(villes_europe)
 
+tests_greedy()
 
 def gradation_performance() :
     with open("test_gradation_performance.txt", "a") as file:
@@ -168,7 +173,7 @@ def gradation_performance() :
     precision = 10000
     
     while (greedy_select == False or select_expl == False):
-        print("Test en cours...")
+        #print("Test en cours...")
 
         ville_depart = choisir_ville_au_hasard(liste_villes)
         ville_destination = choisir_ville_au_hasard(liste_villes)

@@ -84,6 +84,8 @@ villes_europe = [
 # Liste de villes dans le monde.
 
 villes_monde = [
+    Ville("Kinshasa", 15.2663, -4.4419),
+    Ville("Joahannesburg", 28.0473, -26.2041),
     Ville("Tokyo", 139.6917, 35.6895),
     Ville("New Delhi", 77.1025, 28.7041),
     Ville("Beijing", 116.4074, 39.9042),

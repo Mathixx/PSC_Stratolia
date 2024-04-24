@@ -19,9 +19,11 @@ import matplotlib.pyplot as plt
 
 
 def test1_greedy():
-    depart = choisir_ville_au_hasard(villes_europe)
+    #depart = choisir_ville_au_hasard(villes_europe)
+    depart = Ville("EcolePolytechnique",  2.2039577960968018, 48.71699905395508)
     print("Départ : "+ str(depart))
-    dest = choisir_ville_au_hasard(villes_europe)
+    #dest = choisir_ville_au_hasard(villes_europe)
+    dest = Ville("Carva",  2.3495659828186035, 48.857234954833984,)
     # On ne veut pas que la destination soit égale au départ
     while(dest.nom == depart.nom):
         dest = choisir_ville_au_hasard(villes_europe)
@@ -31,13 +33,13 @@ def test1_greedy():
     pression =  random.randint(0,16)
     print("Pression de départ : "+str(pression))
     # duree = int(input("Veuillez entrer la durée d'exploration (nombre d'heures divisible par 6) : "))
-    duree = 60
+    duree = 120
     
     # Paramètres de test
     destination = (dest.long, dest.lat)
     n = Node(depart.long, depart.lat, temps_I*21600, pression=pression, prev=None)
-    temps_chgmt_pression = 6*3600  # Remplacez par la durée du changement de pression souhaitée
-    precision = 10000 # Précision de la destination
+    temps_chgmt_pression = 3600  # Remplacez par la durée du changement de pression souhaitée
+    precision = 500 # Précision de la destination
 
     # Exécution de la fonction
     temps_debut_execution = time.time()
@@ -49,6 +51,11 @@ def test1_greedy():
     if a_atteint_destination:
         print("trouvé :")
         coords = chemin_graphic(res)
+        if (len(coords) >10 or len(coords) < 6):
+            print("Chemin trop court")
+            return (False, distance, duree_execution)
+        coords[len(coords)-1][0] = dest.long
+        coords[len(coords)-1][1] = dest.lat
         nom = "Chemin_"+depart.nom+"_"+dest.nom+".gif"
         animation(coords, destination, 1, nom)
     
@@ -59,6 +66,13 @@ def test1_greedy():
 # Exécution du test
 #test1_greedy()
 
+def trouver_chemin():
+    test = False
+    while not(test):
+        test, _, _ = test1_greedy()
+
+trouver_chemin()
+
 def obtention_gif():
     count  = 0
     while count < 10:
@@ -66,7 +80,7 @@ def obtention_gif():
             count += 1
             print(count)
 
-obtention_gif()
+#obtention_gif()
         
 
 def test2_greedy():

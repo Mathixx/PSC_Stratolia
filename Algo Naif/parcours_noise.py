@@ -103,3 +103,22 @@ def robust_dist(liste : list, destination : (float,float), temps_chgmt_pression,
         affichage_liste(chemin(point))
         somme_best_dist += best_dist
     return somme_best_dist/(1000*N)
+
+def heuristique(liste : list, destination : (float,float), temps_chgmt_pression, precision, indice) -> list:
+    point = liste[0]
+    # On moyenne sur N tests
+    N = 1 # À modifier
+    somme_best_dist = 0
+    for i in range(N):
+        best_dist = distance_destination(destination, point.long, point.lat)
+        for i in range(len(liste)-1):
+            # On fait le choix de pression qui a été fait dans le chemin
+            a_atteint_destination, point = parcours_a_Z_noise(destination, Node(point.long, point.lat, point.t, liste[i].p, point), temps_chgmt_pression, precision, wind_data)
+            if a_atteint_destination:
+                return precision
+            else:
+                dist = distance_destination(destination, point.long, point.lat)
+                best_dist = min(best_dist, dist)
+        affichage_liste(chemin(point))
+        somme_best_dist += best_dist
+    return somme_best_dist/(1000*N)
