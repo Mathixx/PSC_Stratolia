@@ -105,18 +105,19 @@ class Balloon:
 
             # On met à jour les valeurs de longitude et latitude.
             temps_evolution = min(temps_restant, temps_test_arrivee)
-            lat += (temps_evolution*ventU)/k
-            long += (temps_evolution*ventV)/k
+            lat += (temps_evolution*ventV)/k
+            long += (temps_evolution*ventU)/k
             temps_restant -= temps_evolution
 
             #on met à jour ces valeurs pour le ballon également
-            self.t += dt.timedelta(seconds= temps_evolution)
+            self.t += dt.timedelta(seconds = temps_evolution)
+            self.lat = lat
+            self.long = long
 
         # On s'assure que les valeurs de longitude et latitude soient dans le bon intervalle.
         (long, lat) = mod(long, lat)
         self.lat, self.long = lat, long
         
-        # On renvoie notre position finale sachant qu'on a pas rencontré la destination. 
         return (False)
 
 
