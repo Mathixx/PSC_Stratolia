@@ -45,18 +45,17 @@ def generate_random_date(start_date, end_date):
 ## CREATION DE LA BASE DE DONNÉES ##
 ####################################
 
-def random_path(liste_villes) :
+def random_path_greedy(ville_destination, liste_villes) :
     """
     Fonction qui génère un chemin aléatoire entre 2 villes prise au hasard de la liste
     """
     path = []
     ville_depart = choisir_ville_au_hasard(liste_villes)
-    ville_destination = choisir_ville_au_hasard(liste_villes)
 
     distance_max = 5000000 # 5000 km
 
     while(ville_destination.nom == ville_depart.nom or distance_destination((ville_destination.long, ville_destination.lat), ville_depart.long, ville_depart.lat) > distance_max):
-        ville_destination = choisir_ville_au_hasard(liste_villes)
+        ville_depart = choisir_ville_au_hasard(liste_villes)
     
     temps = (generate_random_date(dt.datetime(2020, 1, 1), dt.datetime(2020, 10, 30))-dt.datetime(2020, 1, 1)).total_seconds()
     #Convert it in an integer
@@ -69,49 +68,28 @@ def random_path(liste_villes) :
     ville_arr = ville_destination
     ville_destination = (ville_destination.long, ville_destination.lat)
     
-    technique = random.choice(["greedy"])
-    #print(technique)
-    if technique == "greedy":
-        duree = 120
-        temps_chgmt_pression = 6*3600
-        precision = 10000
 
-        found, _ , path = greedy(ville_destination, depart, duree, temps_chgmt_pression, precision, wind_data)
-        if found :
-            return found, ville_depart, ville_arr ,path
-    elif technique == "selection":
-        duree = 120
-        temps_chgmt_pression = 6*3600
-        precision = 10000
-        eloignement = 1.2
+    duree = 120
+    temps_chgmt_pression = 6*3600
+    precision = 10000
 
-        found, _ , path = N_closest(ville_destination, depart, duree, temps_chgmt_pression, precision,eloignement, wind_data)
-        if found :
-            return found, ville_depart, ville_arr ,path
-    elif technique == "exploration":
-        duree = 120
-        temps_chgmt_pression = 6*3600
-        precision = 10000
-
-        found, _ , path = wide_search(ville_destination, depart, duree, temps_chgmt_pression, precision, wind_data)
-        if found :
-            return found, ville_depart, ville_arr,path
-    
+    found, _ , path = greedy(ville_destination, depart, duree, temps_chgmt_pression, precision, wind_data)
+    if found :
+        return found, ville_depart, ville_arr ,path
     return found ,ville_depart, ville_destination, []
 
 
 
-def random_path_bis(liste_villes):
+def random_path_hard(ville_destination, liste_villes) :
     
     duree = 120
     temps_chgmt_pression = 6*3600  # Remplacez par la durée du changement de pression souhaitée
     precision = 10000
 
     ville_depart = choisir_ville_au_hasard(liste_villes)
-    ville_destination = choisir_ville_au_hasard(liste_villes)
 
     while(ville_destination.nom == ville_depart.nom):
-        ville_destination = choisir_ville_au_hasard(liste_villes)
+        ville_depart = choisir_ville_au_hasard(liste_villes)
     
     temps = (generate_random_date(dt.datetime(2020, 1, 1), dt.datetime(2020, 10, 30))-dt.datetime(2020, 1, 1)).total_seconds()
     tempsB = temps
@@ -132,64 +110,16 @@ def random_path_bis(liste_villes):
             #print("Select failed")
             #Take a random value in 0 and 1
             p = random.random()
-            if p < 0.8:
+            if p < 0.5:
                 print("Wide search not done")
                 return False, ville_depart, ville_arr, []
             found, _ , path = wide_search(ville_destination, depart, duree, temps_chgmt_pression, precision, wind_data)
         return found, ville_depart , ville_arr , path
     else:
         return False, ville_depart, ville_arr, []
-    
-"""
-        Action 0 : You do nothing and let the balloon follow the wind for temps_exploration seconds
-        Action 1 : You push the balloon upwards (goes up in altitude) (instanneous action)
-        Action 2 : You push the balloon downwards (goes down in altitude) (instanneous action)
-"""
 
-def create_data( path : list) :
-    """
-    Fonction qui crée un élément de la base de données à partir d'un chemin
-    """
-    data = []
 
-    i = 0
-    while (i+1 < len(path)):
-        delta_altitude = path[i].p - path[i+1].p
-        if (delta_altitude == 0):
-            # Le ballon est à la même altitude, il a suivi les vents
-            if (path[i].t == path[i+1].t):
-                # Le ballon n'a pas bougé, on ne le prend pas en compte
-                i += 1
-                continue
-            else:
-                # Le ballon a bougé, on prend en compte le changement de temps
-                data.append([[path[i].long, path[i].lat, path[i].t, path[i].p], 0] )
-                i += 1
-                continue
-            
-        elif (delta_altitude > 0) :
-            #Le ballon est monté en altitude, NORMALEMENT EN TEMPS CONSIDÉRÉ COMME INSTANTANÉ
-
-            d_alt = 0
-            while(d_alt < delta_altitude):
-                data.append([[path[i].long, path[i].lat, path[i].t, path[i].p - d_alt], 1])
-                d_alt += 1
-            i += 1
-            continue
-        
-        elif (delta_altitude < 0) :
-            #Le ballon est descendu en altitude, NORMALEMENT EN TEMPS CONSIDÉRÉ COMME INSTANTANÉ
-            delta_altitude = -delta_altitude
-
-            d_alt = 0
-            while(d_alt < delta_altitude):
-                data.append([[path[i].long, path[i].lat, path[i].t, path[i].p + d_alt], 2])
-                d_alt += 1
-            i += 1
-            continue
-    return data
-
-def create_data_Bis(path : list, ville_arr) :
+def create_data(path : list, ville_arr) :
     """
     Fonction qui crée un élément de la base de données à partir d'un chemin
     """
@@ -207,142 +137,76 @@ def create_data_Bis(path : list, ville_arr) :
     return data
 
 
-def create_database_random_fr(n : int) :
+def create_database_easy(n : int, liste_villes, ville_arr) :
     """
     Fonction qui crée une base de données de n éléments et qui les ajoute dans un csv file
     """
     data = []
-    liste_villes = villes_france
     i = 0
+    #ville_arr = choisir_ville_au_hasard(capitales_europe)
+
     while (i < n) :
         # Generate a random path
         #print("Path number : ", i+1)
-        found, ville_dep, ville_arr, path = random_path(liste_villes)
+        found, ville_dep, ville_arr, path = random_path_greedy(ville_arr, liste_villes)
         if found:
             i += 1
             # Create data from the path
             #data.extend([["Chemin : " + str(ville_dep) +" to " + str(ville_arr) ]])
-            data.extend(create_data_Bis(path, ville_arr))
-            with open("database_greedy_fr.csv", "a") as f:
+            data.extend(create_data(path, ville_arr))
+            with open("database_"+str(ville_arr)+"_europe.csv", "a") as f:
                 writer = csv.writer(f)
                 writer.writerows(data)
             data = []
         else :
             continue
 
-def create_database_random_hard_fr(n : int) :
+def create_database_hard(n : int, liste_villes, ville_arr) :
     """
     Fonction qui crée une base de données de n éléments et qui les ajoute dans un csv file
     """
     data = []
-    liste_villes = villes_france
+    #ville_arr = choisir_ville_au_hasard(capitales_europe)
     i = 0
     while (i < n) :
         # Generate a random path
         #print("Path number : ", i+1)
-        found, ville_dep, ville_arr, path = random_path_bis(liste_villes)
+        found, ville_dep, ville_arr, path = random_path_hard(ville_arr, liste_villes)
         if found:
             i += 1
             # Create data from the path
             #data.extend([["Chemin : " + str(ville_dep) +" to " + str(ville_arr) ]])
-            data.extend(create_data_Bis(path, ville_arr))
-            with open("database_hard_fr.csv", "a") as f:
+            data.extend(create_data(path, ville_arr))
+            with open("database_"+str(ville_arr)+"_europe.csv", "a") as f:
                 writer = csv.writer(f)
                 writer.writerows(data)
             data = []
         else :
             continue
             
-def create_database_random_eu(n : int) :
-    """
-    Fonction qui crée une base de données de n éléments et qui les ajoute dans un csv file
-    """
-    data = []
-    liste_villes = villes_europe
-    i = 0
-    while (i < n) :
-        # Generate a random path
-        #print("Path number : ", i+1)
-        found, ville_dep, ville_arr, path = random_path(liste_villes)
-        if found:
-            i += 1
-            # Create data from the path
-            #data.extend([["Chemin : " + str(ville_dep) +" to " + str(ville_arr) ]])
-            data.extend(create_data_Bis(path, ville_arr))
-            with open("database_greedy_eu.csv", "a") as f:
-                writer = csv.writer(f)
-                writer.writerows(data)
-            data = []
-        else :
-            continue
-
-def create_database_random_hard_eu(n : int) :
-    """
-    Fonction qui crée une base de données de n éléments et qui les ajoute dans un csv file
-    """
-    data = []
-    liste_villes = villes_europe
-    i = 0
-    while (i < n) :
-        # Generate a random path
-        #print("Path number : ", i+1)
-        found, ville_dep, ville_arr, path = random_path_bis(liste_villes)
-        if found:
-            i += 1
-            # Create data from the path
-            #data.extend([["Chemin : " + str(ville_dep) +" to " + str(ville_arr) ]])
-            data.extend(create_data_Bis(path, ville_arr))
-            with open("database_hard_eu.csv", "a") as f:
-                writer = csv.writer(f)
-                writer.writerows(data)
-            data = []
-        else :
-            continue
-
 
 def database() :
-    #create_database_random_fr(20000)
-    #print("Database France created")
-    #create_database_random_hard_fr(1000)
-    #print("Database France hard created")
-    #create_database_random_eu(20000)
-    #print("Database Europe created")
-    create_database_random_hard_eu(300)
-    print("Database Europe hard created")
+    ville_arr = choisir_ville_au_hasard(capitales_europe)
 
-    create_database_random_hard_fr(200)
-    print("Database France hard created again")
-    create_database_random_hard_eu(200)
-    print("Database Europe hard created again")
+    create_database_easy(100, villes_europe, ville_arr)
+    print("easy-1 done")
+    create_database_hard(100, villes_europe, ville_arr)
+    print("hard-1 done")
+
+    create_database_easy(100, villes_europe, ville_arr)
+    print("easy-2 done")
+    create_database_hard(100, villes_europe, ville_arr)
+    print("hard-2 done")
+
+    create_database_easy(100, villes_europe, ville_arr)
+    print("easy-3 done")
+    create_database_hard(100, villes_europe, ville_arr)
+    print("hard-3 done")
+
 
     print("let me sleep")
 
 
-database()
-
-
-
-
-
-###########
-## TESTS ##
-###########
-
-def test_date() :
-    temps = generate_random_date(dt.datetime(2020, 1, 1), dt.datetime(2020, 10, 30))
-    print(temps)
-
-
-#test_date()
-
-def test_path() :
-    found, path = random_path(villes_france)
-    if found :
-        print("Chemin trouvé.")
-        print(create_data(path))
-    else :
-        print("Chemin non trouvé.")
-
-#test_path()
+#database()
 
 

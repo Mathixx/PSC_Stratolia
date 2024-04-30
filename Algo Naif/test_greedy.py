@@ -20,10 +20,10 @@ import matplotlib.pyplot as plt
 
 def test1_greedy():
     #depart = choisir_ville_au_hasard(villes_europe)
-    depart = Ville("EcolePolytechnique",  2.2039577960968018, 48.71699905395508)
+    depart = Ville("Marrakech",  -7.58984375, 31.630334854125977)
     print("Départ : "+ str(depart))
     #dest = choisir_ville_au_hasard(villes_europe)
-    dest = Ville("Carva",  2.3495659828186035, 48.857234954833984,)
+    dest = Ville("Paris", 2.2118199376859393, 48.710240264856644)
     # On ne veut pas que la destination soit égale au départ
     while(dest.nom == depart.nom):
         dest = choisir_ville_au_hasard(villes_europe)
@@ -51,11 +51,6 @@ def test1_greedy():
     if a_atteint_destination:
         print("trouvé :")
         coords = chemin_graphic(res)
-        if (len(coords) >10 or len(coords) < 6):
-            print("Chemin trop court")
-            return (False, distance, duree_execution)
-        coords[len(coords)-1][0] = dest.long
-        coords[len(coords)-1][1] = dest.lat
         nom = "Chemin_"+depart.nom+"_"+dest.nom+".gif"
         animation(coords, destination, 1, nom)
     
