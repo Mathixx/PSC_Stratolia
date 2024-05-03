@@ -60,8 +60,8 @@ def parcours_a_Z_interpolate(destination : (float,float), n : Node, temps_chgmt_
 
         # On met à jour les valeurs de longitude et latitude.
         temps_evolution = min(temps_restant, temps_test_arrivee)
-        lat += (temps_evolution*ventU)/k
-        long += (temps_evolution*ventV)/k
+        lat += (temps_evolution*ventV)/k
+        long += (temps_evolution*ventU)/k
         temps_restant -= temps_evolution
 
     # On s'assure que les valeurs de longitude et latitude soient dans le bon intervalle.
@@ -69,6 +69,8 @@ def parcours_a_Z_interpolate(destination : (float,float), n : Node, temps_chgmt_
         
     # On renvoie notre position finale sachant qu'on a pas rencontré la destination. 
     return (False, Node(long, lat, temps+temps_chgmt_pression, pression, n))
+
+
 
 
 

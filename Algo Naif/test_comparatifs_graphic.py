@@ -57,5 +57,5 @@ def test():
     animation(tab_affichage_greedy,(dest.long, dest.lat), 1)
     
 
-test()
+#test()
     

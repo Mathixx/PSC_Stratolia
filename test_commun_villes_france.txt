@@ -1,0 +1,32 @@
+Test commun sur les villes de France.
+
+Les paramètres des test sont : 
+Durée d'exploration : 120 heures.
+Temps de changement de pression : 6 heures.
+Précision : 10000 m.
+
+Résulats de l'algorithme : greedy
+La fréquence de chemins trouvés est de : 56.989999999999995 %.
+La distance moyenne à la destination est de : 378.3641790000006 km.
+La moyenne temporelle est de : 0.11203332803249359 secondes.
+
+Résulats de l'algorithme : selection
+Pour ce test on a pris N : 100
+
+La fréquence de chemins trouvés est de : 55.48 %.
+La distance moyenne à la destination est de : 149.22405027702553 km.
+La moyenne temporelle est de : 1.2882608146429062 secondes.
+
+
+Résulats de l'algorithme : exploration
+
+Résulats de l'algorithme : exploration
+La fréquence de chemins trouvés est de : 83.0 %.
+La distance moyenne à la destination est de : 55.35672999999999 km.
+La moyenne temporelle est de : 85.91067085266113 secondes.
+
+Résulats de l'algorithme : exploration
+La fréquence de chemins trouvés est de : 85.0 %.
+La distance moyenne à la destination est de : 58.10241 km.
+La moyenne temporelle est de : 84.01339803934097 secondes.
+
