@@ -23,8 +23,8 @@ from Node import *
 ############################
 
 
-with open("objet_wind_data_2020.pickle", "rb") as f:
-   wind_data = pickle.load(f)
+#with open("objet_wind_data_2020.pickle", "rb") as f:
+#   wind_data = pickle.load(f)
 
 ##################################################
 ## FONCTIONS RELATIVES A L'EXTRACTION DES VENTS ##
@@ -93,7 +93,7 @@ def ventU_ventV_interpolate(long : float, lat : float, temps : int, pression : i
     for lg in LG:
         for lt in LT:
             for tps in TPS:
-                ventU, ventV = ventU_ventV(lg, lt, tps, pression, wind_data)
+                ventU, ventV = ventU_ventV(lg, lt, tps, pression, tab_vent)
                 dist = distance_destination(dest, lg, lt)
                 numU += dist*ventU
                 numV += dist*ventV

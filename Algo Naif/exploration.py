@@ -116,7 +116,7 @@ def wide_search(destination : (float,float), depart : Node, duree : int, temps_c
         
 
     # Dans ce cas on a dépassé la limite temporelle d'exploration.
-    print("On a atteint la limite temporelle d'exploration.")
+    #print("On a atteint la limite temporelle d'exploration.")
     #distance_minimale = min(distance_destination(destination, point.long, point.lat) for point in listeP)
     #print("Distance de la destination = "+str(distance_minimale//1000)+ " km.")
     #print("Meilleur point final : "+str(listeP[0]))
