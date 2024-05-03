@@ -6,7 +6,7 @@ import datetime as dt
 import sys
 import random
 
-sys.path.append('/Users/mathiasperez/Documents/GitHub/PSC_Stratolia/Algo Naif')
+sys.path.append('./Algo Naif')
 from data_vent import *
 from villes import *
 from exploration import *
@@ -23,10 +23,9 @@ import csv
 ## EXTRACTION DES DONNÉES ##
 ############################
 
-
-with open("objet_wind_data_2020.pickle", "rb") as f:
+picke_file_path = "/users/eleves-b/2022/mathias.perez/Documents/DATA_VENT/objet_wind_data_2021.pickle"
+with open(picke_file_path, "rb") as f:
    wind_data = pickle.load(f)
-
 
 ############################
 ## FONCTIONS AUXILIAIRES  ##
@@ -57,7 +56,7 @@ def random_path_greedy(ville_destination, liste_villes) :
     while(ville_destination.nom == ville_depart.nom or distance_destination((ville_destination.long, ville_destination.lat), ville_depart.long, ville_depart.lat) > distance_max):
         ville_depart = choisir_ville_au_hasard(liste_villes)
     
-    temps = (generate_random_date(dt.datetime(2020, 1, 1), dt.datetime(2020, 10, 30))-dt.datetime(2020, 1, 1)).total_seconds()
+    temps = (generate_random_date(dt.datetime(2021, 1, 1), dt.datetime(2021, 12, 24))-dt.datetime(2021, 1, 1)).total_seconds()
     #Convert it in an integer
     temps = int(temps)
     depart = Node(ville_depart.long, ville_depart.lat, temps, 16, None) #long, lat, temps, pression, None
@@ -76,7 +75,7 @@ def random_path_greedy(ville_destination, liste_villes) :
     found, _ , path = greedy(ville_destination, depart, duree, temps_chgmt_pression, precision, wind_data)
     if found :
         return found, ville_depart, ville_arr ,path
-    return found ,ville_depart, ville_destination, []
+    return found ,ville_depart, ville_arr, []
 
 
 
@@ -91,7 +90,7 @@ def random_path_hard(ville_destination, liste_villes) :
     while(ville_destination.nom == ville_depart.nom):
         ville_depart = choisir_ville_au_hasard(liste_villes)
     
-    temps = (generate_random_date(dt.datetime(2020, 1, 1), dt.datetime(2020, 10, 30))-dt.datetime(2020, 1, 1)).total_seconds()
+    temps = (generate_random_date(dt.datetime(2021, 1, 1), dt.datetime(2021, 12, 24))-dt.datetime(2021, 1, 1)).total_seconds()
     tempsB = temps
     #Convert it in an integer
     temps = int(temps)
@@ -110,8 +109,8 @@ def random_path_hard(ville_destination, liste_villes) :
             #print("Select failed")
             #Take a random value in 0 and 1
             p = random.random()
-            if p < 0.5:
-                print("Wide search not done")
+            if p < 0.3:
+                #print("Wide search not done")
                 return False, ville_depart, ville_arr, []
             found, _ , path = wide_search(ville_destination, depart, duree, temps_chgmt_pression, precision, wind_data)
         return found, ville_depart , ville_arr , path
@@ -154,7 +153,7 @@ def create_database_easy(n : int, liste_villes, ville_arr) :
             # Create data from the path
             #data.extend([["Chemin : " + str(ville_dep) +" to " + str(ville_arr) ]])
             data.extend(create_data(path, ville_arr))
-            with open("database_"+str(ville_arr)+"_europe.csv", "a") as f:
+            with open("database_"+str(ville_arr)+"_france21.csv", "a") as f:
                 writer = csv.writer(f)
                 writer.writerows(data)
             data = []
@@ -177,7 +176,7 @@ def create_database_hard(n : int, liste_villes, ville_arr) :
             # Create data from the path
             #data.extend([["Chemin : " + str(ville_dep) +" to " + str(ville_arr) ]])
             data.extend(create_data(path, ville_arr))
-            with open("database_"+str(ville_arr)+"_europe.csv", "a") as f:
+            with open("database_"+str(ville_arr)+"_france21.csv", "a") as f:
                 writer = csv.writer(f)
                 writer.writerows(data)
             data = []
@@ -190,17 +189,17 @@ def database() :
 
     create_database_easy(100, villes_europe, ville_arr)
     print("easy-1 done")
-    create_database_hard(100, villes_europe, ville_arr)
+    create_database_hard(80, villes_europe, ville_arr)
     print("hard-1 done")
 
-    create_database_easy(100, villes_europe, ville_arr)
+    create_database_easy(1000, villes_europe, ville_arr)
     print("easy-2 done")
     create_database_hard(100, villes_europe, ville_arr)
     print("hard-2 done")
 
-    create_database_easy(100, villes_europe, ville_arr)
+    create_database_easy(1000, villes_europe, ville_arr)
     print("easy-3 done")
-    create_database_hard(100, villes_europe, ville_arr)
+    create_database_hard(1000, villes_europe, ville_arr)
     print("hard-3 done")
 
     create_database_easy(100, villes_europe, ville_arr)
@@ -208,7 +207,7 @@ def database() :
     create_database_hard(100, villes_europe, ville_arr)
     print("hard-4 done")
 
-    create_database_easy(100, villes_europe, ville_arr)
+    create_database_easy(1000, villes_europe, ville_arr)
     print("easy-4 done")
     create_database_hard(100, villes_europe, ville_arr)
     print("hard-4 done")
@@ -217,6 +216,4 @@ def database() :
     print("let me sleep")
 
 
-#database()
-
-
+database()

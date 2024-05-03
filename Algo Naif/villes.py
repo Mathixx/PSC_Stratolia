@@ -153,6 +153,41 @@ villes_monde = [
     Ville("Sidney", 151.2093, -33.8688)
 ]
 
+capitales_europe = [ Ville("Paris", 2.3522, 48.8566), 
+                    Ville("Berlin", 13.4050, 52.5200), 
+                    Ville("Madrid", -3.7038, 40.4168), 
+                    Ville("Rome", 12.4964, 41.9028), 
+                    Ville("Amsterdam", 4.897975, 52.374540), 
+                    Ville("Bruxelles", 4.3517, 50.8503), 
+                    Ville("Lisbonne", -9.1393, 38.7223), 
+                    Ville("Vienne", 16.3738, 48.2082), 
+                    Ville("Varsovie", 21.0122, 52.2297), 
+                    Ville("Budapest", 19.0402, 47.4979), 
+                    Ville("Prague", 14.4378, 50.0755), 
+                    Ville("Athènes", 23.7275, 37.9838), 
+                    Ville("Stockholm", 18.0686, 59.3293), 
+                    Ville("Oslo", 10.7522, 59.9139), 
+                    Ville("Copenhague", 12.5683, 55.6761), 
+                    Ville("Helsinki", 24.9384, 60.1695), 
+                    Ville("Dublin", -6.2603, 53.3498), 
+                    Ville("Édimbourg", -3.1883, 55.9533), 
+                    Ville("Reykjavik", -21.9426, 64.1466), 
+                    Ville("Londres", -0.1278, 51.5074), 
+                    #Ville("Moscou", 37.6173, 55.7558), 
+                    Ville("Kiev", 30.5238, 50.4501), 
+                    Ville("Bucarest", 26.1025, 44.4268),
+                      Ville("Sofia", 23.3219, 42.6977), 
+                      Ville("Ankara", 32.8597, 39.9334), 
+                      Ville("Istanbul", 28.9784, 41.0082), 
+                      Ville("Leeds", -1.5491, 53.8008), 
+                      Ville("Manchester", -2.2426, 53.4808), 
+                      Ville("Liverpool", -2.9912, 53.4084), 
+                      Ville("Barcelone", 2.1734, 41.3851), 
+                      Ville("Valence", -0.3750, 39.4699), 
+                      Ville("Florence", 11.2558, 43.7696), 
+                      Ville("Milan", 9.1859, 45.4654) 
+]
+
 
 
 def choisir_ville_au_hasard(liste_villes):
