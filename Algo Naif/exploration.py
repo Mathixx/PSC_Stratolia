@@ -72,6 +72,7 @@ def wide_search(destination : (float,float), depart : Node, duree : int, temps_c
     # On initialise le point le plus proche trouvé
     closest = depart
     distance_closest = distance_destination(destination, depart.long, depart.lat)
+    limite_eloignement = int(distance_closest)
 
     for count in range(nombre_d_iterations) : 
 
@@ -150,9 +151,6 @@ def selection_opti(destination : (float,float), liste : list, ecart_min : int) -
     return res
 
     
-
-
-
 
 ###########
 ## TESTS ##
