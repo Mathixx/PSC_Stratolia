@@ -203,6 +203,16 @@ def database() :
     create_database_hard(100, villes_europe, ville_arr)
     print("hard-3 done")
 
+    create_database_easy(100, villes_europe, ville_arr)
+    print("easy-4 done")
+    create_database_hard(100, villes_europe, ville_arr)
+    print("hard-4 done")
+
+    create_database_easy(100, villes_europe, ville_arr)
+    print("easy-4 done")
+    create_database_hard(100, villes_europe, ville_arr)
+    print("hard-4 done")
+
 
     print("let me sleep")
 
