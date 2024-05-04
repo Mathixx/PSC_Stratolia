@@ -187,30 +187,30 @@ def create_database_hard(n : int, liste_villes, ville_arr) :
 def database() :
     ville_arr = choisir_ville_au_hasard(capitales_europe)
 
-    create_database_easy(100, villes_europe, ville_arr)
+    create_database_easy(3000, villes_europe, ville_arr)
     print("easy-1 done")
-    create_database_hard(80, villes_europe, ville_arr)
+    create_database_hard(50, villes_europe, ville_arr)
     print("hard-1 done")
 
-    create_database_easy(1000, villes_europe, ville_arr)
+    create_database_easy(3000, villes_europe, ville_arr)
     print("easy-2 done")
-    create_database_hard(100, villes_europe, ville_arr)
+    create_database_hard(50, villes_europe, ville_arr)
     print("hard-2 done")
 
-    create_database_easy(1000, villes_europe, ville_arr)
+    create_database_easy(3000, villes_europe, ville_arr)
     print("easy-3 done")
-    create_database_hard(1000, villes_europe, ville_arr)
+    create_database_hard(50, villes_europe, ville_arr)
     print("hard-3 done")
 
-    create_database_easy(100, villes_europe, ville_arr)
+    create_database_easy(300, villes_europe, ville_arr)
     print("easy-4 done")
-    create_database_hard(100, villes_europe, ville_arr)
+    create_database_hard(50, villes_europe, ville_arr)
     print("hard-4 done")
 
-    create_database_easy(1000, villes_europe, ville_arr)
-    print("easy-4 done")
-    create_database_hard(100, villes_europe, ville_arr)
-    print("hard-4 done")
+    create_database_easy(3000, villes_europe, ville_arr)
+    print("easy-5 done")
+    create_database_hard(50, villes_europe, ville_arr)
+    print("hard-5 done")
 
 
     print("let me sleep")
