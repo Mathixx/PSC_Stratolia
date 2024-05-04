@@ -19,6 +19,7 @@ from datetime import datetime, timedelta
 ###########################
 
 def visupoints(liste,echelle=1):
+    ''' Visualise '''
     X,Y = [],[]
     
     for n in liste :
@@ -51,17 +52,17 @@ def visupoints(liste,echelle=1):
 
     
 
-def animation(coords,dest,echelle, nom= "Animation_trajectoire.gif"):
-    '''  crée une animation de la trajectoire du ballon, prenant en entrée une liste de coordonnées coords pour la trajectoire,
-    coords de la forme [(long_i,lat_i,z_i,sec_i),]
-      un tuple dest pour la destination (long,lat),
-      une echelle pour la carte (en long/lat) -> Prendre 1 de base'''
-
+def animation(coords,dest,echelle=1):
+    '''  crée une animation de la trajectoire du ballon, prenant en entrée une liste de coordonnées coords pour la trajectoire.
+    Entrée : Coords  de la forme [(long_i,lat_i,z_i,sec_i),]
+             un tuple dest pour la destination (long,lat),
+             (Optionel) une echelle pour la carte (en long/lat)'''
       
     X, Y, Z, S = zip(*coords)
-    X = [(x-360 if x>180 else x ) for x in X]
-    longitude_min, longitude_max = min(X)-echelle, max(X)+echelle # Min et Max Longitudes
-    latitude_min, latitude_max = min(Y)-echelle, max(Y)+echelle  # Min et Max Latitudes
+    X = [(x-360 if x>180 else x ) for x in X] #Conversion des longitudes dans ]-180;180]
+
+    longitude_min, longitude_max = min(X)-echelle, max(X)+echelle # Min et Max Longitudes+= echelle
+    latitude_min, latitude_max = min(Y)-echelle, max(Y)+echelle  # Min et Max Latitudes+= echelle
 
     # Configuration de GridSpec
     fig = plt.figure(figsize=(15, 12))
@@ -135,9 +136,12 @@ def animation(coords,dest,echelle, nom= "Animation_trajectoire.gif"):
 
     # Génération et sauvegarde de l'animation
     animation = camera.animate()
-    animation.save(nom, writer='Pillow', fps=2)
+    animation.save('Animation_trajectoire.gif', writer='Pillow', fps=2)
 
-##Example 
+
+##############
+##  Example ## 
+##############
 spirale = [
     (50.0, 0.0, 0.0),
     (38.43, 29.22, 3.45),
@@ -175,4 +179,3 @@ spirale_modifiee = [
 ]
 
 #animation(spirale_modifiee, [0.0, 0.0, 100.0],1)
-
