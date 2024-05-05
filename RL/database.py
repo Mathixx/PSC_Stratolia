@@ -186,6 +186,7 @@ def create_database_hard(n : int, liste_villes, ville_arr) :
 
 def database() :
     ville_arr = choisir_ville_au_hasard(capitales_europe)
+    print("Ville d'arrivée : ", ville_arr.nom)
 
     create_database_easy(3000, villes_europe, ville_arr)
     print("easy-1 done")
