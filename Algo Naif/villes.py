@@ -345,5 +345,5 @@ def afficher_positions_villes(villes, filename, color, region):
 
 # afficher_positions_villes(villes_france, 'villes_france.png', 'red', 'France')
 # afficher_positions_villes(villes_europe, 'villes_europe.png', 'blue', 'Europe')
-afficher_positions_villes(villes_monde, 'villes_monde.png', 'purple', 'World')
+# afficher_positions_villes(villes_monde, 'villes_monde.png', 'purple', 'World')
 

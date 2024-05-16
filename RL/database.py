@@ -5,6 +5,7 @@
 import datetime as dt
 import sys
 import random
+import time 
 
 sys.path.append('./Algo Naif')
 from data_vent import *
@@ -14,6 +15,7 @@ from greedy import *
 from selection_search import *
 from Node import *
 from parcours_interpolate import *
+from Affichage import *
 
 from matrice_choix import *
 
@@ -224,20 +226,22 @@ def database() :
         print("let me sleep")
 
 
-database()
+# database()
 
 def opti_random_path(liste_villes) :
     # On utilise liste_villes comme points de départ.
     # Le but est de laisser dériver le ballon
     path = []
     ville_depart = choisir_ville_au_hasard(liste_villes)
-    duree = (random.randint(6, 120)//6)*6
+    duree = (random.randint(36, 120)//6)*6
     temps = int((generate_random_date(dt.datetime(2021, 1, 1), dt.datetime(2021, 12, 24))-dt.datetime(2021, 1, 1)).total_seconds())
     depart = Node(ville_depart.long, ville_depart.lat, temps, 16, None) 
     for i in range(duree//6) :
         path.append(depart)
         pression = random.randint(0, 16)
-        depart = parcours_a_Z_interpolate((0, -90), depart, 6*3600, pression,1, wind_data)[1]
+        _ , depart = parcours_a_Z_interpolate((0, -90), depart, 6*3600,10000, wind_data)
+    # liste = chemin_graphic(path)
+    # animation(liste, (path[-1].long, path[-1].lat))
     return path[-1], path
     
 
@@ -251,14 +255,22 @@ def critere_opti(dest : Node, path : list, tab : MatriceChoix) :
         diff_long -= 360
     # On ajoute le chemin au tableau seulement si le chemin n'est pas assez représenté en moyenne
     # On abandonne si diff est au dela de 50 en valeur absolue
+    
+    #On regarde si greedy y arrive
+    greedy_found = False
+    greedy_found, _ , _ = greedy((dest.long, dest.lat), path[0], 120, 6*3600, 10000, wind_data)
+    
+    
+    
+    
     if abs(diff_long) >= 50 :
         return tab
     diff_long += 50
     diff_long = int(diff_long*10)
-    if tab.get_element(diff_long) <= tab.get_average() :
+    if (tab.get_element(diff_long) <= tab.get_average() *1.5 and not greedy_found):
         tab.add(diff_long,1)
         data = []
-        data.extend(create_data(path))
+        data.extend(create_data(path, dest))
         with open("database_random_paths_chelou21.csv", "a") as f:
             writer = csv.writer(f)
             writer.writerows(data)
@@ -270,5 +282,18 @@ def create_database_opti(n : int, liste_villes : list) :
     data = []
     tab = MatriceChoix(size=1000,initial_value=0)
     while tab.get_sum() < n :
+        start_time = time.perf_counter()
         dest, path = opti_random_path(liste_villes)
+        inter_time = time.perf_counter()
         tab = critere_opti(dest, path, tab)
+        end_time = time.perf_counter()
+        
+        opti_time = inter_time - start_time
+        critere_time = end_time - inter_time
+        print(f"The function opti_random took {opti_time} seconds to execute.")
+        print(f"The function critere_opti took {critere_time} seconds to execute.")
+        print("\n")
+        print(tab.get_sum())
+
+
+create_database_opti(10000, villes_france)

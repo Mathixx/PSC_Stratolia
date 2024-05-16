@@ -18,7 +18,7 @@ from datetime import datetime, timedelta
 ## FONCTIONS PRINCIPALES ##
 ###########################
 
-def visupoints(liste,echelle=1):
+def visupoints(liste,echelle=1, color = 'red'):
     ''' Visualise '''
     X,Y = [],[]
     
@@ -42,7 +42,7 @@ def visupoints(liste,echelle=1):
     ax.add_feature(cfeature.OCEAN)
     ax.add_feature(cfeature.LAKES)
     ax.add_feature(cfeature.RIVERS)
-    ax.scatter(X, Y, transform=ccrs.PlateCarree(), color='red', marker='o', s=30)
+    ax.scatter(X, Y, transform=ccrs.PlateCarree(), color=color, marker='o', s=30)
 
 
     
