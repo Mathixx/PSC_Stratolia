@@ -13,10 +13,13 @@ from exploration import *
 from greedy import *
 from selection_search import *
 from Node import *
+from parcours_interpolate import *
+
+from matrice_choix import *
 
 import math
 import pickle
-import random
+import random 
 import csv
 
 ############################
@@ -153,7 +156,7 @@ def create_database_easy(n : int, liste_villes, ville_arr) :
             # Create data from the path
             #data.extend([["Chemin : " + str(ville_dep) +" to " + str(ville_arr) ]])
             data.extend(create_data(path, ville_arr))
-            with open("database_"+str(ville_arr)+"_france21.csv", "a") as f:
+            with open("database_france_from_france21.csv", "a") as f:
                 writer = csv.writer(f)
                 writer.writerows(data)
             data = []
@@ -176,7 +179,7 @@ def create_database_hard(n : int, liste_villes, ville_arr) :
             # Create data from the path
             #data.extend([["Chemin : " + str(ville_dep) +" to " + str(ville_arr) ]])
             data.extend(create_data(path, ville_arr))
-            with open("database_"+str(ville_arr)+"_france21.csv", "a") as f:
+            with open("database_france_from_france21bis.csv", "a") as f:
                 writer = csv.writer(f)
                 writer.writerows(data)
             data = []
@@ -185,36 +188,87 @@ def create_database_hard(n : int, liste_villes, ville_arr) :
             
 
 def database() :
-    ville_arr = choisir_ville_au_hasard(capitales_europe)
-    print("Ville d'arrivée : ", ville_arr.nom)
+    for ville_arr in villes_france:
+        if ville_arr.nom in ["Paris", "Marseille", "Lyon", "Toulouse", "Nice", "Nantes", "Montpellier", "Strasbourg", "Bordeaux","Lille", "Rennes", "Reims", "Le Havre"]:
+            continue
+    
+        # ville_arr = choisir_ville_au_hasard(villes_france)
+        print("Ville d'arrivée : ", ville_arr.nom)
 
-    create_database_easy(3000, villes_europe, ville_arr)
-    print("easy-1 done")
-    create_database_hard(50, villes_europe, ville_arr)
-    print("hard-1 done")
+        create_database_easy(5000, villes_france, ville_arr)
+        print("easy-1 done")
+        # create_database_hard(50, villes_france, ville_arr)
+        # print("hard-1 done")
 
-    create_database_easy(3000, villes_europe, ville_arr)
-    print("easy-2 done")
-    create_database_hard(50, villes_europe, ville_arr)
-    print("hard-2 done")
+        create_database_easy(5000, villes_france, ville_arr)
+        print("easy-2 done")
+        # create_database_hard(50, villes_france, ville_arr)
+        # print("hard-2 done")
 
-    create_database_easy(3000, villes_europe, ville_arr)
-    print("easy-3 done")
-    create_database_hard(50, villes_europe, ville_arr)
-    print("hard-3 done")
+        create_database_easy(5000, villes_france, ville_arr)
+        print("easy-3 done")
+        # create_database_hard(50, villes_frances, ville_arr)
+        # print("hard-3 done")
 
-    create_database_easy(300, villes_europe, ville_arr)
-    print("easy-4 done")
-    create_database_hard(50, villes_europe, ville_arr)
-    print("hard-4 done")
+        create_database_easy(5000, villes_france, ville_arr)
+        print("easy-4 done")
+        # create_database_hard(50, villes_frances, ville_arr)
+        # print("hard-4 done")
 
-    create_database_easy(3000, villes_europe, ville_arr)
-    print("easy-5 done")
-    create_database_hard(50, villes_europe, ville_arr)
-    print("hard-5 done")
+        create_database_easy(5000, villes_france, ville_arr)
+        print("easy-5 done")
+        # create_database_hard(50, villes_frances, ville_arr)
+        # print("hard-5 done")
 
 
-    print("let me sleep")
+        print("let me sleep")
 
 
 database()
+
+def opti_random_path(liste_villes) :
+    # On utilise liste_villes comme points de départ.
+    # Le but est de laisser dériver le ballon
+    path = []
+    ville_depart = choisir_ville_au_hasard(liste_villes)
+    duree = (random.randint(6, 120)//6)*6
+    temps = int((generate_random_date(dt.datetime(2021, 1, 1), dt.datetime(2021, 12, 24))-dt.datetime(2021, 1, 1)).total_seconds())
+    depart = Node(ville_depart.long, ville_depart.lat, temps, 16, None) 
+    for i in range(duree//6) :
+        path.append(depart)
+        pression = random.randint(0, 16)
+        depart = parcours_a_Z_interpolate((0, -90), depart, 6*3600, pression,1, wind_data)[1]
+    return path[-1], path
+    
+
+def critere_opti(dest : Node, path : list, tab : MatriceChoix) :
+    # On choisit de garder les points en fonction du déplacement longitudinal pour débiaiser les trajectoires obtenues
+    # On exprime plus simplement le critère en termes de différence de longitudes
+    diff_long = path[-1].long - path[0].long
+    # On ramène le chiffre dans l'intervalle [-180, 180]
+    diff_long = diff_long % 360
+    if diff_long > 180 :
+        diff_long -= 360
+    # On ajoute le chemin au tableau seulement si le chemin n'est pas assez représenté en moyenne
+    # On abandonne si diff est au dela de 50 en valeur absolue
+    if abs(diff_long) >= 50 :
+        return tab
+    diff_long += 50
+    diff_long = int(diff_long*10)
+    if tab.get_element(diff_long) <= tab.get_average() :
+        tab.add(diff_long,1)
+        data = []
+        data.extend(create_data(path))
+        with open("database_random_paths_chelou21.csv", "a") as f:
+            writer = csv.writer(f)
+            writer.writerows(data)
+    return tab
+
+
+
+def create_database_opti(n : int, liste_villes : list) :
+    data = []
+    tab = MatriceChoix(size=1000,initial_value=0)
+    while tab.get_sum() < n :
+        dest, path = opti_random_path(liste_villes)
+        tab = critere_opti(dest, path, tab)

@@ -282,3 +282,30 @@ def test() :
         print("Aucune ville n'est à plus de 5000 km de toutes les autres villes.")
 
 #test()
+
+import cartopy.crs as ccrs
+import matplotlib.pyplot as plt
+
+def afficher_positions_villes(villes):
+    fig = plt.figure(figsize=(10, 6))
+    ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
+
+    for ville in villes:
+        ax.plot(ville.long, ville.lat, 'ro', transform=ccrs.PlateCarree())
+
+    ax.coastlines()
+    ax.set_global()
+
+    plt.show()
+
+# Afficher les positions des villes françaises
+afficher_positions_villes(villes_france)
+
+# Afficher les positions des villes européennes
+afficher_positions_villes(villes_europe)
+
+# Afficher les positions des villes du monde
+afficher_positions_villes(villes_monde)
+
+# Afficher les positions des capitales européennes
+afficher_positions_villes(capitales_europe)
