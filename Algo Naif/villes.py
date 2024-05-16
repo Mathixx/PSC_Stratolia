@@ -283,29 +283,67 @@ def test() :
 
 #test()
 
-import cartopy.crs as ccrs
 import matplotlib.pyplot as plt
+import cartopy.crs as ccrs
+import cartopy.feature as cfeature
 
-def afficher_positions_villes(villes):
-    fig = plt.figure(figsize=(10, 6))
+def afficher_positions_villes(villes, filename, color, region):
+    # Extract latitudes and longitudes
+    lats = [ville.lat for ville in villes]
+    lons = [ville.long for ville in villes]
+    
+    # Calculate the geographical bounds
+    min_lat, max_lat = min(lats), max(lats)
+    min_long, max_long = min(lons), max(lons)
+    
+    # Calculate the aspect ratio
+    lat_range = max_lat - min_lat
+    long_range = max_long - min_long
+    aspect_ratio = long_range / lat_range
+
+    # Set the figure size based on the aspect ratio and region
+    if region == 'France':
+        fig_width = 12
+        fig_height = 10
+        marker_size = 20
+    elif region == 'Europe':
+        fig_width = 10
+        fig_height = fig_width / aspect_ratio
+        marker_size = 7
+    elif region == 'World':
+        fig_width = 15
+        fig_height = 7.5
+        marker_size = 8
+
+    fig = plt.figure(figsize=(fig_width, fig_height), dpi=300)
     ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
 
     for ville in villes:
-        ax.plot(ville.long, ville.lat, 'ro', transform=ccrs.PlateCarree())
+        ax.plot(ville.long, ville.lat, 'o', color=color, transform=ccrs.PlateCarree(), markersize=marker_size)
 
-    ax.coastlines()
-    ax.set_global()
+    ax.coastlines(resolution='110m')
+    
+    if region == 'France':
+        ax.set_extent([-5, 9, 41, 51], crs=ccrs.PlateCarree())
+    elif region == 'Europe':
+        ax.set_extent([-30, 40, 30, 70], crs=ccrs.PlateCarree())
+    elif region == 'World':
+        ax.set_global()
+    else:
+        ax.set_extent([min_long, max_long, min_lat, max_lat], crs=ccrs.PlateCarree())
+    
+    ax.add_feature(cfeature.COASTLINE)
+    ax.add_feature(cfeature.BORDERS, linestyle=':')
+    ax.add_feature(cfeature.LAND)
+    ax.add_feature(cfeature.OCEAN)
+    ax.add_feature(cfeature.LAKES)
+    ax.add_feature(cfeature.RIVERS)
 
-    plt.show()
+    plt.savefig(filename, format='png', dpi=300)  # Save the figure with higher DPI
+    # plt.show()
 
-# Afficher les positions des villes françaises
-afficher_positions_villes(villes_france)
 
-# Afficher les positions des villes européennes
-afficher_positions_villes(villes_europe)
+# afficher_positions_villes(villes_france, 'villes_france.png', 'red', 'France')
+# afficher_positions_villes(villes_europe, 'villes_europe.png', 'blue', 'Europe')
+afficher_positions_villes(villes_monde, 'villes_monde.png', 'purple', 'World')
 
-# Afficher les positions des villes du monde
-afficher_positions_villes(villes_monde)
-
-# Afficher les positions des capitales européennes
-afficher_positions_villes(capitales_europe)
