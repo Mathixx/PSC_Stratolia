@@ -162,4 +162,18 @@ cython_debug/
 
 # Files I do nt want on the git repository
 
+Animation_trajectoire.gif
+points 21600.png
+
+database_paris_marseille.csv 
+database_random_paths_france.csv 
+database_random_paths.csv
+database_random_paths_monde.csv
+database_france_from_france21_hard.csv
+database_france_from_france21.csv
+
+/Graphs
+
+# Files I do nt want on the git repository
+
 objet_wind_data_2020.pickle

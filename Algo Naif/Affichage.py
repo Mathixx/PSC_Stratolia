@@ -1,3 +1,7 @@
+#########################
+## MODULES NÉCESSAIRES ##
+#########################
+
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -10,17 +14,55 @@ import cartopy.feature as cfeature
 import matplotlib.dates as mdates
 from datetime import datetime, timedelta
 
+###########################
+## FONCTIONS PRINCIPALES ##
+###########################
 
-def animation(coords,dest,echelle):
-    '''  crée une animation de la trajectoire du ballon, prenant en entrée une liste de coordonnées coords pour la trajectoire,
-    coords de la forme [(long_i,lat_i,z_i,h6_i,sec_i),]
-      un tuple dest pour la destination (long,lat),
-      une echelle pour la carte (en long/lat) -> Prendre 1 de base'''
-      
-    X, Y, Z, H, S = zip(*coords)
-
+def visupoints(liste,echelle=1, color = 'red'):
+    ''' Visualise '''
+    X,Y = [],[]
+    
+    for n in liste :
+        X.append(n.long)
+        Y.append(n.lat)
+    X = [(x-360 if x>180 else x ) for x in X]
     longitude_min, longitude_max = min(X)-echelle, max(X)+echelle # Min et Max Longitudes
     latitude_min, latitude_max = min(Y)-echelle, max(Y)+echelle  # Min et Max Latitudes
+     # Création de la figure
+    fig = plt.figure(figsize=(15, 12))
+    ax = fig.add_subplot(1, 1, 1, projection=ccrs.PlateCarree())
+
+    # Ajout des points sur la carte
+    
+    ax.set_extent([longitude_min, longitude_max, latitude_min, latitude_max], crs=ccrs.PlateCarree())
+    ax.add_feature(cfeature.COASTLINE)
+    ax.add_feature(cfeature.COASTLINE)
+    ax.add_feature(cfeature.BORDERS, linestyle=':')
+    ax.add_feature(cfeature.LAND)
+    ax.add_feature(cfeature.OCEAN)
+    ax.add_feature(cfeature.LAKES)
+    ax.add_feature(cfeature.RIVERS)
+    ax.scatter(X, Y, transform=ccrs.PlateCarree(), color=color, marker='o', s=30)
+
+
+    
+    # Enregistrement de l'image
+    nom = "points "+str(liste[0].t)+".png"
+    plt.savefig(nom)
+
+    
+
+def animation(coords,dest,echelle=1):
+    '''  crée une animation de la trajectoire du ballon, prenant en entrée une liste de coordonnées coords pour la trajectoire.
+    Entrée : Coords  de la forme [(long_i,lat_i,z_i,sec_i),]
+             un tuple dest pour la destination (long,lat),
+             (Optionel) une echelle pour la carte (en long/lat)'''
+      
+    X, Y, Z, S = zip(*coords)
+    X = [(x-360 if x>180 else x ) for x in X] #Conversion des longitudes dans ]-180;180]
+
+    longitude_min, longitude_max = min(X)-echelle, max(X)+echelle # Min et Max Longitudes+= echelle
+    latitude_min, latitude_max = min(Y)-echelle, max(Y)+echelle  # Min et Max Latitudes+= echelle
 
     # Configuration de GridSpec
     fig = plt.figure(figsize=(15, 12))
@@ -28,6 +70,8 @@ def animation(coords,dest,echelle):
 
     # Axe 3D
     ax1 = ax = fig.add_subplot(gs[0], projection='3d')  
+    m = max(max(X)-min(X),max(Y)-min(Y))
+    
     ax1.set_xlim([min(X), max(X)])
     ax1.set_ylim([min(Y), max(Y)])
     ax1.set_zlim([min(Z), max(Z)])
@@ -40,6 +84,8 @@ def animation(coords,dest,echelle):
     # Axe 2D
     ax2 = fig.add_subplot(gs[1],projection=ccrs.PlateCarree())
     ax2.set_global()
+    #ax2.set_xlim([(min(X)+max(X)-m)/2, (min(X)+max(X)+m)/2])
+    #ax2.set_ylim([(min(Y)+max(X)-m)/2, (min(X)+max(X)+m)/2])
 
     camera = Camera(fig)
     
@@ -81,7 +127,7 @@ def animation(coords,dest,echelle):
 
         
         #Calcul et affiche de l'heure
-        heure_actuelle = datetime(2020, 1, 1, 0, 0, 0)+timedelta(hours = 6*H[i],seconds = S[i])
+        heure_actuelle = datetime(2020, 1, 1, 0, 0, 0)+timedelta(seconds = S[i])
         ax2.text(0.5, 1.05, heure_actuelle.strftime('%Y-%m-%d %H:%M:%S'), 
                 ha='center', va='center', transform=ax2.transAxes, fontsize = 14)
         
@@ -92,7 +138,10 @@ def animation(coords,dest,echelle):
     animation = camera.animate()
     animation.save('Animation_trajectoire.gif', writer='Pillow', fps=2)
 
-##Example 
+
+##############
+##  Example ## 
+##############
 spirale = [
     (50.0, 0.0, 0.0),
     (38.43, 29.22, 3.45),
@@ -126,7 +175,7 @@ spirale = [
     (0.0, 0.0, 100.0)
 ]
 spirale_modifiee = [
-    (x, y, z, 0, 600*i) for i, (x, y, z) in enumerate(spirale)
+    (x, y, z,  600*i) for i, (x, y, z) in enumerate(spirale)
 ]
 
 #animation(spirale_modifiee, [0.0, 0.0, 100.0],1)
