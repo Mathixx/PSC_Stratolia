@@ -282,17 +282,17 @@ def create_database_opti(n : int, liste_villes : list) :
     data = []
     tab = MatriceChoix(size=1000,initial_value=0)
     while tab.get_sum() < n :
-        start_time = time.perf_counter()
+        # start_time = time.perf_counter()
         dest, path = opti_random_path(liste_villes)
-        inter_time = time.perf_counter()
+        # inter_time = time.perf_counter()
         tab = critere_opti(dest, path, tab)
-        end_time = time.perf_counter()
+        # end_time = time.perf_counter()
         
-        opti_time = inter_time - start_time
-        critere_time = end_time - inter_time
-        print(f"The function opti_random took {opti_time} seconds to execute.")
-        print(f"The function critere_opti took {critere_time} seconds to execute.")
-        print("\n")
+        # opti_time = inter_time - start_time
+        # critere_time = end_time - inter_time
+        # print(f"The function opti_random took {opti_time} seconds to execute.")
+        # print(f"The function critere_opti took {critere_time} seconds to execute.")
+        # print("\n")
         print(tab.get_sum())
 
 
