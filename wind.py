@@ -1,3 +1,4 @@
+#Importartion des modules
 import sys, math, pickle, numpy as np, random as rd, matplotlib.pyplot as plt, matplotlib.animation as animation
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
@@ -22,7 +23,7 @@ alts = convPression_altitude(pres)
 
 
 def affiche_vents3D(temps,longmin, longmax, latmin,latmax):
-     
+     ''' Afiche une carte 3D des vents à un temps et espace fixés. '''
      #On selectionne les indices qui nous interessent
      long_indices = np.where((longmin <= longs) & (longs <= longmax))[0]
      lat_indices = np.where((latmin <= lats) & (lats <= latmax))[0]
@@ -76,8 +77,8 @@ def affiche_vents2D(temps, longmin, longmax, latmin,latmax, pression, indice = F
 
 
 
-def affiche_ventsGIF(temps, longmin, longmax, latmin,latmax,show = True, save = False):
-
+def affiche_ventsGIF(temps, longmin, longmax, latmin,latmax,show = True, save = False,echelle =1):
+    '''Affiche les vents à instant fixé sous forme d'un GIF '''
     #On définit l'animation, ici on joue sur la pression
     def animv(num,qr,temps, longmin, longmax, latmin,latmax):
         nummod = (16-num)%17 #On part de la pression la plus élévée au début
@@ -90,7 +91,7 @@ def affiche_ventsGIF(temps, longmin, longmax, latmin,latmax,show = True, save = 
     ax.set_ylabel('Latitude')
     ax.set_title(f'Pression : {pres[16]} hPA/ Altitude {format(alts[16],'.2f')} km')
     X,Y,U,V = affiche_vents2D(temps, longmin,longmax,latmin,latmax,0,True,True)
-    qr = ax.quiver(X,Y,U,V,color = 'r',pivot = 'middle')
+    qr = ax.quiver(X,Y,echelle*U,echelle*V,color = 'r',pivot = 'middle')
 
     anim = animation.FuncAnimation(fig, animv, fargs=(qr,temps, longmin, longmax, latmin,latmax),
                               interval=1000, frames=range(17), blit=False)
@@ -101,6 +102,9 @@ def affiche_ventsGIF(temps, longmin, longmax, latmin,latmax,show = True, save = 
 
 
 #### Tests ####
-affiche_vents3D(0,20,30,-5,5)
+#affiche_vents(0,20,30,-5,5)
 #affiche_vents2D(0,10,40,-5,5,200)
-#affiche_ventsGIF(0,10,40,-5,5,show = True, save = False)
+
+##Slides
+#affiche_ventsGIF(0,10,40,-5,5,show = True, save = False) #Directions différentes
+#affiche_ventsGIF(0,150,165,-20,0,show = True, save = False,echelle=0.8) #Directions identiques
